@@ -485,7 +485,8 @@ gen_class (umlclassnode *node)
         umlattrlist umla = node->key->attributes;
         if (!is_valuetype) {
             while (umla != NULL) {
-                if (umla->key.visibility != '2') {
+                if (umla->key.visibility != '2'||umla->key.visibility != '1')//modification pour eviter ajout automatique des prototypes de setters and getters dans le cas des attributs protected
+		{
                     umla = umla->next;
                     continue;
                 }
