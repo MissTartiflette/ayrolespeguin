@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../src/shared/state.h
+state/Exemple.h
+../src/shared/state/Exemple.h
+
+../src/shared/state/Exemple.h
+
+/home/chloe/Documents/ayrolespeguin/src/client/main.cpp
+iostream
+-
+string.h
+-
+SFML/Graphics.hpp
+-
+state.h
+/home/chloe/Documents/ayrolespeguin/src/client/state.h
+
+/home/chloe/Documents/ayrolespeguin/src/shared/state/Exemple.cpp
+Exemple.h
+/home/chloe/Documents/ayrolespeguin/src/shared/state/Exemple.h
+
+/home/chloe/Documents/ayrolespeguin/src/shared/state/Exemple.h
+
