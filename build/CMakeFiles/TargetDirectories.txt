@@ -1,3 +1,0 @@
-/home/chloe/Documents/ayrolespeguin/build/CMakeFiles/rebuild_cache.dir
-/home/chloe/Documents/ayrolespeguin/build/CMakeFiles/client.dir
-/home/chloe/Documents/ayrolespeguin/build/CMakeFiles/edit_cache.dir
