@@ -3,7 +3,7 @@
 using namespace state;
 
 Element::Element(){
-	this -> nom = "";
+	nom = "";
 	Position position;
 	position.setX(0);
 	position.setY(0);
@@ -17,4 +17,14 @@ Element::Element(){
 
 std::string Element::getNom(){
 	return nom;
+}
+
+Position& Element::getPosition(){
+	Position & refPosition = position;
+	return refPosition ;
+}
+
+Statistiques& Element::getStatistiques(){
+	Statistiques & refStatistiques = statistiques;
+	return refStatistiques ;
 }

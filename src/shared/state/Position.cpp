@@ -1,5 +1,4 @@
 #include "state.h"
-#include <iostream>
 
 using namespace state;
 
@@ -17,4 +16,15 @@ void Position::setX(int newX){
 
 void Position::setY(int newY){
     y = newY;
+}
+
+bool Position::equals(Position& other){
+	bool resultat;
+	if (x == other.getX() && y == other.getY()){
+		resultat = true;
+	}
+	else{
+		resultat = false;
+	}
+	return resultat;
 }
