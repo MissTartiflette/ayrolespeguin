@@ -33,40 +33,53 @@ void Personnage::setStatut (StatutPersonnageID newStatut){
 	statut=newStatut;
 }
 
-vector<Position> Personnage::getLegalMove(Etat etat){
-	vector<Position> Liste_pos_mouv(2*champMove*(champMove+1)+1);
-	for(size_t i=0; i<Liste_pos_mouv.size();i++){
-		for(int abscisse=this->position.getX();abscisse<=this->position.getX()+champMove;abscisse++){//parcourt les abscisses
-			for(int ordonnee=this->position.getY();ordonnee<=this->position.getY()+champMove;ordonnee++){//parcourt les ordonnées
-				if(abscisse+ordonnee<=champMove){
-					if(etat.getGrille()[abscisse][ordonnee].isPraticable()==true){
-						TerrainPraticable& terprat = dynamic_cast<TerrainPraticable&>(etat.getGrille()[abscisse][ordonnee]);
-						if(terprat.isOccupe(etat)==false){
-							Liste_pos_mouv[i].setX(this->position.getX()+abscisse);
-							Liste_pos_mouv[i].setY(this->position.getY()+ordonnee);
-						}
+vector<Position> Personnage::getLegalMove(Etat& etat){
+	/* Note : On autorise le déplacement sur sa propre case
+	 */
+	vector<Position> ListePosMouv;
+	Position positionAjoutee;
+	
+	//On parcourt les abscisses de la grille
+	for(int abscisse = this -> position.getX() - champMove; abscisse <= this -> position.getX()+champMove; abscisse++){
+		//On parcourt les ordonnées de la grille
+		for(int ordonnee = this -> position.getY() - champMove; ordonnee <= this -> position.getY()+champMove; ordonnee++){
+			// On teste les cases qui sont dans la zone de deplacement du personnage
+			if(abscisse+ordonnee <= champMove && abscisse+ordonnee >= -champMove){
+				if(etat.getGrille()[abscisse][ordonnee].isPraticable()){
+					if(!etat.getGrille()[abscisse][ordonnee].isOccupe(etat)){						
+							positionAjoutee.setX(abscisse);
+							positionAjoutee.setY(ordonnee);
+							ListePosMouv.push_back(positionAjoutee);
 					}
 				}
 			}
 		}
 	}
-	return Liste_pos_mouv;
-//il faut aussi vérifier si le terrain est praticable et s'il n'est pas occupé	
+	return ListePosMouv;	
 }
 
-vector<Position> Personnage::getLegalAttack(Etat etat){
-	vector<Position> Liste_pos_attack(2*champAttack*(champAttack+1)+1);
-	for(size_t i=0; i<Liste_pos_attack.size();i++){
-		for(int abscisse=this->position.getX();abscisse<=this->position.getX()+champAttack;abscisse++){
-			for(int ordonnee=this->position.getY();ordonnee<=this->position.getY()+champAttack;ordonnee++){
-				if(abscisse+ordonnee<=champAttack){
-					Liste_pos_attack[i].setX(this->position.getX()+abscisse);
-					Liste_pos_attack[i].setY(this->position.getY()+ordonnee);
+vector<Position> Personnage::getLegalAttack(Etat& etat){
+	vector<Position> ListePosAtq;
+	Position positionAjoutee;
+	
+	//On parcourt les abscisses de la grille
+	for(int abscisse = this -> position.getX() - champAttack; abscisse <= this -> position.getX()+champAttack; abscisse++){
+		//On parcourt les ordonnées de la grille
+		for(int ordonnee = this -> position.getY() - champAttack; ordonnee <= this -> position.getY()+champAttack; ordonnee++){
+			// On teste les cases qui sont dans la zone de deplacement du personnage
+			if(abscisse+ordonnee <= champAttack && abscisse+ordonnee >= -champAttack){
+				if(etat.getGrille()[abscisse][ordonnee].isPraticable()){
+					if(etat.getGrille()[abscisse][ordonnee].isOccupe(etat)){						
+							positionAjoutee.setX(abscisse);
+							positionAjoutee.setY(ordonnee);
+							// On ne peut attaquer sa propre case
+							if(!positionAjoutee.equals(this -> position)){
+								ListePosAtq.push_back(positionAjoutee);
+							}
+					}
 				}
 			}
 		}
 	}
-	return Liste_pos_attack;
-//il faut aussi vérifier si le terrain est praticable 	
-
+	return ListePosAtq;	
 }

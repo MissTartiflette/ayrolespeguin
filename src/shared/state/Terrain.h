@@ -4,6 +4,7 @@
 
 
 namespace state {
+  class Etat;
   class Element;
 }
 
@@ -16,7 +17,8 @@ namespace state {
     // Operations
   public:
     bool isTerrain ();
-    virtual bool isPraticable ();
+    virtual bool isPraticable () = 0;
+    bool isOccupe (Etat& etat);
     // Setters and Getters
   };
 

@@ -2,8 +2,6 @@
 #ifndef STATE__ARCHER__H
 #define STATE__ARCHER__H
 
-#include <string>
-#include <vector>
 
 namespace state {
   class Personnage;
@@ -15,14 +13,9 @@ namespace state {
 
   /// class Archer - 
   class Archer : public state::Personnage {
-    // Attributes
-  protected:
-    std::string nomArme     = "Arc";
-    int codeArme     = 1;
     // Operations
   public:
-    std::vector<Position> getLegalMove ();
-    std::vector<Position> getLegalAttack ();
+    Archer ();
     // Setters and Getters
   };
 

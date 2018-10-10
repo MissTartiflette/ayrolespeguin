@@ -24,8 +24,11 @@ namespace state {
     Statistiques statistiques;
     // Operations
   public:
+    Element ();
     virtual bool isTerrain () = 0;
     std::string getNom ();
+    Position& getPosition ();
+    Statistiques& getStatistiques ();
     // Setters and Getters
   };
 

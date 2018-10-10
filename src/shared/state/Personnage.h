@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace state {
+  class Etat;
   class Element;
 }
 
@@ -23,15 +24,18 @@ namespace state {
     std::string nomArme;
     int codeArme;
     StatutPersonnageID statut;
+    int champMove;
+    int champAttack;
     // Operations
   public:
+    Personnage ();
     bool isTerrain ();
     bool getCamp ();
     std::string getNomArme ();
     StatutPersonnageID getStatut ();
     void setStatut (StatutPersonnageID newStatut);
-    virtual std::vector<Position> getLegalMove ();
-    virtual std::vector<Position> getLegalAttack ();
+    std::vector<Position> getLegalMove (Etat& etat);
+    std::vector<Position> getLegalAttack (Etat& etat);
     // Setters and Getters
   };
 

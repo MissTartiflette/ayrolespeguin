@@ -2,8 +2,6 @@
 #ifndef STATE__BRIGAND__H
 #define STATE__BRIGAND__H
 
-#include <string>
-#include <vector>
 
 namespace state {
   class Personnage;
@@ -15,14 +13,9 @@ namespace state {
 
   /// class Brigand - 
   class Brigand : public state::Personnage {
-    // Attributes
-  protected:
-    std::string nomArme     = "Hache";
-    int codeArme     = 2;
     // Operations
   public:
-    std::vector<Position> getLegalMove ();
-    std::vector<Position> getLegalAttack ();
+    Brigand ();
     // Setters and Getters
   };
 

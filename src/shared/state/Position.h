@@ -4,6 +4,10 @@
 
 
 namespace state {
+  class Position;
+}
+
+namespace state {
 
   /// class Position - 
   class Position {
@@ -17,6 +21,7 @@ namespace state {
     int getY ();
     void setX (int newX);
     void setY (int newY);
+    bool equals (Position& other);
     // Setters and Getters
   };
 
