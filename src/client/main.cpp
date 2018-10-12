@@ -17,12 +17,28 @@ using namespace std;
 using namespace state;
 
 int main(int argc,char* argv[]){
+	if (argc>1){
+		if(strcmp(argv[1],"hello")==0){
+			cout<<"Bonjour tout le monde"<<endl;
+		}
+		else if(strcmp(argv[1],"state")==0){
+			cout<<"Tests simples à écrire"<<endl;
+		}
+		else{
+			exit(EXIT_FAILURE);
+		}
+	}
+	else{
 	// Tests sur classes
 	{
+	//
+	int a;
+	cout<< "type de a : "<<typeid(a).name()<<endl;
+	//	
     Position testpos;
     testpos.setX(1);
     testpos.setY(2);
-	
+
 	Position testpos2;
 	testpos2.setX(1);
 	testpos2.setY(2);
@@ -72,6 +88,6 @@ int main(int argc,char* argv[]){
 	}
 	
 	}
-
+	}
     return 0;
 }
