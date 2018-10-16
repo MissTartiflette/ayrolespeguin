@@ -11,6 +11,7 @@ namespace state {
 }
 
 #include "StatutPersonnageID.h"
+#include "TypePersonnageID.h"
 #include "Element.h"
 
 namespace state {
@@ -26,9 +27,10 @@ namespace state {
     StatutPersonnageID statut;
     int champMove;
     int champAttack;
+    TypePersonnageID typeID;
     // Operations
   public:
-    Personnage ();
+    Personnage (TypePersonnageID id);
     bool isTerrain ();
     bool getCamp ();
     std::string getNomArme ();

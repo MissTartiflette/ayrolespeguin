@@ -15,10 +15,14 @@ namespace state {
   /// class TerrainNonPraticable - 
   class TerrainNonPraticable : public state::Terrain {
     // Associations
+    // Attributes
+  protected:
+    TerrainNonPraticableID typeID;
     // Operations
   public:
     TerrainNonPraticable (TerrainNonPraticableID id);
     bool isPraticable ();
+    TerrainNonPraticableID getTerrainNonPraticableID ();
     // Setters and Getters
   };
 

@@ -2,7 +2,10 @@
 
 using namespace state;
 
-TerrainNonPraticable::TerrainNonPraticable(TerrainNonPraticableID id){
+TerrainNonPraticable::TerrainNonPraticable(TerrainNonPraticableID id):Terrain(){
+
+	typeID = id;
+
 	if (id == MUR){
 	nom = "Mur";
 	}
@@ -15,11 +18,12 @@ TerrainNonPraticable::TerrainNonPraticable(TerrainNonPraticableID id){
 	else if (id == FALAISE){
 	nom = "Falaise";
 	}
-	else {
-	nom = "";
-	}
 }
 
 bool TerrainNonPraticable::isPraticable(){
 	return false;
+}
+
+TerrainNonPraticableID TerrainNonPraticable::getTerrainNonPraticableID(){
+	return typeID;
 }

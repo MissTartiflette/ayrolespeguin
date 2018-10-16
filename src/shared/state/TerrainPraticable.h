@@ -17,7 +17,7 @@ namespace state {
     // Associations
     // Attributes
   protected:
-    TerrainPraticableID id;
+    TerrainPraticableID typeID;
     // Operations
   public:
     TerrainPraticable (TerrainPraticableID id);

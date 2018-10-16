@@ -2,7 +2,10 @@
 
 using namespace state;
 
-TerrainPraticable::TerrainPraticable (TerrainPraticableID id){
+TerrainPraticable::TerrainPraticable (TerrainPraticableID id):Terrain(){
+	
+	typeID = id;
+	
 	if (id == PLAINE){
 		nom = "Plaine";
 		statistiques.setPV(0);
@@ -66,5 +69,5 @@ bool TerrainPraticable::isPraticable(){
 }
 
 TerrainPraticableID TerrainPraticable::getTerrainPraticableID(){
-	return id;
+	return typeID;
 }

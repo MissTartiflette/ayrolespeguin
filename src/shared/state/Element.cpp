@@ -4,10 +4,8 @@ using namespace state;
 
 Element::Element(){
 	nom = "";
-	Position position;
 	position.setX(0);
 	position.setY(0);
-	Statistiques statistiques;
 	statistiques.setPV(0);
 	statistiques.setAttaque(0);
 	statistiques.setDefense(0);

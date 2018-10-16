@@ -2,13 +2,13 @@
 
 using namespace state;
 
-std::vector<std::vector<Terrain>>& Etat::getGrille(){
-	std::vector<std::vector<Terrain>> & refGrille = grille;
+std::vector<std::vector<std::unique_ptr<Terrain>>>& Etat::getGrille(){
+	std::vector<std::vector<std::unique_ptr<Terrain>>> & refGrille = grille;
 	return refGrille;
 }
 
-std::vector<Personnage>& Etat::getPersonnages(){
-	std::vector<Personnage> & refPersonnages = personnages;
+std::vector<std::unique_ptr<Personnage>>& Etat::getPersonnages(){
+	std::vector<std::unique_ptr<Personnage>> & refPersonnages = personnages;
 	return refPersonnages;
 }
 

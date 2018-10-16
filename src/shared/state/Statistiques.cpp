@@ -7,7 +7,12 @@ int Statistiques::getPV(){
 }
 
 void Statistiques::setPV (int newPV){
-    pv=newPV;
+	if (newPV < 0){
+		pv = 0;
+	}
+	else{
+    	pv=newPV;
+    }
 }
 
 int Statistiques::getAttaque(){
@@ -15,7 +20,12 @@ int Statistiques::getAttaque(){
 }
 
 void Statistiques::setAttaque(int newAttaque){
-    attaque=newAttaque;
+	if (newAttaque < 0){
+	    attaque=0;
+	}
+	else{
+	    attaque=newAttaque;	
+	}
 }
 
 int Statistiques::getDefense(){
@@ -23,7 +33,12 @@ int Statistiques::getDefense(){
 }
 
 void Statistiques::setDefense(int newDefense){
-    defense=newDefense;
+    if (newDefense < 0){
+    	defense=0;
+    }
+    else{
+    	defense = newDefense;
+    }
 }
 
 int Statistiques::getEsquive(){
@@ -31,7 +46,12 @@ int Statistiques::getEsquive(){
 }
 
 void Statistiques::setEsquive(int newEsquive){
-    esquive=newEsquive;
+	if (newEsquive < 0){
+		esquive=0;
+	}
+	else{
+    	esquive=newEsquive;
+    }
 }
 
 int Statistiques::getCritique(){
@@ -39,7 +59,12 @@ int Statistiques::getCritique(){
 }
 
 void Statistiques::setCritique(int newCritique){
-   critique=newCritique;
+	if (newCritique < 0){
+		critique=0;
+	}
+	else{
+   		critique=newCritique;
+   	}
 }
 
 

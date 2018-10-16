@@ -3,14 +3,15 @@
 #define STATE__ETAT__H
 
 #include <vector>
+#include <memory>
 
 namespace state {
-  class Personnage;
   class Terrain;
+  class Personnage;
 }
 
-#include "Personnage.h"
 #include "Terrain.h"
+#include "Personnage.h"
 
 namespace state {
 
@@ -19,14 +20,14 @@ namespace state {
     // Associations
     // Attributes
   private:
-    std::vector<std::vector<Terrain>> grille;
-    std::vector<Personnage> personnages;
+    std::vector<std::vector<std::unique_ptr<Terrain>>> grille;
+    std::vector<std::unique_ptr<Personnage>> personnages;
     int tour;
     bool fin;
     // Operations
   public:
-    std::vector<std::vector<Terrain>>& getGrille ();
-    std::vector<Personnage>& getPersonnages ();
+    std::vector<std::vector<std::unique_ptr<Terrain>>>& getGrille ();
+    std::vector<std::unique_ptr<Personnage>>& getPersonnages ();
     int getTour ();
     // Setters and Getters
   };
