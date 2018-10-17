@@ -54,14 +54,6 @@ TerrainPraticable::TerrainPraticable (TerrainPraticableID id):Terrain(){
 		statistiques.setEsquive(0);
 		statistiques.setCritique(0);
 	}
-	else {
-		nom = "";
-		statistiques.setPV(0);
-		statistiques.setAttaque(0);
-		statistiques.setDefense(0);
-		statistiques.setEsquive(0);
-		statistiques.setCritique(0);
-	}
 }
 
 bool TerrainPraticable::isPraticable(){

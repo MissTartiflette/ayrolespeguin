@@ -67,4 +67,3 @@ void Statistiques::setCritique(int newCritique){
    	}
 }
 
-
