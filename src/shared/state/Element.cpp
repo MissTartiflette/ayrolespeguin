@@ -26,3 +26,13 @@ Statistiques& Element::getStatistiques(){
 	Statistiques & refStatistiques = statistiques;
 	return refStatistiques ;
 }
+
+bool Element::equals(Element& other){
+	bool resultat;
+	if(this->position.equals(other.getPosition())==1 && this->nom==other.getNom() && this->statistiques==other.getStatistiques()){
+		resultat = true;}
+	else{
+		resultat = false;
+	}
+	return resultat;
+}

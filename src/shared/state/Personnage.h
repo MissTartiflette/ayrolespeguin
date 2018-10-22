@@ -38,6 +38,11 @@ namespace state {
     void setStatut (StatutPersonnageID newStatut);
     std::vector<Position> getLegalMove (Etat& etat);
     std::vector<Position> getLegalAttack (Etat& etat);
+    bool equals (Element& other);
+    int getChampMove ();
+    int getChampAttack ();
+    TypePersonnageID getType ();
+    int getCodeArme ();
     // Setters and Getters
   };
 

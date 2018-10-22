@@ -27,3 +27,23 @@ bool TerrainNonPraticable::isPraticable(){
 TerrainNonPraticableID TerrainNonPraticable::getTerrainNonPraticableID(){
 	return typeID;
 }
+
+bool TerrainNonPraticable::equals (Element& other){
+	bool resultat;
+	if(other.isTerrain()){
+		Terrain& t = static_cast<Terrain&>(other);
+		if(!t.isPraticable()){
+			TerrainNonPraticable& tNP = static_cast<TerrainNonPraticable&>(t);
+			if(this->Element::equals(tNP) && typeID==tNP.getTerrainNonPraticableID()){
+				resultat=true;
+			}
+			else{resultat=false;}
+		}
+		else{ resultat=false;}
+	}
+	else{resultat=false;}
+	
+	return resultat;
+
+}
+

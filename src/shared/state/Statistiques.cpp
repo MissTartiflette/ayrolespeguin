@@ -67,3 +67,12 @@ void Statistiques::setCritique(int newCritique){
    	}
 }
 
+bool Statistiques::operator==(Statistiques& a){
+	if(pv==a.getPV() && attaque==a.getAttaque() && defense==a.getDefense() && esquive==a.getEsquive() && critique==a.getCritique()){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+

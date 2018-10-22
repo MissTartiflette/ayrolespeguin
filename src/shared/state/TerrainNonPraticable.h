@@ -4,6 +4,7 @@
 
 
 namespace state {
+  class Element;
   class Terrain;
 }
 
@@ -23,6 +24,7 @@ namespace state {
     TerrainNonPraticable (TerrainNonPraticableID id);
     bool isPraticable ();
     TerrainNonPraticableID getTerrainNonPraticableID ();
+    bool equals (Element& other);
     // Setters and Getters
   };
 

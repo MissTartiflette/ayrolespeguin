@@ -133,3 +133,33 @@ vector<Position> Personnage::getLegalAttack(Etat& etat){
 	}
 	return ListePosAtq;	
 }
+
+bool Personnage::equals(Element& other){
+	bool resultat;
+	if(!other.isTerrain()){
+		Personnage& rd = static_cast<Personnage&>(other);
+
+		if(this->Element::equals(rd) && nomArme==rd.getNomArme() && codeArme==rd.getCodeArme() && statut==rd.getStatut() && 		typeID==rd.getType() && champMove==rd.getChampMove() && champAttack==rd.getChampAttack()){
+			resultat=true;
+		}
+		else{resultat=false;}
+	}
+	else{resultat=false;}	
+	return resultat;
+}
+
+int Personnage::getChampMove(){
+	return champMove;
+}
+
+int Personnage::getChampAttack(){
+	return champAttack;
+}
+
+TypePersonnageID Personnage::getType(){
+	return typeID;
+}
+
+int Personnage::getCodeArme(){
+	return codeArme;
+}

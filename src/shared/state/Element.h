@@ -7,6 +7,7 @@
 namespace state {
   class Position;
   class Statistiques;
+  class Element;
 }
 
 #include "Position.h"
@@ -29,6 +30,7 @@ namespace state {
     std::string getNom ();
     Position& getPosition ();
     Statistiques& getStatistiques ();
+    virtual bool equals (Element& other);
     // Setters and Getters
   };
 
