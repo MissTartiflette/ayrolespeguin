@@ -137,9 +137,14 @@ vector<Position> Personnage::getLegalAttack(Etat& etat){
 bool Personnage::equals(Element& other){
 	bool resultat;
 	if(!other.isTerrain()){
-		Personnage& rd = static_cast<Personnage&>(other);
+		Personnage& other_personnage = static_cast<Personnage&>(other);
 
-		if(this->Element::equals(rd) && nomArme==rd.getNomArme() && codeArme==rd.getCodeArme() && statut==rd.getStatut() && 		typeID==rd.getType() && champMove==rd.getChampMove() && champAttack==rd.getChampAttack()){
+		if(	this->Element::equals(other_personnage) && 
+			nomArme==other_personnage.getNomArme() && 
+			codeArme==other_personnage.getCodeArme() && 		
+			typeID==other_personnage.getType() && 
+			champMove==other_personnage.getChampMove() && 
+			champAttack==other_personnage.getChampAttack()){
 			resultat=true;
 		}
 		else{resultat=false;}

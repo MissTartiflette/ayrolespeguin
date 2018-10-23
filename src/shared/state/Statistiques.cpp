@@ -67,8 +67,8 @@ void Statistiques::setCritique(int newCritique){
    	}
 }
 
-bool Statistiques::operator==(Statistiques& a){
-	if(pv==a.getPV() && attaque==a.getAttaque() && defense==a.getDefense() && esquive==a.getEsquive() && critique==a.getCritique()){
+bool Statistiques::operator==(Statistiques& other){
+	if(pv==other.getPV() && attaque==other.getAttaque() && defense==other.getDefense() && esquive==other.getEsquive() && critique==other.getCritique()){
 		return true;
 	}
 	else{

@@ -30,7 +30,7 @@ namespace state {
     void setDefense (int newDefense);
     void setEsquive (int newEsquive);
     void setCritique (int newCritique);
-    bool operator== (Statistiques & a);
+    bool operator== (Statistiques & other);
     // Setters and Getters
   };
 

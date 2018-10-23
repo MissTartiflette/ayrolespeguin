@@ -31,10 +31,11 @@ TerrainNonPraticableID TerrainNonPraticable::getTerrainNonPraticableID(){
 bool TerrainNonPraticable::equals (Element& other){
 	bool resultat;
 	if(other.isTerrain()){
-		Terrain& t = static_cast<Terrain&>(other);
-		if(!t.isPraticable()){
-			TerrainNonPraticable& tNP = static_cast<TerrainNonPraticable&>(t);
-			if(this->Element::equals(tNP) && typeID==tNP.getTerrainNonPraticableID()){
+		Terrain& other_terrain = static_cast<Terrain&>(other);
+		if(!other_terrain.isPraticable()){
+			TerrainNonPraticable& other_terrain_non_praticable=static_cast<TerrainNonPraticable&>(other_terrain);
+			if(	this->Element::equals(other_terrain_non_praticable) &&
+				typeID==other_terrain_non_praticable.getTerrainNonPraticableID()){
 				resultat=true;
 			}
 			else{resultat=false;}
