@@ -2,13 +2,13 @@
 #ifndef RENDER__LAYER__H
 #define RENDER__LAYER__H
 
-#include <memory>
 
 namespace render {
-  class MyEntity;
+  class Surface;
+  class TileSet;
 }
 
-#include "MyEntity.h"
+#include "TileSet.h"
 
 namespace render {
 
@@ -16,13 +16,15 @@ namespace render {
   class Layer {
     // Associations
     // Attributes
-  public:
-    std::unique_ptr<MyEntity> ptr_entity;
+  protected:
+    Surface* surface;
+    TileSet* tileset;
     // Operations
   public:
     Layer ();
-    ~Layer ();
-    std::unique_ptr<MyEntity> getPtrEntity ();
+    virtual ~Layer ();
+    Surface* getSurface ();
+    void setSurface (Surface* surface);
     // Setters and Getters
   };
 

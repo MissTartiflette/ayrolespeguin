@@ -1,18 +1,21 @@
 #include <SFML/Graphics.hpp>
-
 #include "render.h"
-using namespace render;
-#include <iostream>
 
-Layer::Layer(){
-	ptr_entity=0;
+using namespace render;
+
+Layer::Layer (){
 	
 }
 
-Layer::~Layer(){
-	ptr_entity=0;
+Layer::~Layer (){
+	
 }
 
-std::unique_ptr<MyEntity> Layer::getPtrEntity(){
-	return std::move(ptr_entity);
+Surface* Layer::getSurface (){
+	return this->surface;
 }
+
+void Layer::setSurface (Surface* surface){
+	this->surface=surface;
+}
+
