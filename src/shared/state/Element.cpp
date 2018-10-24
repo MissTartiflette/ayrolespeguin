@@ -36,3 +36,11 @@ bool Element::equals(Element& other){
 	}
 	return resultat;
 }
+
+int Element::getCodeTuile (){
+	return codeTuile;
+}
+
+void Element::setCodeTuile (int newCodeTuile){
+	codeTuile = newCodeTuile;
+}
