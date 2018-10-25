@@ -4,27 +4,26 @@
 
 #include <string>
 
-namespace render {
-  class Tile;
-};
-namespace state {
-  class Element;
-}
-
-#include "state/Element.h"
-#include "Tile.h"
+#include "TileSetID.h"
 
 namespace render {
 
   /// class TileSet - 
   class TileSet {
     // Associations
+    // Attributes
+  private:
+    TileSetID id;
+    int cellWidth;
+    int cellHeight;
+    std::string imageFile;
     // Operations
   public:
-    virtual ~TileSet ();
-    virtual const std::string  getImageFile () = 0;
-    virtual const Tile&  getTile (state::Element& e);
-    virtual const Tile&  getCharTile (char c);
+    TileSet (TileSetID newID);
+    const std::string  getImageFile ();
+    int const getCellWidth ();
+    int const getCellHeight ();
+    int const getTileSetID ();
     // Setters and Getters
   };
 

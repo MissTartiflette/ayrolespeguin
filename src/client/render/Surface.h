@@ -8,6 +8,11 @@
 namespace sf {
   class Texture;
   class VertexArray;
+};
+namespace state {
+  class Etat;
+};
+namespace sf {
   class Drawable;
   class Transformable;
 }
@@ -23,10 +28,9 @@ namespace render {
     sf::VertexArray quads;
     // Operations
   public:
-    bool load (const std::string& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int  height);
+    bool loadGrille (state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int  height);
+    bool loadPersonnage (state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int height);
     virtual void  draw (sf::RenderTarget& target, sf::RenderStates states) const;
-    sf::Texture getTexture ();
-    sf::VertexArray getQuads ();
     // Setters and Getters
   };
 
