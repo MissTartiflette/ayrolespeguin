@@ -3,6 +3,7 @@
 #define RENDER__STATELAYER__H
 
 #include <vector>
+#include <memory>
 
 namespace state {
   class Etat;
@@ -24,10 +25,15 @@ namespace render {
     // Attributes
   private:
     state::Etat& etatLayer;
+  protected:
+    std::vector<std::unique_ptr<TileSet>> tilesets;
+    std::vector<std::unique_ptr<Surface>> surfaces;
     // Operations
   public:
     StateLayer (state::Etat& etat);
-    std::vector<Surface> initSurface ();
+    std::vector<std::unique_ptr<TileSet>>& getTilesets ();
+    std::vector<std::unique_ptr<Surface>>& getSurfaces ();
+    void initSurfaces ();
     // Setters and Getters
   };
 

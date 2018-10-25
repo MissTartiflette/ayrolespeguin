@@ -40,23 +40,20 @@ int main(int argc,char* argv[]){
 			
 			Correspondances tab_corres = Correspondances();
 			
-			// Initialisation d'un etat
+			// -- Initialisation d'un etat --
 			Etat etat_initial;			
-			etat_initial.initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres);
+			if(etat_initial.initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 			cout << "Taille grille : " <<etat_initial.getGrille().size() << "x" << etat_initial.getGrille()[0].size() << endl;
 			etat_initial.initPersonnages(tab_corres);
 			cout << "Taille liste de personnages : " << etat_initial.getPersonnages().size() << endl;
 			
-			
-			// Affichage de cet etat
-			StateLayer layer(etat_initial);						
-			TileSet grille_tileset(GRILLETILESET);
-						
-			sf::RenderWindow window(sf::VideoMode(	longueur_map_cases*grille_tileset.getCellHeight(),
-													largeur_map_cases*grille_tileset.getCellWidth()),
+			// -- Affichage de cet Etat --
+			StateLayer layer(etat_initial);			
+			// La variable layer.getTilesets()[0] est le tileset de la grille
+			sf::RenderWindow window(sf::VideoMode(	longueur_map_cases*layer.getTilesets()[0]->getCellHeight(),
+													largeur_map_cases*layer.getTilesets()[0]->getCellWidth()),
 													"Map");
-												
-			std::vector<Surface> surfaces = layer.initSurface();
+			layer.initSurfaces();
 	
 			while (window.isOpen()){
 				sf::Event event;
@@ -67,9 +64,11 @@ int main(int argc,char* argv[]){
 				}
 				
 				window.clear();
-				window.draw(surfaces[0]);
-				window.draw(surfaces[1]);
+				
+				window.draw(*layer.getSurfaces()[0]);	// Dessin de la grille				
+				window.draw(*layer.getSurfaces()[1]);	// Dessin des personnages
 				window.display();
+			}
 			}
 		}
 

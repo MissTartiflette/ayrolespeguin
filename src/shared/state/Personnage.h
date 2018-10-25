@@ -30,7 +30,7 @@ namespace state {
     TypePersonnageID typeID;
     // Operations
   public:
-    Personnage (TypePersonnageID id, bool newCamp, std::string newNom, int newX, int newY);
+    Personnage (TypePersonnageID id, bool newCamp, std::string newNom, int newY, int newX);
     bool isTerrain ();
     bool getCamp ();
     std::string getNomArme ();

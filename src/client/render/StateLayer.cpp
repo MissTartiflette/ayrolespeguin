@@ -11,24 +11,43 @@ using namespace std;
 using namespace state;
 
 StateLayer::StateLayer(state::Etat& etat):etatLayer(etat){
+	TileSet tilesetGrille(GRILLETILESET);
+	std::unique_ptr<TileSet> ptr_tilesetGrille (new TileSet(tilesetGrille));
+	tilesets.push_back(move(ptr_tilesetGrille));
+	
+	TileSet tilesetPersonnages(PERSONNAGETILESET);
+	std::unique_ptr<TileSet> ptr_tilesetPersonnages (new TileSet(tilesetPersonnages));
+	tilesets.push_back(move(ptr_tilesetPersonnages));
+	
+	TileSet tilesetInfos(INFOSTILESET);
+	std::unique_ptr<TileSet> ptr_tilesetInfos (new TileSet(tilesetInfos));
+	tilesets.push_back(move(ptr_tilesetInfos));
+
 }
 
-std::vector<Surface> StateLayer::initSurface(){
-	std::vector<Surface> tableSurface;
-	TileSet tilesetGrille(GRILLETILESET);
-	TileSet tilesetPerso(PERSONNAGETILESET);
-	
+void StateLayer::initSurfaces(){	
 	Surface surfGrille;
 	Surface surfPersonnage;
 	
-	surfGrille.loadGrille(etatLayer,tilesetGrille.getImageFile(), sf::Vector2u(tilesetGrille.getCellWidth(), tilesetGrille.getCellHeight()), etatLayer.getGrille().size(), etatLayer.getGrille()[0].size());
+	surfGrille.loadGrille(etatLayer,tilesets[0]->getImageFile(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etatLayer.getGrille().size(), etatLayer.getGrille()[0].size());
 
-	surfPersonnage.loadPersonnage(etatLayer,tilesetPerso.getImageFile(), sf::Vector2u(tilesetPerso.getCellWidth(), tilesetPerso.getCellHeight()), etatLayer.getPersonnages().size(), 1);
+	surfPersonnage.loadPersonnage(etatLayer,tilesets[1]->getImageFile(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etatLayer.getPersonnages().size(), 1);
+	
+	std::unique_ptr<Surface> ptr_surfGrille (new Surface(surfGrille));
+	std::unique_ptr<Surface> ptr_surfPersonnage (new Surface(surfPersonnage));
 
-	tableSurface.push_back(surfGrille);
-	tableSurface.push_back(surfPersonnage);
+	surfaces.push_back(move(ptr_surfGrille));
+	surfaces.push_back(move(ptr_surfPersonnage));
+}
 
-	return tableSurface;
+std::vector<std::unique_ptr<TileSet>>& StateLayer::getTilesets (){
+	std::vector<std::unique_ptr<TileSet>>& ref_tilesets = tilesets;
+	return ref_tilesets;
+}
+
+std::vector<std::unique_ptr<Surface>>& StateLayer::getSurfaces (){
+	std::vector<std::unique_ptr<Surface>>& ref_surfaces = surfaces;
+	return ref_surfaces;
 }
 
 

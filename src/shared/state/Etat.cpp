@@ -51,21 +51,27 @@ int Etat::initGrille (std::string chemin_map_txt, unsigned int longueur, unsigne
     for (i = 0; i < longueur; i++){
     	std::vector<std::unique_ptr<Terrain>> newLigne;
     
-    	for (j = 0; j < largeur; j++){    	
-    	    // On regarde si le code de la tuile est celui d'un Terrain Praticable
-    		if (correspondances.getCorrespondanceTP().find(map_tuiles_code[k]) != correspondances.getCorrespondanceTP().end()){
-    			TerrainPraticable newTP(correspondances.getCorrespondanceTP()[map_tuiles_code[k]],j,i,map_tuiles_code[k]);
-    			std::unique_ptr<TerrainPraticable> ptr(new TerrainPraticable(newTP)) ;
-    			newLigne.push_back(move(ptr));
+    	for (j = 0; j < largeur; j++){
+    		if (map_tuiles_code[k] >= 0 && map_tuiles_code[k] <= 46){
+			    // On regarde si le code de la tuile est celui d'un Terrain Praticable
+				if (correspondances.getCorrespondanceTP().find(map_tuiles_code[k]) != correspondances.getCorrespondanceTP().end()){
+					TerrainPraticable newTP(correspondances.getCorrespondanceTP()[map_tuiles_code[k]],j,i,map_tuiles_code[k]);
+					std::unique_ptr<TerrainPraticable> ptr(new TerrainPraticable(newTP)) ;
+					newLigne.push_back(move(ptr));
+				}
+				// Cas du Terrain Non Praticable
+				else if (correspondances.getCorrespondanceTNP().find(map_tuiles_code[k]) != correspondances.getCorrespondanceTNP().end()){
+					TerrainNonPraticable newTNP(correspondances.getCorrespondanceTNP()[map_tuiles_code[k]],j,i,map_tuiles_code[k]);
+					std::unique_ptr<TerrainNonPraticable> ptr(new TerrainNonPraticable(newTNP)) ;
+					newLigne.push_back(move(ptr));
+				}
+				
+			}
+    		else{
+    			cerr << "Code Tuile " << map_tuiles_code[k]<< " invalide dans le fichier " << chemin_map_txt << endl;
+    			return 0;
+    		
     		}
-    		// Cas du Terrain Non Praticable
-    		else if (correspondances.getCorrespondanceTNP().find(map_tuiles_code[k]) != correspondances.getCorrespondanceTNP().end()){
-    			TerrainNonPraticable newTNP(correspondances.getCorrespondanceTNP()[map_tuiles_code[k]],j,i,map_tuiles_code[k]);
-    			std::unique_ptr<TerrainNonPraticable> ptr(new TerrainNonPraticable(newTNP)) ;
-    			newLigne.push_back(move(ptr));
-    		}
-    		// Code tuile invalide
-    		else{return -1;}
     		
     		k++;
     	}

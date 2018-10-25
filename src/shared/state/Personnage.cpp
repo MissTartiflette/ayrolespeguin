@@ -5,7 +5,7 @@ using namespace state;
 using namespace std;
 
 
-Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newX, int newY):Element(){
+Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newY, int newX):Element(){
 
 	typeID = id;
 	camp=newCamp;
