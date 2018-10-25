@@ -21,7 +21,7 @@ namespace state {
     TerrainPraticableID typeID;
     // Operations
   public:
-    TerrainPraticable (TerrainPraticableID id);
+    TerrainPraticable (TerrainPraticableID id, int newX, int newY, int newCodeTuile);
     bool isPraticable ();
     TerrainPraticableID getTerrainPraticableID ();
     bool equals (Element& other);

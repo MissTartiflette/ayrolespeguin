@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string.h>
 #include <sstream>
+#include <map>
+#include <memory>
 
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
@@ -10,7 +12,6 @@
 void testSFML() {
     sf::Texture texture;
 }
-
 // Fin test SFML
 
 #include "state.h"
@@ -22,7 +23,7 @@ using namespace render;
 int main(int argc,char* argv[]){
 
 	testSFML();
-	
+		
 	if (argc>1){
 		/*	hello : Affichage simple */
 		if(strcmp(argv[1],"hello")==0){
@@ -30,54 +31,44 @@ int main(int argc,char* argv[]){
 		}
 		
 		/*	render : Affichage du rendu de la map */
-		else if(strcmp(argv[1],"render")==0){		
-			cout<<"Affichage map"<<endl;
+		else if(strcmp(argv[1],"render")==0){
+		
+			cout<<"Affichage d'un Etat"<<endl;
 			
-			std::string chemin_fichier_map_txt = "res/map2.txt";
-			std::string chemin_tileset_map = "res/tileset.png";
-			std::string contenu, ligne, code_tuile;
-			const size_t longueur_tuile = 16, largeur_tuile = 16;
-			const size_t longueur_map_cases = 25, largeur_map_cases = 25;
-			int map_tuiles_code[longueur_map_cases*largeur_map_cases];			
-			    		
-    		// Fichier
-    		ifstream fichier(chemin_fichier_map_txt, ios::in);
-    		if (fichier){
-    			while (getline(fichier,ligne)){
-					ligne = ligne + ",";
-					contenu = contenu + ligne;
-				}
-				fichier.close();
-    		}
-    		else {return -1;}    		
-    		    		
-    		// Conversion des codes des tuiles en int
-    		std::stringstream contenuStream(contenu);
-    		size_t i = 0;
-    		    		
-    		while(std::getline(contenuStream, code_tuile, ',')){
-    			map_tuiles_code[i] = std::stoi(code_tuile);
-    			i++;
-    		}
-    								
-			// Fenetre
-    		sf::RenderWindow window(sf::VideoMode(longueur_tuile*longueur_map_cases, largeur_tuile*largeur_map_cases), "Tilemap");
-			Surface map;
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			std::string chemin_fichier_map_txt = "res/map1.txt";
+			
+			Correspondances tab_corres = Correspondances();
+			
+			// Initialisation d'un etat
+			Etat etat_initial;			
+			etat_initial.initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres);
+			cout << "Taille grille : " <<etat_initial.getGrille().size() << "x" << etat_initial.getGrille()[0].size() << endl;
+			etat_initial.initPersonnages(tab_corres);
+			cout << "Taille liste de personnages : " << etat_initial.getPersonnages().size() << endl;
+			
+			
+			// Affichage de cet etat
+			StateLayer layer(etat_initial);						
+			TileSet grille_tileset(GRILLETILESET);
 						
-			if (!map.load(chemin_tileset_map, sf::Vector2u(longueur_tuile, largeur_tuile), map_tuiles_code, longueur_map_cases, largeur_map_cases))
-				return -1;
-
-			while (window.isOpen())
-			{
-				// Gestion des evenements
+			sf::RenderWindow window(sf::VideoMode(	longueur_map_cases*grille_tileset.getCellHeight(),
+													largeur_map_cases*grille_tileset.getCellWidth()),
+													"Map");
+												
+			std::vector<Surface> surfaces = layer.initSurface();
+	
+			while (window.isOpen()){
 				sf::Event event;
-				while (window.pollEvent(event))	{
-				    if(event.type == sf::Event::Closed)
-				        window.close();
+				while (window.pollEvent(event)){
+					if (event.type == sf::Event::Closed){
+						window.close();
+					}
 				}
-
+				
 				window.clear();
-				window.draw(map);
+				window.draw(surfaces[0]);
+				window.draw(surfaces[1]);
 				window.display();
 			}
 		}
@@ -85,7 +76,7 @@ int main(int argc,char* argv[]){
 		/*	state : Tests unitaires*/
 		else if(strcmp(argv[1],"state")==0){
 					
-			Personnage perso = Personnage(ARCHER);
+			Personnage perso = Personnage(ARCHER,true, "archerTest",0, 0);
 			
 			int count_err = 0;
 			

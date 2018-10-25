@@ -27,7 +27,7 @@ namespace render {
     // Operations
   public:
     StateLayer (state::Etat& etat);
-    std::vector<Surface> initSurface (unsigned int longeur, unsigned int largeur);
+    std::vector<Surface> initSurface ();
     // Setters and Getters
   };
 

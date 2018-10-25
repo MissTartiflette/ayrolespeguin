@@ -5,15 +5,14 @@ using namespace state;
 using namespace std;
 
 
-Personnage::Personnage(TypePersonnageID id):Element(){
+Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newX, int newY):Element(){
 
 	typeID = id;
-	camp=false;
-    nomArme="";
-    codeArme=0;
-	champMove=0;
-	champAttack=0;
+	camp=newCamp;
     statut=ATTENTE;
+    nom = newNom;
+    position.setX(newX);
+    position.setY(newY);
     
     if(id == ARCHER){
     	nomArme="Arc";
@@ -25,6 +24,10 @@ Personnage::Personnage(TypePersonnageID id):Element(){
 		statistiques.setDefense(8);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(15);
+		if (newCamp == true){
+			codeTuile = 0;
+		}
+		else{codeTuile = 4;}
     }
     
     else if (id == BRIGAND){
@@ -37,6 +40,10 @@ Personnage::Personnage(TypePersonnageID id):Element(){
 		statistiques.setDefense(10);
 		statistiques.setEsquive(15);
 		statistiques.setCritique(10);
+		if (newCamp == true){
+			codeTuile = 1;
+		}
+		else{codeTuile = 5;}
     }
     
     else if (id == CHEVALIER){
@@ -49,6 +56,10 @@ Personnage::Personnage(TypePersonnageID id):Element(){
 		statistiques.setDefense(15);
 		statistiques.setEsquive(15);
 		statistiques.setCritique(10);
+		if (newCamp == true){
+			codeTuile = 3;
+		}
+		else{codeTuile = 7;}
     }
     
     else if (id == GUERRIER){
@@ -61,6 +72,10 @@ Personnage::Personnage(TypePersonnageID id):Element(){
 		statistiques.setDefense(10);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(10);
+		if (newCamp == true){
+			codeTuile = 2;
+		}
+		else{codeTuile = 6;}
     }
 }
 

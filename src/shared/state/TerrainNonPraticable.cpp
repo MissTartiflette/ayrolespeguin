@@ -2,7 +2,7 @@
 
 using namespace state;
 
-TerrainNonPraticable::TerrainNonPraticable(TerrainNonPraticableID id):Terrain(){
+TerrainNonPraticable::TerrainNonPraticable(TerrainNonPraticableID id, int newX, int newY, int newCodeTuile):Terrain(newX, newY, newCodeTuile){
 
 	typeID = id;
 

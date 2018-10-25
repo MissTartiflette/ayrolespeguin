@@ -4,8 +4,10 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 namespace state {
+  class Correspondances;
   class Terrain;
   class Personnage;
 }
@@ -29,6 +31,8 @@ namespace state {
     std::vector<std::vector<std::unique_ptr<Terrain>>>& getGrille ();
     std::vector<std::unique_ptr<Personnage>>& getPersonnages ();
     int getTour ();
+    int initGrille (std::string chemin_map_txt, unsigned int longueur, unsigned int largeur, Correspondances& correspondances);
+    int initPersonnages (Correspondances& correspondances);
     // Setters and Getters
   };
 

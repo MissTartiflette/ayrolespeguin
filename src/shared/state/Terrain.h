@@ -16,7 +16,7 @@ namespace state {
   class Terrain : public state::Element {
     // Operations
   public:
-    Terrain ();
+    Terrain (int newX, int newY, int newCodeTuile);
     bool isTerrain ();
     virtual bool isPraticable () = 0;
     bool isOccupe (Etat& etat);

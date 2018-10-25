@@ -2,7 +2,10 @@
 
 using namespace state;
 
-Terrain::Terrain():Element(){
+Terrain::Terrain(int newX, int newY, int newCodeTuile):Element(){
+	position.setX(newX);
+	position.setY(newY);
+	codeTuile = newCodeTuile;
 }
 
 bool Terrain::isTerrain(){

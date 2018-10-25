@@ -8,10 +8,12 @@ namespace state {
   class Position;
   class Statistiques;
   class Element;
+  class Correspondances;
 }
 
 #include "Position.h"
 #include "Statistiques.h"
+#include "Correspondances.h"
 
 namespace state {
 
@@ -23,6 +25,7 @@ namespace state {
     std::string nom;
     Position position;
     Statistiques statistiques;
+    int codeTuile;
     // Operations
   public:
     Element ();
@@ -31,6 +34,8 @@ namespace state {
     Position& getPosition ();
     Statistiques& getStatistiques ();
     virtual bool equals (Element& other);
+    int getCodeTuile ();
+    void setCodeTuile (int newCodeTuile);
     // Setters and Getters
   };
 

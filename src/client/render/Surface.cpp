@@ -16,8 +16,8 @@ bool Surface::loadGrille(state::Etat& etatLayer, const std::string& tileset, sf:
        	quads.resize(width * height * 4);
 
         // on remplit le tableau de vertex, avec un quad par tuile
-        for (unsigned int i = 0; i < width; ++i){
-            for (unsigned int j = 0; j < height; ++j){
+        for (unsigned int i = 0; i < width; i++){
+            for (unsigned int j = 0; j < height; j++){
 
             	// on récupère le numéro de tuile courant
 				int tileNumber=etatLayer.getGrille()[i][j]->getCodeTuile();
@@ -59,9 +59,7 @@ bool Surface::loadPersonnage(state::Etat& etatLayer, const std::string& tileset,
        	quads.resize(width * height * 4);
         // on remplit le tableau de vertex, avec un quad par tuile
         for (unsigned int i = 0; i < width; ++i){
-           for (unsigned int j = 0; j < height; ++j){
-
-            	// on récupère le numéro de tuile courant
+              	// on récupère le numéro de tuile courant
 				int tileNumber=etatLayer.getPersonnages()[i]->getCodeTuile();
 				
                 // on en déduit sa position dans la texture du tileset
@@ -69,7 +67,7 @@ bool Surface::loadPersonnage(state::Etat& etatLayer, const std::string& tileset,
                 int tv = tileNumber / (texture.getSize().x / tileSize.x);
 
                 // on récupère un pointeur vers le quad à définir dans le tableau de vertex
-                sf::Vertex* quad = &quads[(i + j * width) * 4];
+                sf::Vertex* quad = &quads[i * 4];
 				
 				// on définit ses quatre coins
 				quad[0].position = sf::Vector2f(etatLayer.getPersonnages()[i]->getPosition().getX() * tileSize.x, etatLayer.getPersonnages()[i]->getPosition().getY() * tileSize.y);
@@ -82,8 +80,6 @@ bool Surface::loadPersonnage(state::Etat& etatLayer, const std::string& tileset,
 				quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
 				quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
 				quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
-							
-          } 
 		}
 
 		return true;
