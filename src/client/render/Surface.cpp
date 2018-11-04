@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-#include <string>
 #include "render.h"
 
 using namespace render;
@@ -30,10 +28,10 @@ bool Surface::loadGrille(state::Etat& etatLayer, const std::string& tileset, sf:
                 sf::Vertex* quad = &quads[(i + j * width) * 4];
 				
 				// on définit ses quatre coins
-				quad[0].position = sf::Vector2f(etatLayer.getGrille()[i][j]->getPosition().getX() * tileSize.x, etatLayer.getGrille()[i][j]->getPosition().getY() * tileSize.y);
-				quad[1].position = sf::Vector2f((etatLayer.getGrille()[i][j]->getPosition().getX()+ 1) * tileSize.x, etatLayer.getGrille()[i][j]->getPosition().getY() * tileSize.y);
-				quad[2].position = sf::Vector2f((etatLayer.getGrille()[i][j]->getPosition().getX() + 1) * tileSize.x, (etatLayer.getGrille()[i][j]->getPosition().getY() + 1) * tileSize.y);
-				quad[3].position = sf::Vector2f(etatLayer.getGrille()[i][j]->getPosition().getX() * tileSize.x, (etatLayer.getGrille()[i][j]->getPosition().getY() + 1) * tileSize.y);
+				quad[0].position = sf::Vector2f(etatLayer.getGrille()[j][i]->getPosition().getX() * tileSize.x, etatLayer.getGrille()[j][i]->getPosition().getY() * tileSize.y);
+				quad[1].position = sf::Vector2f((etatLayer.getGrille()[j][i]->getPosition().getX()+ 1) * tileSize.x, etatLayer.getGrille()[j][i]->getPosition().getY() * tileSize.y);
+				quad[2].position = sf::Vector2f((etatLayer.getGrille()[j][i]->getPosition().getX() + 1) * tileSize.x, (etatLayer.getGrille()[j][i]->getPosition().getY() + 1) * tileSize.y);
+				quad[3].position = sf::Vector2f(etatLayer.getGrille()[j][i]->getPosition().getX() * tileSize.x, (etatLayer.getGrille()[j][i]->getPosition().getY() + 1) * tileSize.y);
 				
 // on définit ses quatre coordonnées de texture
 				quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);

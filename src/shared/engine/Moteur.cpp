@@ -1,0 +1,50 @@
+#include "engine.h"
+#include "render.h"
+#include <iostream>
+
+using namespace engine;
+using namespace render;
+using namespace std;
+
+Moteur::Moteur () : etatActuel(){	
+}
+
+Moteur::~Moteur (){
+}
+
+state::Etat& Moteur::getEtat (){
+	state::Etat& refEtat=etatActuel;
+	return refEtat;
+}
+
+void Moteur::addCommandePassive (){
+	//commandesActuelles.insert(std::pair<int, std::unique_ptr<Commande>> (commandesActuelles.size(), ptr_cmd));
+}
+
+void Moteur::addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd){
+	commandesActuelles[priorite]=move(ptr_cmd);
+	
+}
+	
+void Moteur::update (sf::RenderWindow& window){
+	cout<< "taille liste commandes : " << commandesActuelles.size()<< endl;
+
+	map<int, std::unique_ptr<Commande>>::iterator it;
+
+	for(size_t i=0; i<commandesActuelles.size();i++){
+		commandesActuelles[i]->execute(etatActuel);
+	}
+	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
+		commandesActuelles.erase(it);
+	}
+	etatActuel.setTour(etatActuel.getTour()+1);
+
+	Scene scene(etatActuel);	
+	//Scene* ptr_scene=&scene;
+	//etatActuel.registerObserver(ptr_scene);
+	
+	scene.draw(window);
+					
+}
+
+ 

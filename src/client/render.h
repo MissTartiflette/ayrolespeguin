@@ -6,4 +6,5 @@
 #include "render/TileSet.h"
 #include "render/Surface.h"
 #include "render/StateLayer.h"
+#include "render/Scene.h"
 #endif

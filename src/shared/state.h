@@ -2,6 +2,10 @@
 #ifndef __STATE__H
 #define __STATE__H
 
+#include "state/StateEventID.h"
+#include "state/StateEvent.h"
+#include "state/IObserver.h"
+#include "state/Observable.h"
 #include "state/Position.h"
 #include "state/Statistiques.h"
 #include "state/TypePersonnageID.h"

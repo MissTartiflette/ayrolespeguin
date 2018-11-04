@@ -1,6 +1,7 @@
 #include "state.h"
-
+#include <iostream>
 using namespace state;
+using namespace std;
 
 Terrain::Terrain(int newX, int newY, int newCodeTuile):Element(){
 	position.setX(newX);
@@ -15,19 +16,19 @@ bool Terrain::isTerrain(){
 bool Terrain::isOccupe(Etat& etat){
 
 	bool resultat = false;
-	std::vector<std::unique_ptr<Personnage>> & listePersonnages = etat.getPersonnages();
-	size_t i = 0;
+	vector<std::unique_ptr<Personnage>> & listePersonnages = etat.getPersonnages();
 	
 	/* On compare la position de la case evaluee avec celles des personnages pour savoir si
 		une unite est dessus */
-	while ( i < listePersonnages.size()){
+	for(size_t i=0; i < listePersonnages.size(); i++){
 		if (position.equals(listePersonnages[i]->getPosition())){
 			resultat = true;
 			break;
+		
 		}
-		else{
-			i++;
-		}
+		
 	}	
-	return resultat; 
+	
+	return resultat;
+	
 }

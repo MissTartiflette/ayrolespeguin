@@ -6,11 +6,14 @@
 #include <memory>
 #include <sstream>
 
+
 using namespace render;
 using namespace std;
 using namespace state;
 
+
 StateLayer::StateLayer(state::Etat& etat):etatLayer(etat){
+	
 	TileSet tilesetGrille(GRILLETILESET);
 	std::unique_ptr<TileSet> ptr_tilesetGrille (new TileSet(tilesetGrille));
 	tilesets.push_back(move(ptr_tilesetGrille));
@@ -48,6 +51,10 @@ std::vector<std::unique_ptr<TileSet>>& StateLayer::getTilesets (){
 std::vector<std::unique_ptr<Surface>>& StateLayer::getSurfaces (){
 	std::vector<std::unique_ptr<Surface>>& ref_surfaces = surfaces;
 	return ref_surfaces;
+}
+
+void StateLayer::stateChanged (const state::StateEvent& e, state::Etat& etat){
+	
 }
 
 

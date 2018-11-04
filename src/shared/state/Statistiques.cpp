@@ -2,6 +2,7 @@
 
 using namespace state;
 
+
 int Statistiques::getPV(){
     return pv;
 }

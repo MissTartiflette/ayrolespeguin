@@ -7,12 +7,14 @@
 
 namespace state {
   class Etat;
+  class IObserver;
 };
 namespace render {
   class TileSet;
   class Surface;
 }
 
+#include "state/IObserver.h"
 #include "state/Etat.h"
 #include "TileSet.h"
 #include "Surface.h"
@@ -20,7 +22,7 @@ namespace render {
 namespace render {
 
   /// class StateLayer - 
-  class StateLayer {
+  class StateLayer : public state::IObserver {
     // Associations
     // Attributes
   private:
@@ -34,6 +36,7 @@ namespace render {
     std::vector<std::unique_ptr<TileSet>>& getTilesets ();
     std::vector<std::unique_ptr<Surface>>& getSurfaces ();
     void initSurfaces ();
+    void stateChanged (const state::StateEvent& e, state::Etat& etat);
     // Setters and Getters
   };
 

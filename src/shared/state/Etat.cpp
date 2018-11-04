@@ -22,6 +22,10 @@ int Etat::getTour(){
 	return tour;
 }
 
+void Etat::setTour(int newTour){
+	tour=newTour;
+}
+
 int Etat::initGrille (std::string chemin_map_txt, unsigned int longueur, unsigned int largeur, Correspondances& correspondances){
 		
     std::ifstream fichier(chemin_map_txt, ios::in);    
@@ -48,20 +52,20 @@ int Etat::initGrille (std::string chemin_map_txt, unsigned int longueur, unsigne
     }
     
     // Remplissage de la grille de jeu avec les terrains
-    for (i = 0; i < longueur; i++){
+    for (i = 0; i < largeur; i++){
     	std::vector<std::unique_ptr<Terrain>> newLigne;
     
-    	for (j = 0; j < largeur; j++){
+    	for (j = 0; j < longueur; j++){
     		if (map_tuiles_code[k] >= 0 && map_tuiles_code[k] <= 46){
 			    // On regarde si le code de la tuile est celui d'un Terrain Praticable
 				if (correspondances.getCorrespondanceTP().find(map_tuiles_code[k]) != correspondances.getCorrespondanceTP().end()){
-					TerrainPraticable newTP(correspondances.getCorrespondanceTP()[map_tuiles_code[k]],j,i,map_tuiles_code[k]);
+					TerrainPraticable newTP(correspondances.getCorrespondanceTP()[map_tuiles_code[k]],i,j,map_tuiles_code[k]);
 					std::unique_ptr<TerrainPraticable> ptr(new TerrainPraticable(newTP)) ;
 					newLigne.push_back(move(ptr));
 				}
 				// Cas du Terrain Non Praticable
 				else if (correspondances.getCorrespondanceTNP().find(map_tuiles_code[k]) != correspondances.getCorrespondanceTNP().end()){
-					TerrainNonPraticable newTNP(correspondances.getCorrespondanceTNP()[map_tuiles_code[k]],j,i,map_tuiles_code[k]);
+					TerrainNonPraticable newTNP(correspondances.getCorrespondanceTNP()[map_tuiles_code[k]],i,j,map_tuiles_code[k]);
 					std::unique_ptr<TerrainNonPraticable> ptr(new TerrainNonPraticable(newTNP)) ;
 					newLigne.push_back(move(ptr));
 				}
@@ -82,35 +86,35 @@ int Etat::initGrille (std::string chemin_map_txt, unsigned int longueur, unsigne
 
 int Etat::initPersonnages(Correspondances& correspondance){
 
-	 Personnage archer_bleu(ARCHER, true, "Oliver", 21, 1);
+	 Personnage archer_bleu(ARCHER, true, "Oliver", 1, 21);
 	 std::unique_ptr<Personnage> ptrAB(new Personnage(archer_bleu));
 	 personnages.push_back(move(ptrAB));
 	 
-	 Personnage brigand_bleu(BRIGAND, true, "John", 20, 2);
+	 Personnage brigand_bleu(BRIGAND, true, "John", 2, 20);
 	 std::unique_ptr<Personnage> ptrBB(new Personnage(brigand_bleu));
 	 personnages.push_back(move(ptrBB));
 	 
-	 Personnage chevalier_bleu(CHEVALIER, true, "Bruce", 23, 3);
+	 Personnage chevalier_bleu(CHEVALIER, true, "Bruce", 3, 23);
 	 std::unique_ptr<Personnage> ptrCB(new Personnage(chevalier_bleu));
 	 personnages.push_back(move(ptrCB));
 	 
-	 Personnage guerrier_bleu(GUERRIER, true, "Arthur", 22, 4);
+	 Personnage guerrier_bleu(GUERRIER, true, "Arthur", 4, 22);
 	 std::unique_ptr<Personnage> ptrGB(new Personnage(guerrier_bleu));
 	 personnages.push_back(move(ptrGB));
 	 
-	 Personnage archer_rouge(ARCHER, false, "Damian", 1, 21);
+	 Personnage archer_rouge(ARCHER, false, "Damian", 3, 21);
 	 std::unique_ptr<Personnage> ptrAR(new Personnage(archer_rouge));
 	 personnages.push_back(move(ptrAR));
 	 
-	 Personnage brigand_rouge(BRIGAND, false, "Oswald", 2, 20);
+	 Personnage brigand_rouge(BRIGAND, false, "Oswald", 20, 2);
 	 std::unique_ptr<Personnage> ptrBR(new Personnage(brigand_rouge));
 	 personnages.push_back(move(ptrBR));
 	 
-	 Personnage chevalier_rouge(CHEVALIER, false, "Jason", 3, 23);
+	 Personnage chevalier_rouge(CHEVALIER, false, "Jason", 23, 3);
 	 std::unique_ptr<Personnage> ptrCR(new Personnage(chevalier_rouge));
 	 personnages.push_back(move(ptrCR));
 	 
-	 Personnage guerrier_rouge(GUERRIER, false, "Slade", 4, 22);
+	 Personnage guerrier_rouge(GUERRIER, false, "Slade", 22, 4);
 	 std::unique_ptr<Personnage> ptrGR(new Personnage(guerrier_rouge));
 	 personnages.push_back(move(ptrGR));	
 	

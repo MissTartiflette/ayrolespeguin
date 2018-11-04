@@ -17,11 +17,14 @@ namespace state {
     int y;
     // Operations
   public:
+    Position ();
+    Position (int x, int y);
     int getX ();
     int getY ();
     void setX (int newX);
     void setY (int newY);
     bool equals (Position& other);
+    int distance (Position& other);
     // Setters and Getters
   };
 

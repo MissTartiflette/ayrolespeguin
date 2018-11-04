@@ -8,17 +8,19 @@
 
 namespace state {
   class Correspondances;
+  class Observable;
   class Terrain;
   class Personnage;
 }
 
+#include "Observable.h"
 #include "Terrain.h"
 #include "Personnage.h"
 
 namespace state {
 
   /// class Etat - 
-  class Etat {
+  class Etat : public state::Observable {
     // Associations
     // Attributes
   private:
@@ -31,6 +33,7 @@ namespace state {
     std::vector<std::vector<std::unique_ptr<Terrain>>>& getGrille ();
     std::vector<std::unique_ptr<Personnage>>& getPersonnages ();
     int getTour ();
+    void setTour (int newTour);
     int initGrille (std::string chemin_map_txt, unsigned int longueur, unsigned int largeur, Correspondances& correspondances);
     int initPersonnages (Correspondances& correspondances);
     // Setters and Getters

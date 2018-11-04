@@ -1,11 +1,11 @@
 #include "state.h"
-#include <vector>
+#include <iostream>  
 
 using namespace state;
 using namespace std;
 
 
-Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newY, int newX):Element(){
+Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newX, int newY):Element(){
 
 	typeID = id;
 	camp=newCamp;
@@ -100,26 +100,36 @@ void Personnage::setStatut (StatutPersonnageID newStatut){
 }
 
 vector<Position> Personnage::getLegalMove(Etat& etat){
-	// Note : On autorise le deplacement sur sa propre case
-	
+	// Note : On n'autorise pas le deplacement sur sa propre case car elle est considérée comme occupée
+	//for(size_t v=0; v<etat.getPersonnages().size();v++){
+		//cout<< "Position perso : "<< etat.getPersonnages()[v]->getNom() << " -> " <<etat.getPersonnages()[v]->getPosition().getX()<<" " <<etat.getPersonnages()[v]->getPosition().getY()<< endl;
+	//}
 	vector<Position> ListePosMouv;
 	Position positionAjoutee;
 	
 	//On parcourt les abscisses puis les ordonnees de la grille
-	for(int abscisse = this -> position.getX() - champMove; abscisse <= this -> position.getX()+champMove; abscisse++){
-		for(int ordonnee = this -> position.getY() - champMove; ordonnee <= this -> position.getY()+champMove; ordonnee++){
+	for(int abscisse = position.getX() - champMove; abscisse <=position.getX() + champMove; abscisse++){
+		for(int ordonnee = position.getY() - champMove; ordonnee <= position.getY() + champMove; ordonnee++){
 			// On teste les cases qui sont dans la zone de deplacement du personnage
-			if(abscisse+ordonnee <= champMove && abscisse+ordonnee >= -champMove){
+			
+			if(abs(abscisse-position.getX())+abs(ordonnee-position.getY())<=champMove && abscisse>=0 && ordonnee>=0 && 			 	abs(abscisse)<etat.getGrille().size() && abs(ordonnee)<etat.getGrille()[abscisse].size()){
+				//cout<<"valide :  "<< abscisse << " "<<ordonnee<<endl;	
 				if(etat.getGrille()[abscisse][ordonnee]->isPraticable()){
-					if(!etat.getGrille()[abscisse][ordonnee]->isOccupe(etat)){						
-							positionAjoutee.setX(abscisse);
-							positionAjoutee.setY(ordonnee);
-							ListePosMouv.push_back(positionAjoutee);
+					//cout<<"praticable: "<< abscisse << " "<<ordonnee<<endl;	
+					if(!etat.getGrille()[abscisse][ordonnee]->isOccupe(etat)){	
+						//cout<<"pas occupe: "<< abscisse << " "<<ordonnee<<endl;					
+						positionAjoutee.setX(abscisse);
+						positionAjoutee.setY(ordonnee);
+						ListePosMouv.push_back(positionAjoutee);
+						
 					}
+					//else{ cout<<"occupe: "<< abscisse << " "<<ordonnee<<endl;	}
 				}
 			}
 		}
 	}
+	
+	//cout<<"taille : "<<ListePosMouv.size()<<endl;
 	return ListePosMouv;	
 }
 
@@ -132,7 +142,8 @@ vector<Position> Personnage::getLegalAttack(Etat& etat){
 	for(int abscisse = this -> position.getX() - champAttack; abscisse <= this -> position.getX()+champAttack; abscisse++){
 		for(int ordonnee = this -> position.getY() - champAttack; ordonnee <= this -> position.getY()+champAttack; ordonnee++){
 			// On teste les cases qui sont dans la zone d'attaque du personnage
-			if(abscisse+ordonnee <= champAttack && abscisse+ordonnee >= -champAttack){
+			//if(abscisse+ordonnee <= champAttack && abscisse+ordonnee >= -champAttack){
+			  if(abs(abscisse-position.getX())+abs(ordonnee-position.getY())<=champAttack && abscisse>=0 && ordonnee>=0 && 			 	abs(abscisse)<etat.getGrille().size() && abs(ordonnee)<etat.getGrille()[abscisse].size()){
 				if(etat.getGrille()[abscisse][ordonnee]->isPraticable()){
 					if(etat.getGrille()[abscisse][ordonnee]->isOccupe(etat)){						
 							positionAjoutee.setX(abscisse);
