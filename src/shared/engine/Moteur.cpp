@@ -1,7 +1,10 @@
 #include "engine.h"
 #include "render.h"
+#include "state.h"
 #include <iostream>
+#include <unistd.h>
 
+using namespace state;
 using namespace engine;
 using namespace render;
 using namespace std;
@@ -27,23 +30,20 @@ void Moteur::addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd){
 }
 	
 void Moteur::update (sf::RenderWindow& window){
-	cout<< "taille liste commandes : " << commandesActuelles.size()<< endl;
+	StateEvent stateEvent(ALLCHANGED);
 
 	map<int, std::unique_ptr<Commande>>::iterator it;
 
 	for(size_t i=0; i<commandesActuelles.size();i++){
 		commandesActuelles[i]->execute(etatActuel);
-		//etatActuel.notifyObservers();
+		etatActuel.notifyObservers(stateEvent, etatActuel, window);
+		sleep(1);
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
 		commandesActuelles.erase(it);
 	}
 	etatActuel.setTour(etatActuel.getTour()+1);
 
-	StateLayer stateLayer(etatActuel);	
-	
-	stateLayer.initSurfaces();
-	stateLayer.draw(window);
 				
 }
 

@@ -12,7 +12,7 @@ using namespace std;
 using namespace state;
 
 
-StateLayer::StateLayer(state::Etat& etat):etatLayer(etat){
+StateLayer::StateLayer(state::Etat& etat){
 	
 	TileSet tilesetGrille(GRILLETILESET);
 	std::unique_ptr<TileSet> ptr_tilesetGrille (new TileSet(tilesetGrille));
@@ -25,22 +25,30 @@ StateLayer::StateLayer(state::Etat& etat):etatLayer(etat){
 	TileSet tilesetInfos(INFOSTILESET);
 	std::unique_ptr<TileSet> ptr_tilesetInfos (new TileSet(tilesetInfos));
 	tilesets.push_back(move(ptr_tilesetInfos));
+	
 
 }
 
-void StateLayer::initSurfaces(){	
+void StateLayer::initSurfaces(state::Etat& etat){	
 	Surface surfGrille;
 	Surface surfPersonnage;
 	
-	surfGrille.loadGrille(etatLayer,tilesets[0]->getImageFile(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etatLayer.getGrille().size(), etatLayer.getGrille()[0].size());
+	surfGrille.loadGrille(etat, tilesets[0]->getImageFile(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etat.getGrille().size(), etat.getGrille()[0].size());
 
-	surfPersonnage.loadPersonnage(etatLayer,tilesets[1]->getImageFile(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etatLayer.getPersonnages().size(), 1);
+	surfPersonnage.loadPersonnage(etat, tilesets[1]->getImageFile(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etat.getPersonnages().size(), 1);
 	
 	std::unique_ptr<Surface> ptr_surfGrille (new Surface(surfGrille));
 	std::unique_ptr<Surface> ptr_surfPersonnage (new Surface(surfPersonnage));
-
+	
+	if(surfaces.size()!=0){
+		for(size_t i=0; i<=surfaces.size();i++){
+			surfaces.pop_back();
+		}
+	}
+	
 	surfaces.push_back(move(ptr_surfGrille));
 	surfaces.push_back(move(ptr_surfPersonnage));
+	
 }
 
 std::vector<std::unique_ptr<TileSet>>& StateLayer::getTilesets (){
@@ -53,8 +61,9 @@ std::vector<std::unique_ptr<Surface>>& StateLayer::getSurfaces (){
 	return ref_surfaces;
 }
 
-void StateLayer::stateChanged (const state::StateEvent& e, state::Etat& etat){
-	
+void StateLayer::stateChanged (const state::StateEvent& e, state::Etat& etat, sf::RenderWindow& window){
+	initSurfaces(etat);
+	draw(window);
 }
 
 void StateLayer::draw (sf::RenderWindow& window){
