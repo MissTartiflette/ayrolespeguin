@@ -57,6 +57,8 @@ bool Surface::loadPersonnage(state::Etat& etatLayer, const std::string& tileset,
        	quads.resize(width * height * 4);
         // on remplit le tableau de vertex, avec un quad par tuile
         for (unsigned int i = 0; i < width; ++i){
+        		//On met a jour les tuiles des personnages en fonction de leur statut
+        		updateTilesPersonnages(etatLayer);
               	// on récupère le numéro de tuile courant
 				int tileNumber=etatLayer.getPersonnages()[i]->getCodeTuile();
 				
@@ -96,3 +98,56 @@ void Surface::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         target.draw(quads, states);
 }
 
+void Surface::updateTilesPersonnages(state::Etat&  etatLayer){
+	for (unsigned int i = 0; i < etatLayer.getPersonnages().size(); i++){
+		if (etatLayer.getPersonnages()[i]->getStatut() == state::DISPONIBLE){
+			if (etatLayer.getPersonnages()[i]->getCamp() == true){
+				if (etatLayer.getPersonnages()[i]->getType() == state::ARCHER){
+					etatLayer.getPersonnages()[i]->setCodeTuile(0);
+				}
+				else if (etatLayer.getPersonnages()[i]->getType() == state::BRIGAND){
+					etatLayer.getPersonnages()[i]->setCodeTuile(1);
+				}
+				else if (etatLayer.getPersonnages()[i]->getType() == state::GUERRIER){
+					etatLayer.getPersonnages()[i]->setCodeTuile(2);
+				}
+				if (etatLayer.getPersonnages()[i]->getType() == state::CHEVALIER){
+					etatLayer.getPersonnages()[i]->setCodeTuile(3);
+				}
+			}
+			else if (etatLayer.getPersonnages()[i]->getCamp() == false){
+				if (etatLayer.getPersonnages()[i]->getType() == state::ARCHER){
+					etatLayer.getPersonnages()[i]->setCodeTuile(4);
+				}
+				else if (etatLayer.getPersonnages()[i]->getType() == state::BRIGAND){
+					etatLayer.getPersonnages()[i]->setCodeTuile(5);
+				}
+				else if (etatLayer.getPersonnages()[i]->getType() == state::GUERRIER){
+					etatLayer.getPersonnages()[i]->setCodeTuile(6);
+				}
+				if (etatLayer.getPersonnages()[i]->getType() == state::CHEVALIER){
+					etatLayer.getPersonnages()[i]->setCodeTuile(7);
+				}
+			}		
+		}
+		
+		else if (etatLayer.getPersonnages()[i]->getStatut() == state::ATTENTE){
+			if (etatLayer.getPersonnages()[i]->getType() == state::ARCHER){
+				etatLayer.getPersonnages()[i]->setCodeTuile(8);
+			}
+			else if (etatLayer.getPersonnages()[i]->getType() == state::BRIGAND){
+				etatLayer.getPersonnages()[i]->setCodeTuile(9);
+			}
+			else if (etatLayer.getPersonnages()[i]->getType() == state::GUERRIER){
+				etatLayer.getPersonnages()[i]->setCodeTuile(10);
+			}
+			if (etatLayer.getPersonnages()[i]->getType() == state::CHEVALIER){
+				etatLayer.getPersonnages()[i]->setCodeTuile(11);
+			}	
+		}
+		
+		else if (etatLayer.getPersonnages()[i]->getStatut() == state::MORT){
+			etatLayer.getPersonnages()[i]->setCodeTuile(12);
+		}		
+	}
+}
