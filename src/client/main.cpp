@@ -45,9 +45,11 @@ int main(int argc,char* argv[]){
 			Moteur moteur;
 			if(moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
-				Scene scene(moteur.getEtat());
+				StateLayer stateLayer(moteur.getEtat());
+				stateLayer.initSurfaces();
 				//----------------------------
-			
+			//StateLayer* ptr_stateLayer=&stateLayer;
+			//etatActuel.registerObserver(ptr_stateLayer);
 				//Observable observable;
 			
 				//Scene* ptr_scene=&scene;
@@ -55,8 +57,8 @@ int main(int argc,char* argv[]){
 
 				//------------------------
 				
-				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*scene.getStateLayer().getTilesets()[0]->getCellHeight(),
-													  largeur_map_cases*scene.getStateLayer().getTilesets()[0]->getCellWidth()),
+				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),
+													  largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
 													  "Map");
 				int i=0;
 				while (window.isOpen()){
@@ -76,7 +78,7 @@ int main(int argc,char* argv[]){
 					}
 					if(i==0){
 						i=1;
-						scene.draw(window);
+						stateLayer.draw(window);
 						
 						Position destination1(3,22);
 						Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1);

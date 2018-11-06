@@ -33,18 +33,18 @@ void Moteur::update (sf::RenderWindow& window){
 
 	for(size_t i=0; i<commandesActuelles.size();i++){
 		commandesActuelles[i]->execute(etatActuel);
+		//etatActuel.notifyObservers();
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
 		commandesActuelles.erase(it);
 	}
 	etatActuel.setTour(etatActuel.getTour()+1);
 
-	Scene scene(etatActuel);	
-	//Scene* ptr_scene=&scene;
-	//etatActuel.registerObserver(ptr_scene);
+	StateLayer stateLayer(etatActuel);	
 	
-	scene.draw(window);
-					
+	stateLayer.initSurfaces();
+	stateLayer.draw(window);
+				
 }
 
  

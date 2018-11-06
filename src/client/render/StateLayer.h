@@ -4,9 +4,15 @@
 
 #include <vector>
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 namespace state {
   class Etat;
+};
+namespace sf {
+  class RenderWindow;
+};
+namespace state {
   class IObserver;
 };
 namespace render {
@@ -37,6 +43,7 @@ namespace render {
     std::vector<std::unique_ptr<Surface>>& getSurfaces ();
     void initSurfaces ();
     void stateChanged (const state::StateEvent& e, state::Etat& etat);
+    void draw (sf::RenderWindow& window);
     // Setters and Getters
   };
 

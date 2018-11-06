@@ -57,4 +57,10 @@ void StateLayer::stateChanged (const state::StateEvent& e, state::Etat& etat){
 	
 }
 
+void StateLayer::draw (sf::RenderWindow& window){
+	window.clear();
+	window.draw(*surfaces[0]);	// Dessin de la grille				
+	window.draw(*surfaces[1]);	// Dessin des personnages
+	window.display();
+}
 
