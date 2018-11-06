@@ -7,12 +7,9 @@ using namespace state;
 using namespace std;
 
 Attaque::Attaque (state::Personnage& attaquant, state::Personnage& cible): attaquant(attaquant), cible(cible){
-	
+	id = ATTAQUE;
 }
     
-CommandeID Attaque::getCommandeID (){
-	return ATTAQUE;
-}
 
 void Attaque::execute (state::Etat& etat){
 	bool b=false;
@@ -37,8 +34,12 @@ void Attaque::execute (state::Etat& etat){
 			cout << cible.getNom() << " perd " << force_attaquant << " PV.";
 			cout << " Il ne lui reste plus que " << cible.getStatistiques().getPV() << " PV."<< endl;
 			if(cible.getStatistiques().getPV()==0){
+				cible.setStatut(MORT);
+				cible.getPosition().setX(-1);
+				cible.getPosition().setY(-1);
 				cout << cible.getNom() << " est mort." << endl;
 			}
+			
 		}
 		
 		else{
@@ -48,6 +49,6 @@ void Attaque::execute (state::Etat& etat){
 		}
 	}
 	else{
-		cout << "Attaque non autorise " << endl;
+		cout << "Attaque non autorisee !" << endl;
 	}
 }

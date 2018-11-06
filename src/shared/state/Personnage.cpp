@@ -9,7 +9,7 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 
 	typeID = id;
 	camp=newCamp;
-    statut=ATTENTE;
+    statut=DISPONIBLE;
     nom = newNom;
     position.setX(newX);
     position.setY(newY);

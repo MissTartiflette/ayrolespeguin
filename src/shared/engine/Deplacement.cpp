@@ -8,11 +8,7 @@ using namespace state;
 using namespace std;
 
 Deplacement::Deplacement(state::Personnage& cible, state::Position& destination):cible(cible), destination(destination){
-	
-}
-    
-CommandeID Deplacement::getCommandeID (){
-	return DEPLACEMENT;
+	id = DEPLACEMENT;
 }
 
 void Deplacement::execute (state::Etat& etat){
