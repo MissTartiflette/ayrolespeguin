@@ -46,14 +46,10 @@ int main(int argc,char* argv[]){
 			if(moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
 				StateLayer stateLayer(moteur.getEtat());
-				stateLayer.initSurfaces();
+				stateLayer.initSurfaces(moteur.getEtat());
 				//----------------------------
-			//StateLayer* ptr_stateLayer=&stateLayer;
-			//etatActuel.registerObserver(ptr_stateLayer);
-				//Observable observable;
-			
-				//Scene* ptr_scene=&scene;
-				//observable.registerObserver(ptr_scene);
+				StateLayer* ptr_stateLayer=&stateLayer;
+				moteur.getEtat().registerObserver(ptr_stateLayer);
 
 				//------------------------
 				
@@ -91,8 +87,12 @@ int main(int argc,char* argv[]){
 						moteur.addCommande(1, move(ptr_deplacement2));
 
 						Attaque attaque(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[3]);
-						std::unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+						unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 						moteur.addCommande(2, move(ptr_attaque));
+
+						FinActions finattaque(*moteur.getEtat().getPersonnages()[2]);
+						unique_ptr<Commande> ptr_finactions (new FinActions(finattaque));
+						moteur.addCommande(3, move(ptr_finactions));
 					}
 				
 					
@@ -130,7 +130,7 @@ int main(int argc,char* argv[]){
 													largeur_map_cases*layer.getTilesets()[0]->getCellWidth()),
 													"Map");
 			
-			layer.initSurfaces();
+			layer.initSurfaces(etat_initial);
 	
 			while (window.isOpen()){
 				sf::Event event;
