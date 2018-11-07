@@ -17,7 +17,7 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
     if(id == ARCHER){
     	nomArme="Arc";
 		codeArme=1;
-		champMove=4;
+		champMove=3;
 		champAttack=2;
 		statistiques.setPV(20);
 		statistiques.setAttaque(15);
@@ -108,11 +108,11 @@ vector<Position> Personnage::getLegalMove(Etat& etat){
 	Position positionAjoutee;
 	
 	//On parcourt les abscisses puis les ordonnees de la grille
-	for(int abscisse = position.getX() - champMove; abscisse <=position.getX() + champMove; abscisse++){
-		for(int ordonnee = position.getY() - champMove; ordonnee <= position.getY() + champMove; ordonnee++){
+	for(int abscisse = position.getX() - 1; abscisse <=position.getX() + 1; abscisse++){
+		for(int ordonnee = position.getY() - 1; ordonnee <= position.getY() + 1; ordonnee++){
 			// On teste les cases qui sont dans la zone de deplacement du personnage
 			
-			if(abs(abscisse-position.getX())+abs(ordonnee-position.getY())<=champMove && abscisse>=0 && ordonnee>=0 && 			 	abs(abscisse)<etat.getGrille().size() && abs(ordonnee)<etat.getGrille()[abscisse].size()){
+			if(abs(abscisse-position.getX())+abs(ordonnee-position.getY())<=1 && abscisse>=0 && ordonnee>=0 && 			 	abs(abscisse)<etat.getGrille().size() && abs(ordonnee)<etat.getGrille()[abscisse].size()){
 				//cout<<"valide :  "<< abscisse << " "<<ordonnee<<endl;	
 				if(etat.getGrille()[abscisse][ordonnee]->isPraticable()){
 					//cout<<"praticable: "<< abscisse << " "<<ordonnee<<endl;	
