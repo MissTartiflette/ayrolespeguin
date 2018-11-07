@@ -69,6 +69,27 @@ int main(int argc,char* argv[]){
 						// Si on appuie sur une touche et que la partie n'est pas terminee
 						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin()){
 							moteur.update(window);
+							
+							FinActions finattaque5(*moteur.getEtat().getPersonnages()[4],false);
+							unique_ptr<Commande> ptr_finactions5 (new FinActions(finattaque5));
+							moteur.addCommande(0, move(ptr_finactions5));
+							
+							FinActions finattaque6(*moteur.getEtat().getPersonnages()[5],false);
+							unique_ptr<Commande> ptr_finactions6 (new FinActions(finattaque6));
+							moteur.addCommande(1, move(ptr_finactions6));
+							
+							FinActions finattaque7(*moteur.getEtat().getPersonnages()[6],false);
+							unique_ptr<Commande> ptr_finactions7 (new FinActions(finattaque7));
+							moteur.addCommande(2, move(ptr_finactions7));
+							
+							FinActions finattaque8(*moteur.getEtat().getPersonnages()[7],false);
+							unique_ptr<Commande> ptr_finactions8 (new FinActions(finattaque8));
+							moteur.addCommande(3, move(ptr_finactions8));
+							
+							Position destination3(16,5);
+							Deplacement deplacement3(*moteur.getEtat().getPersonnages()[7], destination3,false);
+							unique_ptr<Commande> ptr_deplacement3 (new Deplacement(deplacement3));
+							moteur.addCommande(4, move(ptr_deplacement3));
 														
 							if(moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
@@ -78,10 +99,13 @@ int main(int argc,char* argv[]){
 						}						
 					}
 					
+					
+						
+					
+					
 					if(i==0){
 						i=1;
 						stateLayer.draw(window);
-						//moteur.getEtat().setTour(1);
 						cout << "Tour " << moteur.getEtat().getTour() << endl;
 												
 						// Deplacement chevalier bleu
@@ -96,10 +120,13 @@ int main(int argc,char* argv[]){
 						moteur.addCommande(1, move(ptr_attaque1));
 						
 						// Pas d'actions pour les autres personnages bleus
-						FinActions finattaque0(*moteur.getEtat().getPersonnages()[0],true);
-						unique_ptr<Commande> ptr_finactions0 (new FinActions(finattaque0));
-						moteur.addCommande(2, move(ptr_finactions0));
 						
+						// Deplacement chevalier bleu
+						Position destination2(1,20);
+						Deplacement deplacement2(*moteur.getEtat().getPersonnages()[0], destination2,true);
+						unique_ptr<Commande> ptr_deplacement2 (new Deplacement(deplacement2));
+						moteur.addCommande(2, move(ptr_deplacement2));
+												
 						FinActions finattaque1(*moteur.getEtat().getPersonnages()[1],true);
 						unique_ptr<Commande> ptr_finactions1 (new FinActions(finattaque1));
 						moteur.addCommande(3, move(ptr_finactions1));
@@ -112,6 +139,10 @@ int main(int argc,char* argv[]){
 						FinActions finattaque4(*moteur.getEtat().getPersonnages()[3],true);
 						unique_ptr<Commande> ptr_finactions4 (new FinActions(finattaque4));
 						moteur.addCommande(5, move(ptr_finactions4));
+						
+						FinActions finattaque0(*moteur.getEtat().getPersonnages()[0],true);
+						unique_ptr<Commande> ptr_finactions0 (new FinActions(finattaque0));
+						moteur.addCommande(6, move(ptr_finactions0));
 					}
 				}
 			}

@@ -96,6 +96,7 @@ bool Moteur::verificationFinDeTour(){
 
 void Moteur::verificationDebutDeTour(){
 	if (changementTour == true){
+	
 		joueurActif = !joueurActif;
 		cout << "-> Changement de joueur <-" << endl;
 		cout << "Tour " << etatActuel.getTour() << endl;
@@ -115,8 +116,22 @@ void Moteur::verificationDebutDeTour(){
 					etatActuel.getPersonnages()[i]->setChampMove(5);
 				}	
 			}
+			
+			// Regain de PV pour les personnages sur des maisons et fortersse en debut de tour
+			else if (etatActuel.getPersonnages()[i]->getCamp() == joueurActif) {
+				TerrainPraticable& refTerrainP = static_cast<TerrainPraticable&>(*etatActuel.getGrille()[etatActuel.getPersonnages()[i]->getPosition().getX()][etatActuel.getPersonnages()[i]->getPosition().getY()]);
+				
+				if(refTerrainP.getTerrainPraticableID() == MAISON || refTerrainP.getTerrainPraticableID() == FORTERESSE){
+									
+					etatActuel.getPersonnages()[i]->getStatistiques().setPV(etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV());
+					// Affichage
+					cout << etatActuel.getPersonnages()[i]->getNom() << " recupere " ;
+					cout << refTerrainP.getStatistiques().getPV() << " PV.";
+					cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total)." << endl;
+				}
+			}
 		}
-		cout << "*Reinitialisations de debut de tour effectuees*" << endl;
+		cout << "* Reinitialisations de debut de tour effectuees *" << endl;
 		
 		changementTour = !changementTour;
 	}

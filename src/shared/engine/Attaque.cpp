@@ -20,7 +20,6 @@ void Attaque::execute (state::Etat& etat){
 	vector<Position> listePosAtq=attaquant.getLegalAttack(etat);
 
 	for(size_t j=0; j<listePosAtq.size(); j++){
-		//std::cout<< "position possible pour une attaque :" << listePosAtq[j].getX() << " "<<listePosAtq[j].getY()<< std::endl;
 		if(listePosAtq[j].equals(cible.getPosition())){
 			attaque_possible=true;
 			break;
@@ -62,10 +61,10 @@ void Attaque::execute (state::Etat& etat){
 			//------------------------succes ou echec----------------------------------
 			cout << attaquant.getNom() << " attaque " << cible.getNom() << "." << endl;
 			srand(time(NULL));
-			int v1=rand()%100 + 1;
+			int chanceEsquive=rand()%100 + 1;
 			
 			//------------------------echec de l'attaque-------------------------------
-			if(v1<=esquive_cible + bonus_esquive){
+			if(chanceEsquive<=esquive_cible + bonus_esquive){
 				cout << cible.getNom() << " evite l'attaque.";
 				cout << " L'attaque echoue ! " << endl;
 			}
@@ -73,10 +72,10 @@ void Attaque::execute (state::Etat& etat){
 			else{
 			//------------------------Calcul bonus critique-------------------------------------
 				srand(time(NULL));
-				int v2= rand()%100 + 1 ;
-				cout << "v2 : " << v1 << endl;
+				int chanceCritique= rand()%100 + 1 ;
+				cout << "CHANCE CRITIQUE : " << chanceCritique << endl;
 				int bonus_critique=0;
-				if(v2<=critique_attaquant){
+				if(chanceCritique<=critique_attaquant){
 					bonus_critique=5;
 				}
 				cout<< "bonus critique : " <<bonus_critique << endl;
