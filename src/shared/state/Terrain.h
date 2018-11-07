@@ -19,7 +19,7 @@ namespace state {
     Terrain (int newX, int newY, int newCodeTuile);
     bool isTerrain ();
     virtual bool isPraticable () = 0;
-    bool isOccupe (Etat& etat);
+    int isOccupe (Etat& etat);
     // Setters and Getters
   };
 

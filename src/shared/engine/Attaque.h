@@ -10,7 +10,6 @@ namespace engine {
   class Commande;
 }
 
-#include "CommandeID.h"
 #include "Commande.h"
 
 namespace engine {
@@ -21,10 +20,10 @@ namespace engine {
   private:
     state::Personnage& attaquant;
     state::Personnage& cible;
+    bool contreAtk;
     // Operations
   public:
-    Attaque (state::Personnage& attaquant, state::Personnage& cible);
-    CommandeID getCommandeID ();
+    Attaque (state::Personnage& attaquant, state::Personnage& cible, bool joueur);
     void execute (state::Etat& etat);
     // Setters and Getters
   };

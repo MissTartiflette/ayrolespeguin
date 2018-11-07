@@ -34,7 +34,7 @@ int main(int argc,char* argv[]){
 		}
 		
 		else if(strcmp(argv[1],"engine")==0){
-			cout<<"Moteur du jeu"<<endl;
+			cout<<"--- Moteur du jeu ---"<<endl;
 			//----------------------------
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
@@ -43,10 +43,12 @@ int main(int argc,char* argv[]){
 			
 			//-----------------------------
 			Moteur moteur;
-			if(moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
+			
+			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
 				StateLayer stateLayer(moteur.getEtat());
 				stateLayer.initSurfaces(moteur.getEtat());
+				
 				//----------------------------
 				StateLayer* ptr_stateLayer=&stateLayer;
 				moteur.getEtat().registerObserver(ptr_stateLayer);
@@ -56,6 +58,7 @@ int main(int argc,char* argv[]){
 				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),
 													  largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
 													  "Map");
+													  
 				int i=0;
 				while (window.isOpen()){
 					sf::Event event;
@@ -63,53 +66,62 @@ int main(int argc,char* argv[]){
 						if (event.type == sf::Event::Closed){
 							window.close();
 						}
-						else if(event.type==sf::Event::KeyPressed){
+						// Si on appuie sur une touche et que la partie n'est pas terminee
+						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin()){
 							moteur.update(window);
-
-							Attaque attaque(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[4]);
-							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
-							moteur.addCommande(0, move(ptr_attaque));
-						}
-						
+														
+							if(moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+							}
+						}						
 					}
+					
 					if(i==0){
 						i=1;
 						stateLayer.draw(window);
-						
+						//moteur.getEtat().setTour(1);
+						cout << "Tour " << moteur.getEtat().getTour() << endl;
+												
+						// Deplacement chevalier bleu
 						Position destination1(3,22);
-						Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1);
+						Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1,true);
 						unique_ptr<Commande> ptr_deplacement1 (new Deplacement(deplacement1));
-						moteur.addCommande(0, move(ptr_deplacement1));
-
-						Position destination2(1,22);
-						Deplacement deplacement2(*moteur.getEtat().getPersonnages()[0], destination2);
-						unique_ptr<Commande> ptr_deplacement2 (new Deplacement(deplacement2));
-						moteur.addCommande(1, move(ptr_deplacement2));
-
-						Attaque attaque(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[3]);
-						unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
-						moteur.addCommande(2, move(ptr_attaque));
-
-						FinActions finattaque(*moteur.getEtat().getPersonnages()[2]);
-						unique_ptr<Commande> ptr_finactions (new FinActions(finattaque));
-						moteur.addCommande(3, move(ptr_finactions));
+						moteur.addCommande(0, move(ptr_deplacement1));						
+						
+						// Attaque chevalier bleu contre archer rouge
+						Attaque attaque1(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[4],true);
+						unique_ptr<Commande> ptr_attaque1 (new Attaque(attaque1));
+						moteur.addCommande(1, move(ptr_attaque1));
+						
+						// Pas d'actions pour les autres personnages bleus
+						FinActions finattaque0(*moteur.getEtat().getPersonnages()[0],true);
+						unique_ptr<Commande> ptr_finactions0 (new FinActions(finattaque0));
+						moteur.addCommande(2, move(ptr_finactions0));
+						
+						FinActions finattaque1(*moteur.getEtat().getPersonnages()[1],true);
+						unique_ptr<Commande> ptr_finactions1 (new FinActions(finattaque1));
+						moteur.addCommande(3, move(ptr_finactions1));
+						
+						// Action du joueur adverse alors que ce n'est pas son tour
+						FinActions finattaque2(*moteur.getEtat().getPersonnages()[5],false);
+						unique_ptr<Commande> ptr_finactions2 (new FinActions(finattaque2));
+						moteur.addCommande(4, move(ptr_finactions2));
+												
+						FinActions finattaque4(*moteur.getEtat().getPersonnages()[3],true);
+						unique_ptr<Commande> ptr_finactions4 (new FinActions(finattaque4));
+						moteur.addCommande(5, move(ptr_finactions4));
 					}
-				
-					
-					
 				}
-
-			
 			}
-				
-
 		}
 
 
 		/*	render : Affichage du rendu de la map */
 		else if(strcmp(argv[1],"render")==0){
 		
-			cout<<"Affichage d'un Etat"<<endl;
+			cout<<"--- Affichage d'un Etat ---"<<endl;
 			
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";

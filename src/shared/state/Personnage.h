@@ -43,6 +43,7 @@ namespace state {
     int getChampAttack ();
     TypePersonnageID getType ();
     int getCodeArme ();
+    void setChampMove (int newChampMove);
     // Setters and Getters
   };
 

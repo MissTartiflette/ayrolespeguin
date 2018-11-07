@@ -9,7 +9,9 @@ using namespace engine;
 using namespace render;
 using namespace std;
 
-Moteur::Moteur () : etatActuel(){	
+Moteur::Moteur () : etatActuel(){
+	changementTour = false;
+	joueurActif = true;
 }
 
 Moteur::~Moteur (){
@@ -28,23 +30,96 @@ void Moteur::addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd){
 	commandesActuelles[priorite]=move(ptr_cmd);
 	
 }
-	
+
 void Moteur::update (sf::RenderWindow& window){
 	StateEvent stateEvent(ALLCHANGED);
 
 	map<int, std::unique_ptr<Commande>>::iterator it;
 
 	for(size_t i=0; i<commandesActuelles.size();i++){
-		commandesActuelles[i]->execute(etatActuel);
-		etatActuel.notifyObservers(stateEvent, etatActuel, window);
-		sleep(1);
+		// On n'execute que les commandes du joueur dont c'est le tour
+		if (commandesActuelles[i]->joueur == joueurActif){
+			commandesActuelles[i]->execute(etatActuel);
+			etatActuel.notifyObservers(stateEvent, etatActuel, window);
+			sleep(1);
+		}
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
 		commandesActuelles.erase(it);
 	}
-	etatActuel.setTour(etatActuel.getTour()+1);
+}
 
+bool Moteur::verificationFinDeTour(){
+	bool tourChange = true;
+	bool partieFinie = true;
+	
+	for (unsigned int i = 0; i < etatActuel.getPersonnages().size(); i++){
+		// Si un personage du joueur actif n'est ni mort ni en attente, son tour n'est pas termine
+		if (etatActuel.getPersonnages()[i]->getCamp() == joueurActif){
+			if (etatActuel.getPersonnages()[i]->getStatut() != MORT ){
+				if (etatActuel.getPersonnages()[i]->getStatut() != ATTENTE){
+					tourChange = false;
+				}
+			}			
+		}
+		
+		// Si tous les personnages du joueur non actif ne sont pas morts, la partie n'est pas terminee
+		else{
+			if (etatActuel.getPersonnages()[i]->getStatut() != MORT ){
+				partieFinie = false;
+			}		
+		}
+	}
+	
+	if (partieFinie){
+		cout << "Partie Terminee !" << endl;
+		etatActuel.setFin(partieFinie);
+		if (joueurActif){
+			cout << "L'armee bleue a gagne !" << endl;
+		}
+		else {
+			cout << "L'armee rouge a gagne !" << endl;
+		}
+		tourChange = false;
+	}
+		
+	if (tourChange){
+		cout << "Tour Termine.\n" << endl;
+		etatActuel.setTour(etatActuel.getTour()+1);
+	}
+	
+	changementTour = tourChange;
+	
+	return tourChange;
+
+}
+
+void Moteur::verificationDebutDeTour(){
+	if (changementTour == true){
+		joueurActif = !joueurActif;
+		cout << "-> Changement de joueur <-" << endl;
+		cout << "Tour " << etatActuel.getTour() << endl;
+		
+		for (unsigned int i = 0; i < etatActuel.getPersonnages().size(); i++){
+		
+			// Personnages du joueur qui termine son tour et qui ne sont pas morts
+			if (etatActuel.getPersonnages()[i]->getCamp() != joueurActif && etatActuel.getPersonnages()[i]->getStatut() != MORT){
+				// Reinitialisation du statut
+				etatActuel.getPersonnages()[i]->setStatut(DISPONIBLE);
 				
+				//Reinitialisation des points de mouvement
+				if (etatActuel.getPersonnages()[i]->getType() != CHEVALIER){
+					etatActuel.getPersonnages()[i]->setChampMove(3);
+				}
+				else {
+					etatActuel.getPersonnages()[i]->setChampMove(5);
+				}	
+			}
+		}
+		cout << "*Reinitialisations de debut de tour effectuees*" << endl;
+		
+		changementTour = !changementTour;
+	}
 }
 
  

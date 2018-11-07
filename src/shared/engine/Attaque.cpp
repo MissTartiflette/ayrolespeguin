@@ -96,22 +96,26 @@ void Attaque::execute (state::Etat& etat){
 			}
 
 			else{
-				if(this->contreAtk==false){
-					Attaque contre_attaque(cible, attaquant);
+				if(contreAtk==false){
+					Attaque contre_attaque(cible, attaquant, !joueur);
 					contre_attaque.contreAtk=true;
 					sleep(2);
 					contre_attaque.execute(etat);	
 				}
-				if(contreAtk==true){ 
-					FinActions finattaque(cible);
-					sleep(2);
-					finattaque.execute(etat);		
+				if(contreAtk==true){
+					// Le tour du contre-attaquant ne se termine pas apres sa contre-attaque
+					if(attaquant.getType()==ARCHER && cible.getType()!=ARCHER){
+						FinActions finattaque(cible, joueur);
+						sleep(2);
+						finattaque.execute(etat);		
+					}
+					else{
+						FinActions finattaque(attaquant, joueur);
+						sleep(2);
+						finattaque.execute(etat);
+					}		
 				}
-				if(attaquant.getType()==ARCHER && cible.getType()!=ARCHER){
-					FinActions finattaque(attaquant);
-					sleep(2);
-					finattaque.execute(etat);		
-				}
+				
 			}
 						
 			

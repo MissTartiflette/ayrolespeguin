@@ -198,5 +198,8 @@ int Personnage::getCodeArme(){
 	return codeArme;
 }
 
+void Personnage::setChampMove(int newChampMove){
+	champMove = newChampMove;
+}
 
 

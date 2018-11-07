@@ -7,7 +7,8 @@ namespace engine {
 
   enum CommandeID {
     DEPLACEMENT     = 1,
-    ATTAQUE     = 2
+    ATTAQUE     = 2,
+    FINACTIONS     = 3
   };
 
 };

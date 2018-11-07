@@ -7,4 +7,5 @@
 #include "engine/Attaque.h"
 #include "engine/Deplacement.h"
 #include "engine/Moteur.h"
+#include "engine/FinActions.h"
 #endif

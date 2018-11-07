@@ -7,8 +7,9 @@ using namespace engine;
 using namespace state;
 using namespace std;
 
-Deplacement::Deplacement(state::Personnage& cible, state::Position& destination):cible(cible), destination(destination){
+Deplacement::Deplacement(state::Personnage& cible, state::Position& destination, bool newJoueur):cible(cible), destination(destination){
 	id = DEPLACEMENT;
+	joueur = newJoueur;
 }
 
 void Deplacement::execute (state::Etat& etat){

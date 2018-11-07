@@ -28,6 +28,8 @@ namespace engine {
   private:
     state::Etat etatActuel;
     std::map<int, std::unique_ptr<Commande>> commandesActuelles;
+    bool changementTour;
+    bool joueurActif;
     // Operations
   public:
     Moteur ();
@@ -36,6 +38,8 @@ namespace engine {
     void addCommandePassive ();
     void addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd);
     void update (sf::RenderWindow& window);
+    bool verificationFinDeTour ();
+    void verificationDebutDeTour ();
     // Setters and Getters
   };
 

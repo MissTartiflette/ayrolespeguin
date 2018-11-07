@@ -31,8 +31,6 @@ namespace render {
   class StateLayer : public state::IObserver {
     // Associations
     // Attributes
-  private:
-    state::Etat& etatLayer;
   protected:
     std::vector<std::unique_ptr<TileSet>> tilesets;
     std::vector<std::unique_ptr<Surface>> surfaces;
@@ -41,8 +39,8 @@ namespace render {
     StateLayer (state::Etat& etat);
     std::vector<std::unique_ptr<TileSet>>& getTilesets ();
     std::vector<std::unique_ptr<Surface>>& getSurfaces ();
-    void initSurfaces ();
-    void stateChanged (const state::StateEvent& e, state::Etat& etat);
+    void initSurfaces (state::Etat& etat);
+    void stateChanged (const state::StateEvent& e, state::Etat& etat, sf::RenderWindow& window);
     void draw (sf::RenderWindow& window);
     // Setters and Getters
   };

@@ -116,7 +116,15 @@ int Etat::initPersonnages(Correspondances& correspondance){
 	 
 	 Personnage guerrier_rouge(GUERRIER, false, "Slade", 22, 4);
 	 std::unique_ptr<Personnage> ptrGR(new Personnage(guerrier_rouge));
-	 personnages.push_back(move(ptrGR));	
+	 personnages.push_back(move(ptrGR));
 	
 	return 1;
+}
+
+void Etat::setFin(bool resultat){
+	fin = resultat;
+}
+
+bool Etat::getFin(){
+	return fin;
 }

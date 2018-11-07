@@ -26,7 +26,7 @@ namespace state {
   private:
     std::vector<std::vector<std::unique_ptr<Terrain>>> grille;
     std::vector<std::unique_ptr<Personnage>> personnages;
-    int tour;
+    int tour     = 1;
     bool fin;
     // Operations
   public:
@@ -36,6 +36,8 @@ namespace state {
     void setTour (int newTour);
     int initGrille (std::string chemin_map_txt, unsigned int longueur, unsigned int largeur, Correspondances& correspondances);
     int initPersonnages (Correspondances& correspondances);
+    void setFin (bool resultat);
+    bool getFin ();
     // Setters and Getters
   };
 

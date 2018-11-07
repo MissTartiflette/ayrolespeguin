@@ -14,9 +14,13 @@ namespace engine {
 
   /// class Commande - 
   class Commande {
+    // Attributes
+  public:
+    CommandeID id;
+    bool joueur;
     // Operations
   public:
-    virtual CommandeID getCommandeID () = 0;
+    CommandeID getCommandeID ();
     virtual void execute (state::Etat& etat) = 0;
     // Setters and Getters
   };
