@@ -21,7 +21,7 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		champAttack=2;
 		statistiques.setPV(20);
 		statistiques.setAttaque(15);
-		statistiques.setDefense(8);
+		statistiques.setDefense(6);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(15);
 		if (newCamp == true){
@@ -37,7 +37,7 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		champAttack=1;
 		statistiques.setPV(20);
 		statistiques.setAttaque(15);
-		statistiques.setDefense(10);
+		statistiques.setDefense(8);
 		statistiques.setEsquive(15);
 		statistiques.setCritique(10);
 		if (newCamp == true){
@@ -52,8 +52,8 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		champMove=5;
 		champAttack=1;
 		statistiques.setPV(25);
-		statistiques.setAttaque(12);
-		statistiques.setDefense(15);
+		statistiques.setAttaque(15);
+		statistiques.setDefense(12);
 		statistiques.setEsquive(15);
 		statistiques.setCritique(10);
 		if (newCamp == true){
@@ -116,7 +116,7 @@ vector<Position> Personnage::getLegalMove(Etat& etat){
 				//cout<<"valide :  "<< abscisse << " "<<ordonnee<<endl;	
 				if(etat.getGrille()[abscisse][ordonnee]->isPraticable()){
 					//cout<<"praticable: "<< abscisse << " "<<ordonnee<<endl;	
-					if(!etat.getGrille()[abscisse][ordonnee]->isOccupe(etat)){	
+					if(etat.getGrille()[abscisse][ordonnee]->isOccupe(etat)==-1){	
 						//cout<<"pas occupe: "<< abscisse << " "<<ordonnee<<endl;					
 						positionAjoutee.setX(abscisse);
 						positionAjoutee.setY(ordonnee);
@@ -145,13 +145,16 @@ vector<Position> Personnage::getLegalAttack(Etat& etat){
 			//if(abscisse+ordonnee <= champAttack && abscisse+ordonnee >= -champAttack){
 			  if(abs(abscisse-position.getX())+abs(ordonnee-position.getY())<=champAttack && abscisse>=0 && ordonnee>=0 && 			 	abs(abscisse)<etat.getGrille().size() && abs(ordonnee)<etat.getGrille()[abscisse].size()){
 				if(etat.getGrille()[abscisse][ordonnee]->isPraticable()){
-					if(etat.getGrille()[abscisse][ordonnee]->isOccupe(etat)){						
+					int res =etat.getGrille()[abscisse][ordonnee]->isOccupe(etat);
+					if(res!=-1){
+						if(this->camp!=etat.getPersonnages()[res]->getCamp()){				
 							positionAjoutee.setX(abscisse);
 							positionAjoutee.setY(ordonnee);
 							// On ne peut attaquer sa propre case
 							if(!positionAjoutee.equals(this -> position)){
 								ListePosAtq.push_back(positionAjoutee);
 							}
+						}
 					}
 				}
 			}
@@ -194,3 +197,6 @@ TypePersonnageID Personnage::getType(){
 int Personnage::getCodeArme(){
 	return codeArme;
 }
+
+
+

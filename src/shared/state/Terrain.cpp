@@ -13,16 +13,15 @@ bool Terrain::isTerrain(){
 	return true;
 }
 
-bool Terrain::isOccupe(Etat& etat){
-
-	bool resultat = false;
+int Terrain::isOccupe(Etat& etat){
+	int resultat=-1;
 	vector<std::unique_ptr<Personnage>> & listePersonnages = etat.getPersonnages();
 	
 	/* On compare la position de la case evaluee avec celles des personnages pour savoir si
 		une unite est dessus */
 	for(size_t i=0; i < listePersonnages.size(); i++){
 		if (position.equals(listePersonnages[i]->getPosition())){
-			resultat = true;
+			resultat = i;
 			break;
 		
 		}
