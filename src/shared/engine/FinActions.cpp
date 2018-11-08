@@ -13,6 +13,11 @@ FinActions::FinActions(state::Personnage& cible, bool newJoueur):cible(cible){
 }
 
 void FinActions::execute(state::Etat& etat){
-	cible.setStatut(ATTENTE);
-	cout << cible.getNom() << " termine son tour." << endl;
+	if (cible.getStatut()!=ATTENTE && cible.getStatut()!=MORT){
+		cible.setStatut(ATTENTE);
+		cout << cible.getNom() << " termine son tour." << endl;
+	}
+	else if(cible.getStatut()==ATTENTE){
+		cout << cible.getNom() << " est en attente, il ne peut plus effectuer d'actions." <<endl; 
+	}
 }
