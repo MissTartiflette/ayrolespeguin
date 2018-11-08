@@ -39,9 +39,15 @@ void Attaque::execute (state::Etat& etat){
 				int esquive_cible=cible.getStatistiques().getEsquive();
 				string nomArme_cible=cible.getNomArme();
 				
+								
+				if (contreAtk == true){
+					cout << "\tCONTRE-ATTAQUE" << endl;
+				}
+				
 				//-----------------triangle des armes--------------------------------
 				int bonus_attaque=-1;
 				int bonus_esquive=-1;
+				string afficheBonus;
 
 				if(nomArme_cible==nomArme_attaquant){
 					bonus_attaque=0;
@@ -54,48 +60,57 @@ void Attaque::execute (state::Etat& etat){
 				else if((nomArme_attaquant=="Hache" && nomArme_cible=="Lance")|| (nomArme_attaquant=="Lance" && nomArme_cible=="Epee") || (nomArme_attaquant=="Epee" && nomArme_cible=="Hache")){
 					bonus_attaque=5;
 					bonus_esquive=5;
+					afficheBonus = "\t|\tBonus d'arme pour " + attaquant.getNom() + ": +5 en ATTAQUE et +5 en ESQUIVE";
 				}
 				else if ((nomArme_cible=="Hache" && nomArme_attaquant=="Lance")|| (nomArme_cible=="Lance" && nomArme_attaquant=="Epee") || (nomArme_cible=="Epee" && nomArme_attaquant=="Hache")){
 					bonus_attaque=-5;
 					bonus_esquive=-5;
+					afficheBonus = "\t|\tMalus d'arme pour " + attaquant.getNom() + ": -5 en ATTAQUE et -5 en ESQUIVE";
 				}
-				cout<< "bonus attq : " <<bonus_attaque << ", bonus esquive : " << bonus_esquive << endl;
+
 				//------------------------succes ou echec----------------------------------
-				cout << attaquant.getNom() << " attaque " << cible.getNom() << "." << endl;
+				cout << "\t- " << attaquant.getNom() << " attaque " << cible.getNom() << " ! -" << endl;
+				cout << afficheBonus << endl;
 				srand(time(NULL));
 				int chanceEsquive=rand()%100 + 1;
 				
 				//------------------------echec de l'attaque-------------------------------
 				if(chanceEsquive<=esquive_cible + bonus_esquive){
-					cout << cible.getNom() << " evite l'attaque.";
-					cout << " L'attaque echoue ! " << endl;
+					cout << "\t|\t " << cible.getNom() << " évite l'attaque." << endl;
+					cout << "\t|\t L'attaque échoue ! " << endl;
 				}
 				//------------------------succes de l'attaque-------------------------------
 				else{
 				//------------------------Calcul bonus critique-------------------------------------
 					srand(time(NULL));
 					int chanceCritique= rand()%100 + 1 ;
-					cout << "CHANCE CRITIQUE : " << chanceCritique << endl;
 					int bonus_critique=0;
 					if(chanceCritique<=critique_attaquant){
 						bonus_critique=5;
+						cout << "\t|\t COUP CRITIQUE ! (+" << bonus_critique << " dégâts)" << endl;
 					}
-					cout<< "bonus critique : " <<bonus_critique << endl;
+
 				//-------------------------Calcul degats------------------------------------
 					int degats=attaque_attaquant-defense_cible + bonus_attaque + bonus_critique;
+					if (degats < 0){
+						degats = 0;
+					}
 				//---------------------------Attaque--------------------------------------
 					cible.getStatistiques().setPV(pv_cible-degats);
-					cout << cible.getNom() << " perd " << degats << " PV.";
-					cout << " Il ne lui reste plus que " << cible.getStatistiques().getPV() << " PV."<< endl;
+					cout << "\t|\t " << cible.getNom() << " perd " << degats << " PV. " << endl;
+					cout << "\t|\t Il ne lui reste plus que " << cible.getStatistiques().getPV() << " PV."<< endl;
 				}
 
 				if(cible.getStatistiques().getPV()==0){
 					cible.setStatut(MORT);
 					cible.getPosition().setX(-1);
 					cible.getPosition().setY(-1);
-					cout << cible.getNom() << " est mort." << endl;
+					cout << "\t\t++ " << cible.getNom() << " est mort. ++" << endl;
+					FinActions finattaque(attaquant, joueur);
+					sleep(2);
+					finattaque.execute(etat);
 				}
-
+				
 				else{
 					if(contreAtk==false){
 						Attaque contre_attaque(cible, attaquant, !joueur);
@@ -104,30 +119,39 @@ void Attaque::execute (state::Etat& etat){
 						contre_attaque.execute(etat);	
 					}
 					if(contreAtk==true){
-						// Le tour du contre-attaquant ne se termine pas apres sa contre-attaque
+						/*// Le tour du contre-attaquant ne se termine pas apres sa contre-attaque
 						if(attaquant.getType()==ARCHER && cible.getType()!=ARCHER){
-							FinActions finattaque(cible, joueur);
-							sleep(2);
-							finattaque.execute(etat);		
-						}
-						else{
 							FinActions finattaque(attaquant, joueur);
 							sleep(2);
+							finattaque.execute(etat);		
+						}*/
+						//else{
+							FinActions finattaque(cible, joueur);
+							sleep(2);
 							finattaque.execute(etat);
-						}		
+						//}		
 					}
 					
 				}
-							
-				
 			
 		}
+		
+		// Cas attaque impossible
 		else{
-			cout << "Attaque non autorisee !" << endl;
-			
+			if (contreAtk == true){
+				cout << "\t CONTRE-ATTAQUE IMPOSSIBLE : ennemi hors de portée !" << endl;
+				FinActions finattaque(cible, joueur);
+				sleep(2);
+				finattaque.execute(etat);
+			}
+			else{
+				cout << "Attaque non autorisée !" << endl;
+			}		
 		}
 	}
 	else if(attaquant.getStatut()==ATTENTE){
-		cout << cible.getNom() << " est en attente, il ne peut plus effectuer d'actions." <<endl;  
+		cout << attaquant.getNom() << " a terminé son tour d'actions, il ne peut plus attaquer." <<endl;  
 	}
+	
+	cout << "\n" ;
 }

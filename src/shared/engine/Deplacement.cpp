@@ -41,25 +41,23 @@ void Deplacement::execute (state::Etat& etat){
 				cible.getPosition().setX(destination.getX());
 				cible.getPosition().setY(destination.getY());
 				cible.setChampMove(cible.getChampMove()-1);
-				cout << cible.getNom() << " s'est déplace sur la case de coordonnees [" << destination.getX() << ", " << destination.getY() << "] avec succes !" << endl;	
-				cout << "Il lui reste " << cible.getChampMove() << " points de deplacement." << endl;
+				cout << cible.getNom() << " se déplace sur la case de coordonnées [" << destination.getX() << ", " << destination.getY() << "] avec succès !" << endl;	
+				cout << "\tIl lui reste " << cible.getChampMove() << " points de deplacement." << endl;
 				
 				// Nouveau bonus de terrain
 				TerrainPraticable& refTerrainDestination = static_cast<TerrainPraticable&>(*etat.getGrille()[destination.getY()][destination.getX()]);
 				
-				cout << refTerrainDestination.getTerrainPraticableID() << "/"<<destination.getX()<<"/"<<destination.getY()<< endl;
-				cout << "Tuile " << etat.getGrille()[destination.getY()][destination.getX()]-> getCodeTuile()<<endl;
-				
+								
 				if (refTerrainDestination.getTerrainPraticableID() == FORET){
 					cible.getStatistiques().setEsquive(cible.getStatistiques().getEsquive()+refTerrainDestination.getStatistiques().getEsquive());
-					cout << "Il obtient un bonus de +" ;
-					cout << refTerrainDestination.getStatistiques().getEsquive() << " en ESQUIVE sur cette case FORET." << endl;
+					cout << "+ Il obtient un bonus de +" ;
+					cout << refTerrainDestination.getStatistiques().getEsquive() << " en ESQUIVE sur cette case FORET. +" << endl;
 					
 				}
 				else if (refTerrainDestination.getTerrainPraticableID() == COLLINE){
 					cible.getStatistiques().setDefense(cible.getStatistiques().getDefense()+refTerrainDestination.getStatistiques().getDefense());
-					cout << "Il obtient un bonus de +" ;
-					cout << refTerrainDestination.getStatistiques().getDefense() << " en DEFENSE sur cette case COLLINE." << endl;
+					cout << "+ Il obtient un bonus de +" ;
+					cout << refTerrainDestination.getStatistiques().getDefense() << " en DEFENSE sur cette case COLLINE. +" << endl;
 				}
 				
 			}
@@ -72,6 +70,8 @@ void Deplacement::execute (state::Etat& etat){
 		}
 	}
 	else if (cible.getStatut()==ATTENTE){
-		cout << cible.getNom() << " est en attente, il ne peut plus effectuer d'actions." <<endl; 
+		cout << cible.getNom() << " a terminé toutes son tour d'actions, il ne peut plus se déplacer." <<endl; 
 	}
+	
+	cout << "\n" ;
 }

@@ -41,7 +41,7 @@ void Moteur::update (sf::RenderWindow& window){
 		if (commandesActuelles[i]->joueur == joueurActif){
 			commandesActuelles[i]->execute(etatActuel);
 			etatActuel.notifyObservers(stateEvent, etatActuel, window);
-			sleep(1);
+			sleep(2);
 		}
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
@@ -52,16 +52,24 @@ void Moteur::update (sf::RenderWindow& window){
 bool Moteur::verificationFinDeTour(){
 	bool tourChange = true;
 	bool partieFinie = true;
+	//int countJoueurActif = 0;
 	
 	for (unsigned int i = 0; i < etatActuel.getPersonnages().size(); i++){
 		// Si un personage du joueur actif n'est ni mort ni en attente, son tour n'est pas termine
 		if (etatActuel.getPersonnages()[i]->getCamp() == joueurActif){
+			//countJoueurActif = countJoueurActif + 1;
 			if (etatActuel.getPersonnages()[i]->getStatut() != MORT ){
 				if (etatActuel.getPersonnages()[i]->getStatut() != ATTENTE){
 					tourChange = false;
 				}
-			}			
+			}
+			/*
+			else{
+				countJoueurActif = countJoueurActif - 1;
+			}
+			*/			
 		}
+		
 		
 		// Si tous les personnages du joueur non actif ne sont pas morts, la partie n'est pas terminee
 		else{
@@ -70,21 +78,27 @@ bool Moteur::verificationFinDeTour(){
 			}		
 		}
 	}
+	/*
+	if (countJoueurActif == 0){
+		partieFinie = true;
+	}
+	*/
 	
-	if (partieFinie){
-		cout << "Partie Terminee !" << endl;
+	if (partieFinie && tourChange){
+		cout << "\tPartie Terminee !" << endl;
 		etatActuel.setFin(partieFinie);
+		//if (countJoueurActif == 0){							 A MODIFIER}
 		if (joueurActif){
-			cout << "L'armee bleue a gagne !" << endl;
+			cout << "\tL'armee bleue a gagne !" << endl;
 		}
 		else {
-			cout << "L'armee rouge a gagne !" << endl;
+			cout << "\tL'armee rouge a gagne !" << endl;
 		}
 		tourChange = false;
 	}
 		
-	if (tourChange){
-		cout << "Tour Termine.\n" << endl;
+	else if (tourChange && !partieFinie){
+		cout << "\t\t--- Tour Terminé. ---\n" << endl;
 		etatActuel.setTour(etatActuel.getTour()+1);
 	}
 	
@@ -98,8 +112,8 @@ void Moteur::verificationDebutDeTour(){
 	if (changementTour == true){
 	
 		joueurActif = !joueurActif;
-		cout << "-> Changement de joueur <-" << endl;
-		cout << "Tour " << etatActuel.getTour() << endl;
+		cout << "\t-> Changement de joueur <-" << endl;
+		cout << "\t\t--- Tour " << etatActuel.getTour() << " ---\n" << endl;
 		
 		for (unsigned int i = 0; i < etatActuel.getPersonnages().size(); i++){
 		
@@ -119,19 +133,17 @@ void Moteur::verificationDebutDeTour(){
 			
 			// Regain de PV pour les personnages sur des maisons et fortersse en debut de tour
 			else if (etatActuel.getPersonnages()[i]->getCamp() == joueurActif) {
-				TerrainPraticable& refTerrainP = static_cast<TerrainPraticable&>(*etatActuel.getGrille()[etatActuel.getPersonnages()[i]->getPosition().getX()][etatActuel.getPersonnages()[i]->getPosition().getY()]);
+				TerrainPraticable& refTerrainP = static_cast<TerrainPraticable&>(*etatActuel.getGrille()[etatActuel.getPersonnages()[i]->getPosition().getY()][etatActuel.getPersonnages()[i]->getPosition().getX()]);
 				
 				if(refTerrainP.getTerrainPraticableID() == MAISON || refTerrainP.getTerrainPraticableID() == FORTERESSE){
-									
 					etatActuel.getPersonnages()[i]->getStatistiques().setPV(etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV());
 					// Affichage
-					cout << etatActuel.getPersonnages()[i]->getNom() << " recupere " ;
+					cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
 					cout << refTerrainP.getStatistiques().getPV() << " PV.";
-					cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total)." << endl;
+					cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;
 				}
 			}
 		}
-		cout << "* Reinitialisations de debut de tour effectuees *" << endl;
 		
 		changementTour = !changementTour;
 	}

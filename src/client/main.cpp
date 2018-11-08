@@ -58,18 +58,179 @@ int main(int argc,char* argv[]){
 				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),
 													  largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
 													  "Map");
-													  
-				int i=0;
+
+				bool demarrage = true;
+				
 				while (window.isOpen()){
 					sf::Event event;
+					
+					if (demarrage){
+						stateLayer.draw(window);
+						cout << "\t\t--- Tour " << moteur.getEtat().getTour() << " ---" << endl;
+						cout << "(Appuyez sur une touche pour simuler un tour de jeu)" << endl;
+						cout << "(Cette simulation compte 3 tours)\n" << endl;
+						demarrage = false;
+					}
+					
 					while (window.pollEvent(event)){
 						if (event.type == sf::Event::Closed){
 							window.close();
 						}
-						// Si on appuie sur une touche et que la partie n'est pas terminee
-						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin()){
-							moteur.update(window);
+						
+						
+						
+						// Commandes du premier tour pour la simulation (effectuees a l'appuis d'une touche)
+						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin() && moteur.getEtat().getTour() == 1){
+												
+							// Deplacement chevalier bleu
+							Position destination1(3,22);
+							Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1,true);
+							unique_ptr<Commande> ptr_deplacement1 (new Deplacement(deplacement1));
+							moteur.addCommande(0, move(ptr_deplacement1));
 							
+							// Attaque chevalier bleu contre archer rouge
+							Attaque attaque1(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[4],true);
+							unique_ptr<Commande> ptr_attaque1 (new Attaque(attaque1));
+							moteur.addCommande(1, move(ptr_attaque1));
+							
+							// Deplacement chevalier bleu
+							Position destination2(1,20);
+							Deplacement deplacement2(*moteur.getEtat().getPersonnages()[0], destination2,true);
+							unique_ptr<Commande> ptr_deplacement2 (new Deplacement(deplacement2));
+							moteur.addCommande(2, move(ptr_deplacement2));
+							
+							// Fin tour archer bleu
+							FinActions finactions1(*moteur.getEtat().getPersonnages()[0],true);
+							unique_ptr<Commande> ptr_finactions1 (new FinActions(finactions1));
+							moteur.addCommande(3, move(ptr_finactions1));
+							
+							// Premier deplacement du brigand bleu
+							Position destination3(3,20);
+							Deplacement deplacement3(*moteur.getEtat().getPersonnages()[1], destination3,true);
+							unique_ptr<Commande> ptr_deplacement3 (new Deplacement(deplacement3));
+							moteur.addCommande(4, move(ptr_deplacement3));
+							
+							// Deuxieme deplacement du brigand bleu
+							Position destination4(4,20);
+							Deplacement deplacement4(*moteur.getEtat().getPersonnages()[1], destination4,true);
+							unique_ptr<Commande> ptr_deplacement4 (new Deplacement(deplacement4));
+							moteur.addCommande(5, move(ptr_deplacement4));
+							
+							// Troisieme deplacement du brigand bleu
+							Position destination5(4,19);
+							Deplacement deplacement5(*moteur.getEtat().getPersonnages()[1], destination5,true);
+							unique_ptr<Commande> ptr_deplacement5 (new Deplacement(deplacement5));
+							moteur.addCommande(6, move(ptr_deplacement5));
+							
+							// Tentative de quatrieme deplacement du brigand bleu
+							Position destination6(4,18);
+							Deplacement deplacement6(*moteur.getEtat().getPersonnages()[1], destination6,true);
+							unique_ptr<Commande> ptr_deplacement6 (new Deplacement(deplacement6));
+							moteur.addCommande(7, move(ptr_deplacement6));
+														
+							// Fin tour brigand bleu
+							FinActions finactions2(*moteur.getEtat().getPersonnages()[1],true);
+							unique_ptr<Commande> ptr_finactions2 (new FinActions(finactions2));
+							moteur.addCommande(8, move(ptr_finactions2));
+							
+							// Fin tour guerrier bleu
+							FinActions finactions3(*moteur.getEtat().getPersonnages()[3],true);
+							unique_ptr<Commande> ptr_finactions3 (new FinActions(finactions3));
+							moteur.addCommande(9, move(ptr_finactions3));
+						
+							moteur.update(window);							
+														
+							if(moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+							}
+						}
+						
+						// Commandes du deuxieme tour pour la simulation
+						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin() && moteur.getEtat().getTour() == 2){
+						
+							// Fin tour archer rouge
+							FinActions finactions4(*moteur.getEtat().getPersonnages()[4],false);
+							unique_ptr<Commande> ptr_finactions4 (new FinActions(finactions4));
+							moteur.addCommande(0, move(ptr_finactions4));
+							
+							// Tentative d'attaque archer rouge contre chevalier bleu
+							Attaque attaque2(*moteur.getEtat().getPersonnages()[4], *moteur.getEtat().getPersonnages()[2],false);
+							unique_ptr<Commande> ptr_attaque2 (new Attaque(attaque2));
+							moteur.addCommande(1, move(ptr_attaque2));
+						
+							moteur.update(window);							
+														
+							if(moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+							}
+						}
+						
+						// Commandes du troisieme tour pour la simulation
+						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin() && moteur.getEtat().getTour() == 3){
+						
+							// Quatrieme deplacement du brigand bleu
+							Position destination7(4,18);
+							Deplacement deplacement7(*moteur.getEtat().getPersonnages()[1], destination7,true);
+							unique_ptr<Commande> ptr_deplacement7 (new Deplacement(deplacement7));
+							moteur.addCommande(0, move(ptr_deplacement7));
+							
+							// Cinquieme deplacement du brigand bleu
+							Position destination8(3,18);
+							Deplacement deplacement8(*moteur.getEtat().getPersonnages()[1], destination8,true);
+							unique_ptr<Commande> ptr_deplacement8 (new Deplacement(deplacement8));
+							moteur.addCommande(1, move(ptr_deplacement8));
+							
+							// Tentative fin de tour archer rouge
+							FinActions finactions5(*moteur.getEtat().getPersonnages()[4],false);
+							unique_ptr<Commande> ptr_finactions5 (new FinActions(finactions5));
+							moteur.addCommande(2, move(ptr_finactions5));
+							
+							// Fin tour brigand bleu
+							FinActions finactions6(*moteur.getEtat().getPersonnages()[1],true);
+							unique_ptr<Commande> ptr_finactions6 (new FinActions(finactions6));
+							moteur.addCommande(3, move(ptr_finactions6));
+							
+							// Deuxieme deplacement de l'archer bleu
+							Position destination9(1,21);
+							Deplacement deplacement9(*moteur.getEtat().getPersonnages()[0], destination9,true);
+							unique_ptr<Commande> ptr_deplacement9 (new Deplacement(deplacement9));
+							moteur.addCommande(4, move(ptr_deplacement9));
+							
+							// Attaque archer bleu contre guerrier rouge
+							Attaque attaque3(*moteur.getEtat().getPersonnages()[0], *moteur.getEtat().getPersonnages()[4],true);
+							unique_ptr<Commande> ptr_attaque3 (new Attaque(attaque3));
+							moteur.addCommande(5, move(ptr_attaque3));
+							
+							// Attaque chevalier bleu contre guerrier rouge
+							Attaque attaque4(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[4],true);
+							unique_ptr<Commande> ptr_attaque4 (new Attaque(attaque4));
+							moteur.addCommande(6, move(ptr_attaque4));
+							
+							// Fin tour guerrier bleu
+							FinActions finactions7(*moteur.getEtat().getPersonnages()[3],true);
+							unique_ptr<Commande> ptr_finactions7 (new FinActions(finactions7));
+							moteur.addCommande(7, move(ptr_finactions7));
+						
+							moteur.update(window);							
+														
+							if(moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+							}
+						}	
+					}
+					
+					/*
+					if (tourSimule == 1){
+						FinActions finattaque12(*moteur.getEtat().getPersonnages()[4],false);
+						unique_ptr<Commande> ptr_finactions12 (new FinActions(finattaque12));
+						moteur.addCommande(0, move(ptr_finactions12));
+						
 							FinActions finattaque5(*moteur.getEtat().getPersonnages()[4],false);
 							unique_ptr<Commande> ptr_finactions5 (new FinActions(finattaque5));
 							moteur.addCommande(0, move(ptr_finactions5));
@@ -90,43 +251,18 @@ int main(int argc,char* argv[]){
 							Deplacement deplacement3(*moteur.getEtat().getPersonnages()[7], destination3,false);
 							unique_ptr<Commande> ptr_deplacement3 (new Deplacement(deplacement3));
 							moteur.addCommande(4, move(ptr_deplacement3));
-														
-							if(moteur.verificationFinDeTour()){
-								moteur.verificationDebutDeTour();
-								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
-							}
-						}						
 					}
 					
 					
-						
-					
-					
-					if(i==0){
-						i=1;
-						stateLayer.draw(window);
-						cout << "Tour " << moteur.getEtat().getTour() << endl;
+					else if(tourSimule==0){
+						tourSimule=1;
 												
-						// Deplacement chevalier bleu
-						Position destination1(3,22);
-						Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1,true);
-						unique_ptr<Commande> ptr_deplacement1 (new Deplacement(deplacement1));
-						moteur.addCommande(0, move(ptr_deplacement1));						
 						
-						// Attaque chevalier bleu contre archer rouge
-						Attaque attaque1(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[4],true);
-						unique_ptr<Commande> ptr_attaque1 (new Attaque(attaque1));
-						moteur.addCommande(1, move(ptr_attaque1));
+						
 						
 						// Pas d'actions pour les autres personnages bleus
 						
-						// Deplacement chevalier bleu
-						Position destination2(1,20);
-						Deplacement deplacement2(*moteur.getEtat().getPersonnages()[0], destination2,true);
-						unique_ptr<Commande> ptr_deplacement2 (new Deplacement(deplacement2));
-						moteur.addCommande(2, move(ptr_deplacement2));
-												
+																		
 						FinActions finattaque1(*moteur.getEtat().getPersonnages()[1],true);
 						unique_ptr<Commande> ptr_finactions1 (new FinActions(finattaque1));
 						moteur.addCommande(3, move(ptr_finactions1));
@@ -140,10 +276,8 @@ int main(int argc,char* argv[]){
 						unique_ptr<Commande> ptr_finactions4 (new FinActions(finattaque4));
 						moteur.addCommande(5, move(ptr_finactions4));
 						
-						FinActions finattaque0(*moteur.getEtat().getPersonnages()[0],true);
-						unique_ptr<Commande> ptr_finactions0 (new FinActions(finattaque0));
-						moteur.addCommande(6, move(ptr_finactions0));
-					}
+						
+					}*/
 				}
 			}
 		}
