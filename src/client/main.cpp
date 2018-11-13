@@ -37,7 +37,7 @@ int main(int argc,char* argv[]){
 		}
 
 		else if(strcmp(argv[1],"random_ai")==0){
-			cout<<"----testCurseur-----"<<endl;
+			cout<<"----RandomAI-----"<<endl;
 			//----------------------------
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
@@ -137,7 +137,7 @@ int main(int argc,char* argv[]){
 						}
 						
 						
-						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && (moteur.getEtat().verifStatut()==-1)){
 							size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
 							size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
 							int nPerso=moteur.getEtat().getGrille()[xCurs][yCurs]->isOccupe(moteur.getEtat());
