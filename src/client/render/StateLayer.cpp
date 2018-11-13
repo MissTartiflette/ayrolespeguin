@@ -22,32 +22,40 @@ StateLayer::StateLayer(state::Etat& etat){
 	std::unique_ptr<TileSet> ptr_tilesetPersonnages (new TileSet(tilesetPersonnages));
 	tilesets.push_back(move(ptr_tilesetPersonnages));
 	
-	TileSet tilesetInfos(INFOSTILESET);
-	std::unique_ptr<TileSet> ptr_tilesetInfos (new TileSet(tilesetInfos));
-	tilesets.push_back(move(ptr_tilesetInfos));
-	
+	TileSet tilesetCurseur(CURSEURTILESET);
+	std::unique_ptr<TileSet> ptr_tilesetCurseur (new TileSet(tilesetCurseur));
+	tilesets.push_back(move(ptr_tilesetCurseur));
 
+	// tilesetInfos(INFOSTILESET);
+	//std::unique_ptr<TileSet> ptr_tilesetInfos (new TileSet(tilesetInfos));
+	//tilesets.push_back(move(ptr_tilesetInfos));
+	
 }
 
 void StateLayer::initSurfaces(state::Etat& etat){	
 	Surface surfGrille;
 	Surface surfPersonnage;
-	
+	Surface surfCurseur;
+
 	surfGrille.loadGrille(etat, tilesets[0]->getImageFile(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etat.getGrille().size(), etat.getGrille()[0].size());
 
 	surfPersonnage.loadPersonnage(etat, tilesets[1]->getImageFile(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etat.getPersonnages().size(), 1);
+
+	surfCurseur.loadCurseur(etat, tilesets[2]->getImageFile(), sf::Vector2u(tilesets[2]->getCellWidth(), tilesets[2]->getCellHeight()), 1, 1);
 	
 	std::unique_ptr<Surface> ptr_surfGrille (new Surface(surfGrille));
 	std::unique_ptr<Surface> ptr_surfPersonnage (new Surface(surfPersonnage));
+	std::unique_ptr<Surface> ptr_surfCurseur (new Surface(surfCurseur));
 	
 	if(surfaces.size()!=0){
-		for(size_t i=0; i<=surfaces.size();i++){
+		while(surfaces.size()!=0){
 			surfaces.pop_back();
 		}
 	}
 	
 	surfaces.push_back(move(ptr_surfGrille));
 	surfaces.push_back(move(ptr_surfPersonnage));
+	surfaces.push_back(move(ptr_surfCurseur));
 	
 }
 
@@ -70,6 +78,7 @@ void StateLayer::draw (sf::RenderWindow& window){
 	window.clear();
 	window.draw(*surfaces[0]);	// Dessin de la grille				
 	window.draw(*surfaces[1]);	// Dessin des personnages
+	window.draw(*surfaces[2]);	// Dessin du curseur
 	window.display();
 }
 

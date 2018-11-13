@@ -1,6 +1,6 @@
 #include "engine.h"
 #include "state.h"
-
+#include <unistd.h>
 #include <iostream>
 
 using namespace engine;

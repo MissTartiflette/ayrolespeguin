@@ -66,7 +66,7 @@ void Deplacement::execute (state::Etat& etat){
 			}
 		}
 		else {
-			cout<< "Deplacement impossible, tous les points de mouvement ont été utilisés pour ce tour." << endl;
+			cout<< "Deplacement impossible, tous les points de " << cible.getNom() << " de mouvement ont été utilisés pour ce tour." << endl;
 		}
 	}
 	else if (cible.getStatut()==ATTENTE){

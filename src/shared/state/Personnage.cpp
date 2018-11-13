@@ -20,7 +20,7 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		champMove=3;
 		champAttack=2;
 		statistiques.setPV(20);
-		statistiques.setAttaque(11);
+		statistiques.setAttaque(20);
 		statistiques.setDefense(6);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(50);

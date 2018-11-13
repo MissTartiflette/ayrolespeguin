@@ -8,14 +8,41 @@
 using namespace state;
 using namespace std;
 
-std::vector<std::vector<std::unique_ptr<Terrain>>>& Etat::getGrille(){
-	std::vector<std::vector<std::unique_ptr<Terrain>>> & refGrille = grille;
+int Etat::initCurseur(){
+	ptr_curseur=nullptr;
+	ptr_curseur=new Curseur();
+	return 1;
+}
+
+int Etat::deleteCurseur(){
+	//delete ptr_curseur;
+	//ptr_curseur=nullptr;
+	return 1;
+}
+
+int Etat::verifStatut(){
+	int selec=-1;
+	for(size_t i=0; i<personnages.size(); i++){
+		if(personnages[i]->getStatut()==SELECTIONNE){
+			selec=i;
+			break;
+		}
+	}
+	return selec;
+}
+
+vector<vector<unique_ptr<Terrain>>>& Etat::getGrille(){
+	vector<vector<unique_ptr<Terrain>>> & refGrille = grille;
 	return refGrille;
 }
 
-std::vector<std::unique_ptr<Personnage>>& Etat::getPersonnages(){
-	std::vector<std::unique_ptr<Personnage>> & refPersonnages = personnages;
+vector<unique_ptr<Personnage>>& Etat::getPersonnages(){
+	vector<unique_ptr<Personnage>> & refPersonnages = personnages;
 	return refPersonnages;
+}
+
+Curseur* Etat::getCurseur(){
+	return ptr_curseur;
 }
 
 int Etat::getTour(){

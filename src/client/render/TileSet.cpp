@@ -23,6 +23,12 @@ TileSet::TileSet(TileSetID newID){
 		cellHeight=16;
 		imageFile="res/grille_tileset.png";
 	}
+	
+	else if (id==CURSEURTILESET){
+		cellWidth=16;
+		cellHeight=16;
+		imageFile="res/curseur_tileset.png";
+	}
 }
 
 const int TileSet::getTileSetID(){

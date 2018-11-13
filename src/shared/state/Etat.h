@@ -7,6 +7,7 @@
 #include <string>
 
 namespace state {
+  class Curseur;
   class Correspondances;
   class Observable;
   class Terrain;
@@ -14,6 +15,7 @@ namespace state {
 }
 
 #include "Observable.h"
+#include "Curseur.h"
 #include "Terrain.h"
 #include "Personnage.h"
 
@@ -28,6 +30,7 @@ namespace state {
     std::vector<std::unique_ptr<Personnage>> personnages;
     int tour     = 1;
     bool fin;
+    Curseur* ptr_curseur;
     // Operations
   public:
     std::vector<std::vector<std::unique_ptr<Terrain>>>& getGrille ();
@@ -38,6 +41,10 @@ namespace state {
     int initPersonnages (Correspondances& correspondances);
     void setFin (bool resultat);
     bool getFin ();
+    Curseur* getCurseur ();
+    int initCurseur ();
+    int deleteCurseur ();
+    int verifStatut ();
     // Setters and Getters
   };
 

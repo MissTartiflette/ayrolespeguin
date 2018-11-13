@@ -13,6 +13,7 @@
 #include "state/TerrainPraticableID.h"
 #include "state/Correspondances.h"
 #include "state/Element.h"
+#include "state/Curseur.h"
 #include "state/Terrain.h"
 #include "state/StatutPersonnageID.h"
 #include "state/Personnage.h"

@@ -41,7 +41,7 @@ void Moteur::update (sf::RenderWindow& window){
 		if (commandesActuelles[i]->joueur == joueurActif){
 			commandesActuelles[i]->execute(etatActuel);
 			etatActuel.notifyObservers(stateEvent, etatActuel, window);
-			sleep(2);
+			//sleep(2);
 		}
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
@@ -75,6 +75,7 @@ bool Moteur::verificationFinDeTour(){
 		else{
 			if (etatActuel.getPersonnages()[i]->getStatut() != MORT ){
 				partieFinie = false;
+				
 			}		
 		}
 	}

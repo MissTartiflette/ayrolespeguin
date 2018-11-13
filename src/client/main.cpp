@@ -32,6 +32,304 @@ int main(int argc,char* argv[]){
 		if(strcmp(argv[1],"hello")==0){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
+
+		else if(strcmp(argv[1],"curseur")==0){
+			cout<<"----testCurseur-----"<<endl;
+			//----------------------------
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			std::string chemin_fichier_map_txt = "res/map1.txt";
+			
+			Correspondances tab_corres = Correspondances();
+			
+			//-----------------------------
+			Moteur moteur;
+			
+			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
+				moteur.getEtat().initPersonnages(tab_corres);
+				moteur.getEtat().initCurseur();
+				StateLayer stateLayer(moteur.getEtat());
+				stateLayer.initSurfaces(moteur.getEtat());
+				
+				//----------------------------
+				StateLayer* ptr_stateLayer=&stateLayer;
+				moteur.getEtat().registerObserver(ptr_stateLayer);
+
+				//------------------------
+				
+				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),
+													  largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
+													  "Map");
+
+				bool demarrage = true;
+				
+				while (window.isOpen()){
+					sf::Event event;
+					
+					if (demarrage){
+						stateLayer.draw(window);
+						cout << "\t\t--- Tour " << moteur.getEtat().getTour() << " ---" << endl;
+						cout << "(Appuyez sur une touche pour simuler un tour de jeu)" << endl;
+						cout << "(Cette simulation compte 3 tours)\n" << endl;
+						demarrage = false;
+					}
+					
+					while (window.pollEvent(event)){
+						if (event.type == sf::Event::Closed){
+							window.close();
+						}
+
+						else if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+						}
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && (moteur.getEtat().verifStatut()==-1)){
+							StateEvent stateEvent(ALLCHANGED);
+							size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+							size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+							if(xCurs!=largeur_map_cases-1){
+								Position nextPosCurs(xCurs+1, yCurs);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+							}
+						}
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && (moteur.getEtat().verifStatut()==-1)){
+							StateEvent stateEvent(ALLCHANGED);
+							size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+							size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+							if(xCurs!=0){
+								Position nextPosCurs(xCurs-1, yCurs);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+							}
+						}
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && (moteur.getEtat().verifStatut()==-1)){
+							StateEvent stateEvent(ALLCHANGED);
+							size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+							size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+							if(yCurs!=longueur_map_cases-1){
+								Position nextPosCurs(xCurs, yCurs+1);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+							}
+						}
+
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && (moteur.getEtat().verifStatut()==-1)){
+							StateEvent stateEvent(ALLCHANGED);
+							size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+							size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+							if(yCurs!=0){
+								Position nextPosCurs(xCurs, yCurs-1);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+							}
+						}
+						
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
+							size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+							size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+							int nPerso=moteur.getEtat().getGrille()[xCurs][yCurs]->isOccupe(moteur.getEtat());
+						
+							if(nPerso!=-1){
+								if(moteur.getEtat().getPersonnages()[nPerso]->getCamp()){
+									cout<< "Prise de controle de " << moteur.getEtat().getPersonnages()[nPerso]->getNom() << endl;
+									moteur.getEtat().getPersonnages()[nPerso]->setStatut(SELECTIONNE);
+									
+								}
+								else{
+									cout<<"Ce personnage appartient à l'adversaire " <<endl; sleep(1);
+								}
+							}
+							else{
+								cout<< "Ceci est une : " << moteur.getEtat().getGrille()[yCurs][xCurs]->getNom() << endl; sleep(1);
+
+							}
+							usleep(250000);
+							
+						}
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && (moteur.getEtat().verifStatut()!=-1)){
+							int nPerso=moteur.getEtat().verifStatut();
+
+							size_t xPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getX();
+							size_t yPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getY();
+
+							if(xPers!=largeur_map_cases-1){
+								Position nextPosPers(xPers+1, yPers);
+								Deplacement deplacement_droite(*moteur.getEtat().getPersonnages()[nPerso], nextPosPers, moteur.getEtat().getPersonnages()[nPerso]->getCamp());
+								unique_ptr<Commande> ptr_deplacement_droite (new Deplacement(deplacement_droite));
+								moteur.addCommande(0, move(ptr_deplacement_droite));
+								
+									Position nextPosCurs(xPers+1, yPers);
+									moteur.getEtat().getCurseur()->move(nextPosCurs);
+								
+								
+								moteur.update(window);
+								
+							}
+						}
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && (moteur.getEtat().verifStatut()!=-1)){
+							int nPerso=moteur.getEtat().verifStatut();
+
+							size_t xPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getX();
+							size_t yPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getY();
+
+							if(xPers!=0){
+								Position nextPosPers(xPers-1, yPers);
+								Deplacement deplacement_droite(*moteur.getEtat().getPersonnages()[nPerso], nextPosPers,moteur.getEtat().getPersonnages()[nPerso]->getCamp());
+								unique_ptr<Commande> ptr_deplacement_droite (new Deplacement(deplacement_droite));
+								moteur.addCommande(0, move(ptr_deplacement_droite));
+							
+								Position nextPosCurs(xPers-1, yPers);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								
+								moteur.update(window);
+								
+								
+							}
+						}
+
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && (moteur.getEtat().verifStatut()!=-1)){
+							int nPerso=moteur.getEtat().verifStatut();
+
+							size_t xPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getX();
+							size_t yPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getY();
+
+							if(yPers!=longueur_map_cases-1){
+								Position nextPosPers(xPers, yPers+1);
+								Deplacement deplacement_droite(*moteur.getEtat().getPersonnages()[nPerso], nextPosPers,moteur.getEtat().getPersonnages()[nPerso]->getCamp());
+								unique_ptr<Commande> ptr_deplacement_droite (new Deplacement(deplacement_droite));
+								moteur.addCommande(0, move(ptr_deplacement_droite));
+								
+								Position nextPosCurs(xPers, yPers+1);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								
+								moteur.update(window);
+								
+							}
+						}
+
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && (moteur.getEtat().verifStatut()!=-1)){
+							int nPerso=moteur.getEtat().verifStatut();
+
+							size_t xPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getX();
+							size_t yPers=moteur.getEtat().getPersonnages()[nPerso]->getPosition().getY();
+
+							if(yPers!=0){
+								Position nextPosPers(xPers, yPers-1);
+								Deplacement deplacement_droite(*moteur.getEtat().getPersonnages()[nPerso], nextPosPers,moteur.getEtat().getPersonnages()[nPerso]->getCamp());
+								unique_ptr<Commande> ptr_deplacement_droite (new Deplacement(deplacement_droite));
+								moteur.addCommande(0, move(ptr_deplacement_droite));
+
+								
+								Position nextPosCurs(xPers, yPers-1);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
+								
+								
+								moteur.update(window);
+								
+							}
+						}
+
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && (moteur.getEtat().verifStatut()!=-1)){
+							int nPerso=moteur.getEtat().verifStatut();
+							
+							FinActions finaction(*moteur.getEtat().getPersonnages()[nPerso],moteur.getEtat().getPersonnages()[nPerso]->getCamp());
+							unique_ptr<Commande> ptr_finaction (new FinActions(finaction));
+							moteur.addCommande(0, move(ptr_finaction));
+
+							moteur.update(window);
+							usleep(250000);
+						}
+						
+						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && (moteur.getEtat().verifStatut()!=-1)){
+							cout<< "A a été appuyé " << endl;
+							usleep(250000);
+							//bool isAttaque=false;
+							StateEvent stateEvent(ALLCHANGED);
+							int attaquant=moteur.getEtat().verifStatut();
+							int cible=-1;
+							
+							//while(!isAttaque){
+							while((cible==-1) || (cible==attaquant)){
+								
+								if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+									if(xCurs!=largeur_map_cases-1){
+									Position nextPosCurs(xCurs+1, yCurs);
+									
+									moteur.getEtat().getCurseur()->move(nextPosCurs);
+										
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);usleep(200000);}
+								}
+								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+									if(xCurs!=0){
+									Position nextPosCurs(xCurs-1, yCurs);	
+									moteur.getEtat().getCurseur()->move(nextPosCurs);
+									
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);usleep(200000);}
+								}
+								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+									if(yCurs!=longueur_map_cases-1){
+									Position nextPosCurs(xCurs, yCurs+1);	
+									moteur.getEtat().getCurseur()->move(nextPosCurs);
+									
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);usleep(200000);}
+								}
+								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
+									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
+									if(yCurs!=0){
+									Position nextPosCurs(xCurs, yCurs-1);
+									moteur.getEtat().getCurseur()->move(nextPosCurs);
+									
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window); usleep(200000);}
+								}
+								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+									cible=-2;
+									usleep(100000);
+								}
+								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
+									cible=moteur.getEtat().getGrille()[moteur.getEtat().getCurseur()->getPosition().getX()][moteur.getEtat().getCurseur()->getPosition().getY()]->isOccupe(moteur.getEtat());
+								}
+							}
+								
+								if(cible>=0){
+									Attaque attaque(*moteur.getEtat().getPersonnages()[attaquant], *moteur.getEtat().getPersonnages()[cible],moteur.getEtat().getPersonnages()[attaquant]->getCamp());
+									unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+									moteur.addCommande(0, move(ptr_attaque));
+									//isAttaque=true;
+									moteur.update(window);
+								}
+								else{
+									cout<< "attaque annulée" << endl;
+									if(!moteur.getEtat().getCurseur()->getPosition().equals(moteur.getEtat().getPersonnages()[attaquant]->getPosition())){
+										Position nextPosCurs(moteur.getEtat().getPersonnages()[attaquant]->getPosition().getX(), moteur.getEtat().getPersonnages()[attaquant]->getPosition().getY());
+										moteur.getEtat().getCurseur()->move(nextPosCurs);
+									
+										moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+										
+									}
+									
+								}
+							
+						}
+			
+					}
+				
+				}	
+			}
+		}
 		
 		else if(strcmp(argv[1],"engine")==0){
 			cout<<"--- Moteur du jeu ---"<<endl;
@@ -46,6 +344,7 @@ int main(int argc,char* argv[]){
 			
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
+				moteur.getEtat().initCurseur();
 				StateLayer stateLayer(moteur.getEtat());
 				stateLayer.initSurfaces(moteur.getEtat());
 				

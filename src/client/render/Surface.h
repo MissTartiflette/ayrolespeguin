@@ -32,6 +32,7 @@ namespace render {
     bool loadPersonnage (state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int height);
     virtual void  draw (sf::RenderTarget& target, sf::RenderStates states) const;
     void updateTilesPersonnages (state::Etat& etatLayer);
+    bool loadCurseur (state::Etat& etatLayer, const std::string&   tileset, sf::Vector2u  tileSize, unsigned int  width, unsigned int  height);
     // Setters and Getters
   };
 
