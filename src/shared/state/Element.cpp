@@ -13,6 +13,9 @@ Element::Element(){
 	statistiques.setCritique(0);
 }
 
+Element::~Element(){
+}
+
 std::string Element::getNom(){
 	return nom;
 }

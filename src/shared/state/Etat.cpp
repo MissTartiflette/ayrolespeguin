@@ -14,10 +14,10 @@ int Etat::initCurseur(){
 	return 1;
 }
 
-int Etat::deleteCurseur(){
-	//delete ptr_curseur;
-	//ptr_curseur=nullptr;
-	return 1;
+Etat::~Etat(){
+	delete ptr_curseur;
+	ptr_curseur=nullptr;
+	
 }
 
 int Etat::verifStatut(){
