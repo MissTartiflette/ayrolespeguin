@@ -43,8 +43,8 @@ namespace state {
     bool getFin ();
     Curseur* getCurseur ();
     int initCurseur ();
-    int deleteCurseur ();
     int verifStatut ();
+    ~Etat ();
     // Setters and Getters
   };
 

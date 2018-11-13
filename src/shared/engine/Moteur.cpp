@@ -133,7 +133,7 @@ void Moteur::verificationDebutDeTour(){
 			}
 			
 			// Regain de PV pour les personnages sur des maisons et fortersse en debut de tour
-			else if (etatActuel.getPersonnages()[i]->getCamp() == joueurActif) {
+			else if (etatActuel.getPersonnages()[i]->getCamp() == joueurActif && etatActuel.getPersonnages()[i]->getStatut()!=MORT) {
 				TerrainPraticable& refTerrainP = static_cast<TerrainPraticable&>(*etatActuel.getGrille()[etatActuel.getPersonnages()[i]->getPosition().getY()][etatActuel.getPersonnages()[i]->getPosition().getX()]);
 				
 				if(refTerrainP.getTerrainPraticableID() == MAISON || refTerrainP.getTerrainPraticableID() == FORTERESSE){
@@ -148,6 +148,10 @@ void Moteur::verificationDebutDeTour(){
 		
 		changementTour = !changementTour;
 	}
+}
+
+bool Moteur::getJoueurActif(){
+	return joueurActif;
 }
 
  

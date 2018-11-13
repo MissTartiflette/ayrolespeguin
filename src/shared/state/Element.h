@@ -36,6 +36,7 @@ namespace state {
     virtual bool equals (Element& other);
     int getCodeTuile ();
     void setCodeTuile (int newCodeTuile);
+    virtual ~Element ();
     // Setters and Getters
   };
 

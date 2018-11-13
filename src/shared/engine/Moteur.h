@@ -40,6 +40,7 @@ namespace engine {
     void update (sf::RenderWindow& window);
     bool verificationFinDeTour ();
     void verificationDebutDeTour ();
+    bool getJoueurActif ();
     // Setters and Getters
   };
 

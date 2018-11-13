@@ -18,10 +18,13 @@ void testSFML() {
 #include "state.h"
 #include "render.h"
 #include "engine.h"
+#include "ai.h"
+
 using namespace std;
 using namespace state;
 using namespace render;
 using namespace engine;
+using namespace ai;
 
 int main(int argc,char* argv[]){
 
@@ -33,7 +36,7 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 
-		else if(strcmp(argv[1],"curseur")==0){
+		else if(strcmp(argv[1],"random_ai")==0){
 			cout<<"----testCurseur-----"<<endl;
 			//----------------------------
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
@@ -61,6 +64,7 @@ int main(int argc,char* argv[]){
 													  "Map");
 
 				bool demarrage = true;
+				RandomIA adversaireIA;
 				
 				while (window.isOpen()){
 					sf::Event event;
@@ -82,6 +86,10 @@ int main(int argc,char* argv[]){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
 								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+						}
+						
+						else if(moteur.getJoueurActif()==false){
+							adversaireIA.run(moteur, window);						
 						}
 						
 						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && (moteur.getEtat().verifStatut()==-1)){
@@ -136,7 +144,7 @@ int main(int argc,char* argv[]){
 						
 							if(nPerso!=-1){
 								if(moteur.getEtat().getPersonnages()[nPerso]->getCamp()){
-									cout<< "Prise de controle de " << moteur.getEtat().getPersonnages()[nPerso]->getNom() << endl;
+									cout<< "Prise de contrôle de " << moteur.getEtat().getPersonnages()[nPerso]->getNom() << endl;
 									moteur.getEtat().getPersonnages()[nPerso]->setStatut(SELECTIONNE);
 									
 								}
@@ -298,6 +306,7 @@ int main(int argc,char* argv[]){
 								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
 									cible=-2;
 									usleep(100000);
+									
 								}
 								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
 									cible=moteur.getEtat().getGrille()[moteur.getEtat().getCurseur()->getPosition().getX()][moteur.getEtat().getCurseur()->getPosition().getY()]->isOccupe(moteur.getEtat());
@@ -318,15 +327,10 @@ int main(int argc,char* argv[]){
 										moteur.getEtat().getCurseur()->move(nextPosCurs);
 									
 										moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
-										
 									}
-									
 								}
-							
 						}
-			
 					}
-				
 				}	
 			}
 		}
@@ -597,6 +601,7 @@ int main(int argc,char* argv[]){
 			if(etat_initial.initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 			cout << "Taille grille : " <<etat_initial.getGrille().size() << "x" << etat_initial.getGrille()[0].size() << endl;
 			etat_initial.initPersonnages(tab_corres);
+			etat_initial.initCurseur();
 			cout << "Taille liste de personnages : " << etat_initial.getPersonnages().size() << endl;
 			
 			// -- Affichage de cet Etat --
