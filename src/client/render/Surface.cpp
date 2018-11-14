@@ -98,7 +98,7 @@ bool Surface::loadCurseur(state::Etat& etatLayer, const std::string& tileset, sf
 		//On met a jour les tuiles des personnages en fonction de leur statut
 		
 	  	// on récupère le numéro de tuile courant
-		int tileNumber=0;
+		int tileNumber=etatLayer.getCurseur()->getCodeTuile();
 		
 	    // on en déduit sa position dans la texture du tileset
 	    int tu = tileNumber % (texture.getSize().x / tileSize.x);
