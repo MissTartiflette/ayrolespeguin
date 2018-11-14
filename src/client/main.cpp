@@ -81,7 +81,7 @@ int main(int argc,char* argv[]){
 						if (event.type == sf::Event::Closed){
 							window.close();
 						}
-
+						
 						else if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
@@ -89,7 +89,8 @@ int main(int argc,char* argv[]){
 						}
 						
 						else if(moteur.getJoueurActif()==false){
-							adversaireIA.run(moteur, window);						
+							adversaireIA.run(moteur, window);
+							break;						
 						}
 						
 						else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && (moteur.getEtat().verifStatut()==-1)){
@@ -172,8 +173,8 @@ int main(int argc,char* argv[]){
 								unique_ptr<Commande> ptr_deplacement_droite (new Deplacement(deplacement_droite));
 								moteur.addCommande(0, move(ptr_deplacement_droite));
 								
-									Position nextPosCurs(xPers+1, yPers);
-									moteur.getEtat().getCurseur()->move(nextPosCurs);
+								Position nextPosCurs(xPers+1, yPers);
+								moteur.getEtat().getCurseur()->move(nextPosCurs);
 								
 								
 								moteur.update(window);
@@ -261,6 +262,10 @@ int main(int argc,char* argv[]){
 							//bool isAttaque=false;
 							StateEvent stateEvent(ALLCHANGED);
 							int attaquant=moteur.getEtat().verifStatut();
+							int champDroit=moteur.getEtat().getPersonnages()[attaquant]->getChampAttack();
+							int champGauche=champDroit;
+							int champHaut=champDroit;
+							int champBas=champDroit;
 							int cible=-1;
 							
 							//while(!isAttaque){
@@ -269,39 +274,51 @@ int main(int argc,char* argv[]){
 								if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
 									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
 									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
-									if(xCurs!=largeur_map_cases-1){
+									if(xCurs!=largeur_map_cases-1 && champDroit!=0){
 									Position nextPosCurs(xCurs+1, yCurs);
 									
 									moteur.getEtat().getCurseur()->move(nextPosCurs);
-										
-									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);usleep(200000);}
+									champDroit=champDroit-1;
+									champGauche++;	
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+									usleep(200000);
+									}
 								}
 								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
 									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
 									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
-									if(xCurs!=0){
+									if(xCurs!=0 && champGauche!=0){
 									Position nextPosCurs(xCurs-1, yCurs);	
 									moteur.getEtat().getCurseur()->move(nextPosCurs);
-									
-									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);usleep(200000);}
+									champGauche=champGauche-1;
+									champDroit++;
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+									usleep(200000);
+									}
 								}
 								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
 									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
 									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
-									if(yCurs!=longueur_map_cases-1){
+									if(yCurs!=longueur_map_cases-1 && champBas!=0){
 									Position nextPosCurs(xCurs, yCurs+1);	
 									moteur.getEtat().getCurseur()->move(nextPosCurs);
-									
-									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);usleep(200000);}
+									champBas=champBas-1;
+									champHaut++;
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window);
+									usleep(200000);
+									}
 								}
 								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
 									size_t xCurs=moteur.getEtat().getCurseur()->getPosition().getX();
 									size_t yCurs=moteur.getEtat().getCurseur()->getPosition().getY();
-									if(yCurs!=0){
+									if(yCurs!=0 && champHaut!=0){
 									Position nextPosCurs(xCurs, yCurs-1);
 									moteur.getEtat().getCurseur()->move(nextPosCurs);
-									
-									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window); usleep(200000);}
+									champHaut=champHaut-1;
+									champBas++;
+									moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat(), window); 
+									usleep(200000);
+									}
 								}
 								else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
 									cible=-2;
