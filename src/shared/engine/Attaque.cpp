@@ -106,9 +106,14 @@ void Attaque::execute (state::Etat& etat){
 					cible.getPosition().setX(-1);
 					cible.getPosition().setY(-1);
 					cout << "\t\t++ " << cible.getNom() << " est mort. ++" << endl;
-					FinActions finattaque(attaquant, joueur);
-					sleep(2);
-					finattaque.execute(etat);
+					
+					// Si un personnage meurt lors d'une contre-attaque, le tour du personnage qui a 
+					// contre-attaqué ne se termine pas
+					if (contreAtk == false){
+						FinActions finattaque(attaquant, joueur);
+						sleep(2);
+						finattaque.execute(etat);
+					}
 				}
 				
 				else{
