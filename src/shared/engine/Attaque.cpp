@@ -150,7 +150,7 @@ void Attaque::execute (state::Etat& etat){
 				finattaque.execute(etat);
 			}
 			else{
-				cout << "Attaque non autorisée !" << endl;
+				cout << "\tAttaque non autorisée !" << endl;
 			}		
 		}
 	}

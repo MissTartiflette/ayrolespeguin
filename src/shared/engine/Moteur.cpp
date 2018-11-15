@@ -137,11 +137,23 @@ void Moteur::verificationDebutDeTour(){
 				TerrainPraticable& refTerrainP = static_cast<TerrainPraticable&>(*etatActuel.getGrille()[etatActuel.getPersonnages()[i]->getPosition().getY()][etatActuel.getPersonnages()[i]->getPosition().getX()]);
 				
 				if(refTerrainP.getTerrainPraticableID() == MAISON || refTerrainP.getTerrainPraticableID() == FORTERESSE){
-					etatActuel.getPersonnages()[i]->getStatistiques().setPV(etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV());
-					// Affichage
-					cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
-					cout << refTerrainP.getStatistiques().getPV() << " PV.";
-					cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;
+					// Le maximum de points de vie est de 25
+					if (etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV()<= 25){
+						etatActuel.getPersonnages()[i]->getStatistiques().setPV(etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV());
+						// Affichage
+						cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
+						cout << refTerrainP.getStatistiques().getPV() << " PV.";
+						cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;
+					}
+					else if (etatActuel.getPersonnages()[i]->getStatistiques().getPV() == 25){
+						cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " a déjà atteint son maximum de PV. +" << endl;
+					}
+					else {
+						cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
+						cout << 25 -  etatActuel.getPersonnages()[i]->getStatistiques().getPV()<< " PV.";
+						etatActuel.getPersonnages()[i]->getStatistiques().setPV(25);
+						cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;
+					}
 				}
 			}
 		}
