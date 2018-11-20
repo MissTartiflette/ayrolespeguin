@@ -36,9 +36,8 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 
-		else if(strcmp(argv[1],"random_ai")==0){
-			cout<<"\t\t--- RandomAI ---"<<endl;
-			//----------------------------
+		else if(strcmp(argv[1],"random_ai")==0 || strcmp(argv[1],"heuristic_ai")==0){
+			
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
 			
@@ -63,17 +62,32 @@ int main(int argc,char* argv[]){
 													  largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
 													  "Map");
 
-				bool demarrage = true;
-				RandomIA adversaireIA;
 				
+				
+				RandomIA random_ai;
+				HeuristicIA heuristic_ai;
+				
+				if(strcmp(argv[1],"heuristic_ai")==0){
+					cout<<"\t\t--- HeuristicAI ---"<<endl;
+				}
+				else if(strcmp(argv[1],"random_ai")==0){
+					cout<<"\t\t--- RandomAI ---"<<endl;
+				}
+				
+				bool demarrage = true ;
 				int changementX = 0, changementY = 0;
-								
+				
+				
 				while (window.isOpen()){
 					sf::Event event;
 					
-					// Appel à l'IA aleatoire pour le tour adverse
-					adversaireIA.run(moteur, window);
-					
+					// Appel à l'IA choisie pour le tour adverse
+					if(strcmp(argv[1],"heuristic_ai")==0){
+						heuristic_ai.run(moteur, window);
+					}
+					else {
+						random_ai.run(moteur, window);
+					}
 					// Verication de fin de tour et reinitialisations de debut de tour
 					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
