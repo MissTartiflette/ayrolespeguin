@@ -5,4 +5,5 @@
 #include "ai/IA.h"
 #include "ai/RandomIA.h"
 #include "ai/HeuristicIA.h"
+#include "ai/Sommet.h"
 #endif

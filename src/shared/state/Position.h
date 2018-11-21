@@ -2,9 +2,11 @@
 #ifndef STATE__POSITION__H
 #define STATE__POSITION__H
 
+#include <vector>
 
 namespace state {
   class Position;
+  class Etat;
 }
 
 namespace state {
@@ -25,6 +27,7 @@ namespace state {
     void setY (int newY);
     bool equals (Position& other);
     int distance (Position& other);
+    std::vector<Position> getVoisins (Etat& etat);
     // Setters and Getters
   };
 

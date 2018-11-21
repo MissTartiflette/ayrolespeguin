@@ -41,6 +41,7 @@ namespace engine {
     bool verificationFinDeTour ();
     void verificationDebutDeTour ();
     bool getJoueurActif ();
+    void gestionCurseur (sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases);
     // Setters and Getters
   };
 

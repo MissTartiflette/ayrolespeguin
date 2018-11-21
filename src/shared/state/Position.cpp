@@ -41,4 +41,5 @@ bool Position::equals(Position& other){
 
 int Position::distance(Position& other){
 	return abs(x-other.getX())+abs(y-other.getY());
-}	
+}
+

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 
+
 using namespace state;
 using namespace engine;
 using namespace render;
@@ -166,4 +167,224 @@ bool Moteur::getJoueurActif(){
 	return joueurActif;
 }
 
+
+void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases){
+
+	StateEvent stateEvent(ALLCHANGED);
+
+	/*  CURSEUR  */
+							
+	// Appui d'une flèche directionnelle ou de Enter sans selection 
+	// (moteur.getEtat().verifStatut()!=-1)
+	if(newEvent.type==sf::Event::KeyPressed && (etatActuel.verifStatut()==-1)){
+		
+		int changementX = 0, changementY = 0;
+		size_t xCurs=etatActuel.getCurseur()->getPosition().getX();
+		size_t yCurs=etatActuel.getCurseur()->getPosition().getY();
+		int numeroPerso = etatActuel.getGrille()[xCurs][yCurs]->isOccupe(etatActuel);
+							
+		// Fleches directionnelles (deplacement du curseur)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+			if(xCurs!=largeur_map_cases-1){changementX = 1;}
+			else{changementX = -xCurs;}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+			if(xCurs!=0){changementX = -1;}
+			else{changementX = largeur_map_cases-1 -xCurs;}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+			if(yCurs!=0){changementY = -1;}
+			else{changementY = longueur_map_cases-1 -yCurs;}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+			if(yCurs!=longueur_map_cases-1){changementY = 1;}
+			else{changementY = -yCurs;}
+		}
+							
+		// Enter (selection)
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){								
+			if(numeroPerso != -1){
+				// Selection du personnage
+				if(etatActuel.getPersonnages()[numeroPerso]->getCamp() && etatActuel.getPersonnages()[numeroPerso]->getStatut() != ATTENTE && etatActuel.getPersonnages()[numeroPerso]->getStatut() != MORT){
+					etatActuel.getCurseur()->setCodeTuile(3);
+					cout<< "\t\t-> Début du tour de " << etatActuel.getPersonnages()[numeroPerso]->getNom() << " <-" << endl;
+					etatActuel.getPersonnages()[numeroPerso]->setStatut(SELECTIONNE);
+					
+					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+				}									
+				else if (etatActuel.getPersonnages()[numeroPerso]->getStatut() == ATTENTE){
+					cout << "\t\tCe personnage a déjà terminé son tour." << endl;
+				}
+				else{	cout<<"Ce personnage appartient à l'adversaire !" <<endl;}
+			}
+			
+			// Affichage du type de terrain							
+			else{	cout<< "Ceci est une : ";
+					cout << etatActuel.getGrille()[yCurs][xCurs]->getNom() << endl;
+			}
+		}
+							
+		// Déplacement du curseur
+		if (changementX != 0 || changementY !=0){
+			Position nextPosCurs(xCurs+changementX, yCurs+changementY);
+			etatActuel.getCurseur()->move(nextPosCurs);
+			etatActuel.notifyObservers(stateEvent, etatActuel, window);
+			
+			changementX = 0;
+			changementY = 0;
+		}
+	}
+	
+	// Declenchement d'un attaque
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && (etatActuel.verifStatut()!=-1)){
+	
+		cout<< "\tAttaque en préparation" << endl;
+							
+		int attaquant=etatActuel.verifStatut();
+		int champDroit=etatActuel.getPersonnages()[attaquant]->getChampAttack();
+		int champGauche=champDroit;
+		int champHaut=champDroit;
+		int champBas=champDroit;
+		int cible=-1;
+		
+		// Changement de couleur du curseur
+		etatActuel.getCurseur()->setCodeTuile(1);
+		etatActuel.notifyObservers(stateEvent, etatActuel, window);
+		
+		// Actions
+		while((cible==-1) || (cible==attaquant)){	
+									
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+				size_t xCurs=etatActuel.getCurseur()->getPosition().getX();
+				size_t yCurs=etatActuel.getCurseur()->getPosition().getY();
+				
+				if(xCurs!=largeur_map_cases-1 && champDroit!=0){
+					Position nextPosCurs(xCurs+1, yCurs);
+					etatActuel.getCurseur()->move(nextPosCurs);
+					champDroit=champDroit-1;
+					champGauche++;	
+					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					usleep(200000);
+				}
+			}
+			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+				size_t xCurs=etatActuel.getCurseur()->getPosition().getX();
+				size_t yCurs=etatActuel.getCurseur()->getPosition().getY();
+				
+				if(xCurs!=0 && champGauche!=0){
+					Position nextPosCurs(xCurs-1, yCurs);	
+					etatActuel.getCurseur()->move(nextPosCurs);
+					champGauche=champGauche-1;
+					champDroit++;
+					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					usleep(200000);
+				}
+			}
+			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+				size_t xCurs=etatActuel.getCurseur()->getPosition().getX();
+				size_t yCurs=etatActuel.getCurseur()->getPosition().getY();
+			
+				if(yCurs!=longueur_map_cases-1 && champBas!=0){
+					Position nextPosCurs(xCurs, yCurs+1);	
+					etatActuel.getCurseur()->move(nextPosCurs);
+					champBas=champBas-1;
+					champHaut++;
+					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					usleep(200000);
+				}
+			}
+			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+				size_t xCurs=etatActuel.getCurseur()->getPosition().getX();
+				size_t yCurs=etatActuel.getCurseur()->getPosition().getY();
+				if(yCurs!=0 && champHaut!=0){
+					Position nextPosCurs(xCurs, yCurs-1);
+					etatActuel.getCurseur()->move(nextPosCurs);
+					champHaut=champHaut-1;
+					champBas++;
+					etatActuel.notifyObservers(stateEvent, etatActuel, window); 
+					usleep(200000);
+				}
+			}
+								
+			// Annulation de l'attaque avec N
+			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
+				cible=-2;
+				cout<< "\tAttaque annulée" << endl;									
+				etatActuel.getCurseur()->setCodeTuile(3);
+				etatActuel.notifyObservers(stateEvent, etatActuel, window);
+								
+				if(!etatActuel.getCurseur()->getPosition().equals(etatActuel.getPersonnages()[attaquant]->getPosition())){
+					Position nextPosCurs(etatActuel.getPersonnages()[attaquant]->getPosition().getX(), etatActuel.getPersonnages()[attaquant]->getPosition().getY());
+					etatActuel.getCurseur()->move(nextPosCurs);
+									
+					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+				}
+			}
+								
+			// Validation de l'attaque avec Enter
+			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
+				cible=etatActuel.getGrille()[etatActuel.getCurseur()->getPosition().getX()][etatActuel.getCurseur()->getPosition().getY()]->isOccupe(etatActuel);
+			}
+		}
+							
+		// Validation de l'attaque
+		if(cible>=0){
+			Attaque attaque(*etatActuel.getPersonnages()[attaquant], *etatActuel.getPersonnages()[cible], etatActuel.getPersonnages()[attaquant]->getCamp());
+			unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+			addCommande(0, move(ptr_attaque));
+			
+			etatActuel.getCurseur()->setCodeTuile(2);
+			etatActuel.notifyObservers(stateEvent, etatActuel, window);				
+			update(window);
+			etatActuel.getCurseur()->setCodeTuile(0);
+			etatActuel.notifyObservers(stateEvent, etatActuel, window);									
+		}
+	}
+	
+	// Actions avec personnage selectionne (moteur.getEtat().verifStatut()!=-1)
+	else if(newEvent.type==sf::Event::KeyPressed && (etatActuel.verifStatut()!=-1)){
+		
+		int changementX = 0, changementY = 0;
+		int numeroPerso=etatActuel.verifStatut();
+		size_t xPerso=etatActuel.getPersonnages()[numeroPerso]->getPosition().getX();
+		size_t yPerso=etatActuel.getPersonnages()[numeroPerso]->getPosition().getY();
+							
+		// Fleches directionnelles (deplacement du curseur et du personnage)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+			if(xPerso!=largeur_map_cases-1){changementX = 1;}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+			if(xPerso!=0){changementX = -1;}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+			if(yPerso!=0){changementY = -1;}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+			if(yPerso!=longueur_map_cases-1){changementY = 1;}
+		}
+							
+		// Touche Z : Fin de tour d'actions
+		else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)){							
+			FinActions finaction(*etatActuel.getPersonnages()[numeroPerso], etatActuel.getPersonnages()[numeroPerso]->getCamp());
+			unique_ptr<Commande> ptr_finaction (new FinActions(finaction));
+			addCommande(0, move(ptr_finaction));								
+			etatActuel.getCurseur()->setCodeTuile(0);
+			update(window);
+		}
+		
+		// Deplacement du curseur et du personnage selectionne
+		if (changementX != 0 || changementY != 0){
+			Position nextPos(xPerso+changementX, yPerso+changementY);
+			Deplacement deplacement(*etatActuel.getPersonnages()[numeroPerso], nextPos, joueurActif);
+			unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
+			addCommande(0, move(ptr_deplacement));
+								
+			etatActuel.getCurseur()->move(nextPos);
+			update(window);
+								
+			changementX = 0;
+			changementY = 0;
+		}
+	}
+}
  
