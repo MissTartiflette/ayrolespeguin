@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include <string>
 
 namespace state {
   class Etat;
@@ -42,6 +43,7 @@ namespace render {
     void initSurfaces (state::Etat& etat);
     void stateChanged (const state::StateEvent& e, state::Etat& etat, sf::RenderWindow& window);
     void draw (sf::RenderWindow& window);
+    void writeTexteAction (std::string chaine, sf::RenderWindow& window);
     // Setters and Getters
   };
 

@@ -200,7 +200,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			if(yCurs!=longueur_map_cases-1){changementY = 1;}
 			else{changementY = -yCurs;}
 		}
-							
+		
 		// Enter (selection)
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){								
 			if(numeroPerso != -1){
@@ -221,6 +221,11 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			// Affichage du type de terrain							
 			else{	cout<< "Ceci est une : ";
 					cout << etatActuel.getGrille()[yCurs][xCurs]->getNom() << endl;
+					std::string newChaine = "Ce terrain est de type " + etatActuel.getGrille()[yCurs][xCurs]->getNom();
+					
+					stateEvent.texte = newChaine;
+					stateEvent.stateEventID = TEXTECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel, window);
 			}
 		}
 							

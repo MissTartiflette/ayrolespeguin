@@ -51,21 +51,11 @@ int main(int argc,char* argv[]){
 				moteur.getEtat().initCurseur();
 				StateLayer stateLayer(moteur.getEtat());
 				stateLayer.initSurfaces(moteur.getEtat());
-				
-				
-				Position testPos(10,12);
-				Sommet testSom(testPos);
-				std::vector<Sommet> listSom = testSom.getVoisins(moteur.getEtat());
-				for (unsigned i = 0; i < listSom.size(); i++){
-					cout << "[" << listSom[i].getPosition().getX() << "," << listSom[i].getPosition().getY() << "]  "; 
-				}
-				cout << "\n";
-				
-				
+								
 				StateLayer* ptr_stateLayer=&stateLayer;
 				moteur.getEtat().registerObserver(ptr_stateLayer);
 				
-				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),"Map");
+				sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
 				
 				RandomIA random_ai;
 				HeuristicIA heuristic_ai;
@@ -81,6 +71,7 @@ int main(int argc,char* argv[]){
 				
 				while (window.isOpen()){
 					sf::Event event;
+					
 					
 					// Appel à l'IA choisie pour le tour adverse
 					if(strcmp(argv[1],"heuristic_ai")==0){

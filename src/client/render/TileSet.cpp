@@ -7,9 +7,9 @@ TileSet::TileSet(TileSetID newID){
 	id=newID;
 
 	if (id == INFOSTILESET){
-		cellWidth=0;
-		cellHeight=0;
-		imageFile="";	
+		/*cellWidth=64;
+		cellHeight=64;
+		imageFile="res/mugshots_tileset.png";*/	
 	}
 	
 	else if (id==PERSONNAGETILESET){

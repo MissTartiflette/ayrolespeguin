@@ -9,7 +9,7 @@ namespace render {
     INFOSTILESET     = 1,
     PERSONNAGETILESET     = 2,
     GRILLETILESET     = 3,
-    CURSEURTILESET
+    CURSEURTILESET     = 4
   };
 
 };

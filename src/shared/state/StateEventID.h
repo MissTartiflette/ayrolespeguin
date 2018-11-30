@@ -9,7 +9,8 @@ namespace state {
     ALLCHANGED,
     GRILLECHANGED,
     TOURCHANGED,
-    PERSONNAGECHANGED
+    PERSONNAGECHANGED,
+    TEXTECHANGED     = 4
   };
 
 };

@@ -2,6 +2,7 @@
 #ifndef STATE__STATEEVENT__H
 #define STATE__STATEEVENT__H
 
+#include <string>
 
 #include "StateEventID.h"
 
@@ -13,6 +14,7 @@ namespace state {
     // Attributes
   public:
     StateEventID stateEventID;
+    std::string texte;
     // Operations
   public:
     StateEvent (StateEventID se);
