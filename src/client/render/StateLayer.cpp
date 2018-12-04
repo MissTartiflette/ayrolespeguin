@@ -98,31 +98,15 @@ void StateLayer::draw (sf::RenderWindow& window){
 	quad[3].position = sf::Vector2f(0.f, 600.f);
 	quad[0].color = sf::Color::Blue;
 	quad[1].color = sf::Color::Red;
-	quad[2].color = sf::Color::Red;
-	quad[3].color = sf::Color::Blue;
+	quad[2].color = sf::Color::Black;
+	quad[3].color = sf::Color::Black;
 	
 	sf::RectangleShape rectangle(sf::Vector2f(390.f, 30.f));
 	rectangle.setPosition(5.f, 405.f);
 	rectangle.setFillColor(sf::Color::Black);
 	
 	window.draw(quad);
-	window.draw(rectangle);
-	/*
-	sf::Font font;
-	font.loadFromFile("res/8-BIT-WONDER.TTF");
-	sf::Text text;
-	text.setFont(font);
-	text.setString("Fire Emblem Unofficial");
-	text.setCharacterSize(10);
-	text.setFillColor(sf::Color::White);
-	text.setPosition(10.f, 400.f);
-	
-	sf::FloatRect textRect = text.getLocalBounds();
-	text.setOrigin(textRect.left + textRect.width/2.0f,
-		           textRect.top  + textRect.height/2.0f);
-	text.setPosition(sf::Vector2f(400/2.0f, 420));
-	window.draw(text);*/
-	
+	window.draw(rectangle);	
 	window.display();
 }
 

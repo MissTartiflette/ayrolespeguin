@@ -2,14 +2,11 @@
 #ifndef AI__HEURISTICIA__H
 #define AI__HEURISTICIA__H
 
-#include <vector>
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 namespace engine {
   class Moteur;
-};
-namespace ai {
-  class Sommet;
 };
 namespace sf {
   class RenderWindow;
@@ -18,11 +15,12 @@ namespace state {
   class Position;
 };
 namespace ai {
+  class Sommet;
   class IA;
 }
 
-#include "Sommet.h"
 #include "state/Position.h"
+#include "Sommet.h"
 #include "IA.h"
 
 namespace ai {
@@ -32,13 +30,15 @@ namespace ai {
     // Associations
     // Operations
   public:
-    std::vector<state::Position> AlgorithmeA (engine::Moteur& moteur, int i, int indiceVoisin);
-    int isPresentSom (std::vector<Sommet> listeSommet, Sommet sommet);
-    int indiceMinimum (std::vector<int>  liste);
     void run (engine::Moteur& moteur, sf::RenderWindow& window);
-    int findIndiceVoisin (engine::Moteur& moteur, int personnage);
+    std::vector<state::Position> AlgorithmeA (engine::Moteur& moteur, int i, state::Position posDestination);
+    int isPresentSom (std::vector<Sommet> listeSommet, Sommet sommet);
     int isPresentPos (std::vector<Sommet> listeSommet, state::Position position);
+    int findIndiceVoisin (engine::Moteur& moteur, int personnage);
+    int indiceMinimum (std::vector<int>  liste);
     int indiceMaximum (std::vector<int> liste);
+    state::Position findRefuge (engine::Moteur& moteur, int personnage);
+    state::Position findObjectif (engine::Moteur& moteur, int indicePerso);
     // Setters and Getters
   };
 

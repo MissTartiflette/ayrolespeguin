@@ -56,5 +56,3 @@ sf::Texture& TileSet::getTexture(){
 }
 
 
-
-
