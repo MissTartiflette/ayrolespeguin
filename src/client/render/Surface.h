@@ -3,7 +3,6 @@
 #define RENDER__SURFACE__H
 
 #include <SFML/Graphics.hpp>
-#include <string>
 
 namespace sf {
   class Texture;
@@ -28,11 +27,11 @@ namespace render {
     sf::VertexArray quads;
     // Operations
   public:
-    bool loadGrille (state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int  height);
-    bool loadPersonnage (state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int height);
+    bool loadGrille (state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int  height);
+    bool loadPersonnage (state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height);
+    bool loadCurseur (state::Etat& etatLayer, sf::Texture&   textureTileset, sf::Vector2u  tileSize, unsigned int  width, unsigned int  height);
     virtual void  draw (sf::RenderTarget& target, sf::RenderStates states) const;
     void updateTilesPersonnages (state::Etat& etatLayer);
-    bool loadCurseur (state::Etat& etatLayer, const std::string&   tileset, sf::Vector2u  tileSize, unsigned int  width, unsigned int  height);
     // Setters and Getters
   };
 

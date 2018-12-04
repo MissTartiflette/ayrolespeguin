@@ -37,11 +37,11 @@ void StateLayer::initSurfaces(state::Etat& etat){
 	Surface surfCurseur;
 	//Surface surfInfos;
 
-	surfGrille.loadGrille(etat, tilesets[0]->getImageFile(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etat.getGrille().size(), etat.getGrille()[0].size());
+	surfGrille.loadGrille(etat, tilesets[0]->getTexture(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etat.getGrille().size(), etat.getGrille()[0].size());
 
-	surfPersonnage.loadPersonnage(etat, tilesets[1]->getImageFile(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etat.getPersonnages().size(), 1);
+	surfPersonnage.loadPersonnage(etat, tilesets[1]->getTexture(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etat.getPersonnages().size(), 1);
 
-	surfCurseur.loadCurseur(etat, tilesets[2]->getImageFile(), sf::Vector2u(tilesets[2]->getCellWidth(), tilesets[2]->getCellHeight()), 1, 1);
+	surfCurseur.loadCurseur(etat, tilesets[2]->getTexture(), sf::Vector2u(tilesets[2]->getCellWidth(), tilesets[2]->getCellHeight()), 1, 1);
 	
 	std::unique_ptr<Surface> ptr_surfGrille (new Surface(surfGrille));
 	std::unique_ptr<Surface> ptr_surfPersonnage (new Surface(surfPersonnage));
@@ -127,6 +127,12 @@ void StateLayer::draw (sf::RenderWindow& window){
 }
 
 void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& window){
+	sf::RectangleShape rectangle(sf::Vector2f(390.f, 30.f));
+	rectangle.setPosition(5.f, 405.f);
+	rectangle.setFillColor(sf::Color::Black);
+	
+	window.draw(rectangle);
+	
 	sf::Font font;
 	font.loadFromFile("res/8-BIT-WONDER.TTF");
 	sf::Text text;
@@ -143,4 +149,5 @@ void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& wi
 	window.draw(text);
 	window.display();
 }
+
 

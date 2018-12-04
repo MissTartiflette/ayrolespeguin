@@ -3,12 +3,15 @@
 using namespace render;
 
 
-bool Surface::loadGrille(state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
-    
+bool Surface::loadGrille(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
+    	/*
         // on charge la texture du tileset
         if (!texture.loadFromFile(tileset)){
             return false;
-		}
+		}*/
+		
+		texture = textureTileset;
+		
       	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
 	   	quads.setPrimitiveType(sf::Quads);
        	quads.resize(width * height * 4);
@@ -45,12 +48,15 @@ bool Surface::loadGrille(state::Etat& etatLayer, const std::string& tileset, sf:
 }
 
 
-bool Surface::loadPersonnage(state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
-    
+bool Surface::loadPersonnage(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
+    	/*
         // on charge la texture du tileset
         if (!texture.loadFromFile(tileset)){
             return false;
-		}
+		}*/
+		
+		texture = textureTileset;
+		
       	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
 	   	quads.setPrimitiveType(sf::Quads);
        	quads.resize(width * height * 4);
@@ -84,12 +90,16 @@ bool Surface::loadPersonnage(state::Etat& etatLayer, const std::string& tileset,
 		return true;
 }
 
-bool Surface::loadCurseur(state::Etat& etatLayer, const std::string& tileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
-    
+bool Surface::loadCurseur(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
+    	/*
         // on charge la texture du tileset
         if (!texture.loadFromFile(tileset)){
             return false;
 		}
+		*/
+		
+		texture = textureTileset;
+		
       	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
 	   	quads.setPrimitiveType(sf::Quads);
        	quads.resize(width * height * 4);

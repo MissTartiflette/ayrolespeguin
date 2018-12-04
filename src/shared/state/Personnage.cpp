@@ -20,10 +20,10 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		champMove=3;
 		champAttack=2;
 		statistiques.setPV(20);
-		statistiques.setAttaque(20);
-		statistiques.setDefense(6);
+		statistiques.setAttaque(15);
+		statistiques.setDefense(10);
 		statistiques.setEsquive(10);
-		statistiques.setCritique(50);
+		statistiques.setCritique(30);
 		if (newCamp == true){
 			codeTuile = 0;
 		}
@@ -37,9 +37,9 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		champAttack=1;
 		statistiques.setPV(20);
 		statistiques.setAttaque(15);
-		statistiques.setDefense(8);
-		statistiques.setEsquive(15);
-		statistiques.setCritique(10);
+		statistiques.setDefense(10);
+		statistiques.setEsquive(10);
+		statistiques.setCritique(30);
 		if (newCamp == true){
 			codeTuile = 1;
 		}
@@ -51,11 +51,11 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		codeArme=3;
 		champMove=5;
 		champAttack=1;
-		statistiques.setPV(25);
+		statistiques.setPV(20);
 		statistiques.setAttaque(15);
-		statistiques.setDefense(8);
-		statistiques.setEsquive(15);
-		statistiques.setCritique(0);
+		statistiques.setDefense(10);
+		statistiques.setEsquive(10);
+		statistiques.setCritique(30);
 		if (newCamp == true){
 			codeTuile = 3;
 		}
@@ -70,8 +70,8 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		statistiques.setPV(20);
 		statistiques.setAttaque(15);
 		statistiques.setDefense(10);
-		statistiques.setEsquive(0);
-		statistiques.setCritique(10);
+		statistiques.setEsquive(10);
+		statistiques.setCritique(30);
 		if (newCamp == true){
 			codeTuile = 2;
 		}

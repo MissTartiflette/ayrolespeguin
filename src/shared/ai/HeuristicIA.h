@@ -27,6 +27,8 @@ namespace ai {
     int findIndiceVoisin (engine::Moteur& moteur, int personnage);
     int findchoixOptimalDep (engine::Moteur&  moteur, int indiceVoisin, int personnage);
     int indiceMinimum (std::vector<int> liste);
+    int indiceMaximum (std::vector<int> liste);
+    state::Position findRefuge (engine::Moteur& moteur, int personnage);
     // Setters and Getters
   };
 

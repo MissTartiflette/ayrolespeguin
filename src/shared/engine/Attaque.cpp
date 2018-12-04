@@ -46,26 +46,21 @@ void Attaque::execute (state::Etat& etat){
 				
 				//-----------------triangle des armes--------------------------------
 				int bonus_attaque=-1;
-				int bonus_esquive=-1;
 				string afficheBonus;
 
 				if(nomArme_cible==nomArme_attaquant){
 					bonus_attaque=0;
-					bonus_esquive=0;
 				}
 				else if(nomArme_attaquant=="Arc" || nomArme_cible=="Arc"){
 					bonus_attaque=0;
-					bonus_esquive=0;
 				}
 				else if((nomArme_attaquant=="Hache" && nomArme_cible=="Lance")|| (nomArme_attaquant=="Lance" && nomArme_cible=="Epee") || (nomArme_attaquant=="Epee" && nomArme_cible=="Hache")){
 					bonus_attaque=5;
-					bonus_esquive=5;
-					afficheBonus = "\t|\tBonus d'arme pour " + attaquant.getNom() + ": +5 en ATTAQUE et +5 en ESQUIVE";
+					afficheBonus = "\t|\tBonus d'arme pour " + attaquant.getNom() + ": +5 en ATTAQUE";
 				}
 				else if ((nomArme_cible=="Hache" && nomArme_attaquant=="Lance")|| (nomArme_cible=="Lance" && nomArme_attaquant=="Epee") || (nomArme_cible=="Epee" && nomArme_attaquant=="Hache")){
 					bonus_attaque=-5;
-					bonus_esquive=-5;
-					afficheBonus = "\t|\tMalus d'arme pour " + attaquant.getNom() + ": -5 en ATTAQUE et -5 en ESQUIVE";
+					afficheBonus = "\t|\tMalus d'arme pour " + attaquant.getNom() + ": -5 en ATTAQUE";
 				}
 
 				//------------------------succes ou echec----------------------------------
@@ -75,7 +70,7 @@ void Attaque::execute (state::Etat& etat){
 				int chanceEsquive=rand()%100 + 1;
 				
 				//------------------------echec de l'attaque-------------------------------
-				if(chanceEsquive<=esquive_cible + bonus_esquive){
+				if(chanceEsquive<=esquive_cible){
 					cout << "\t|\t " << cible.getNom() << " évite l'attaque." << endl;
 					cout << "\t|\t L'attaque échoue ! " << endl;
 				}

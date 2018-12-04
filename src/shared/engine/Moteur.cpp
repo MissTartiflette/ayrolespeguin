@@ -219,10 +219,8 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			}
 			
 			// Affichage du type de terrain							
-			else{	cout<< "Ceci est une : ";
-					cout << etatActuel.getGrille()[yCurs][xCurs]->getNom() << endl;
-					std::string newChaine = "Ce terrain est de type " + etatActuel.getGrille()[yCurs][xCurs]->getNom();
-					
+			else{	std::string newChaine = "Ce terrain est de type " + etatActuel.getGrille()[yCurs][xCurs]->getNom();
+					cout << newChaine << endl;
 					stateEvent.texte = newChaine;
 					stateEvent.stateEventID = TEXTECHANGED;
 					etatActuel.notifyObservers(stateEvent, etatActuel, window);
@@ -233,6 +231,11 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 		if (changementX != 0 || changementY !=0){
 			Position nextPosCurs(xCurs+changementX, yCurs+changementY);
 			etatActuel.getCurseur()->move(nextPosCurs);
+			etatActuel.notifyObservers(stateEvent, etatActuel, window);			
+			
+			std::string newChaine = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->getNom();
+			stateEvent.texte = newChaine;
+			stateEvent.stateEventID = TEXTECHANGED;
 			etatActuel.notifyObservers(stateEvent, etatActuel, window);
 			
 			changementX = 0;

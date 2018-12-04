@@ -4,12 +4,13 @@
 using namespace render;
 
 TileSet::TileSet(TileSetID newID){
+
 	id=newID;
 
 	if (id == INFOSTILESET){
-		/*cellWidth=64;
+		cellWidth=64;
 		cellHeight=64;
-		imageFile="res/mugshots_tileset.png";*/	
+		imageFile="res/mugshots_tileset.png";
 	}
 	
 	else if (id==PERSONNAGETILESET){
@@ -29,6 +30,8 @@ TileSet::TileSet(TileSetID newID){
 		cellHeight=16;
 		imageFile="res/curseur_tileset.png";
 	}
+	
+	textureTileset.loadFromFile(imageFile);
 }
 
 const int TileSet::getTileSetID(){
@@ -46,5 +49,12 @@ const int TileSet::getCellHeight(){
 const std::string  TileSet::getImageFile (){
 	return imageFile;
 }
+
+sf::Texture& TileSet::getTexture(){
+	sf::Texture & refTexture = textureTileset;
+	return refTexture ;
+}
+
+
 
 

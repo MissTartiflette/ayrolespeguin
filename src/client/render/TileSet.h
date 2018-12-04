@@ -3,6 +3,11 @@
 #define RENDER__TILESET__H
 
 #include <string>
+#include <SFML/Graphics.hpp>
+
+namespace sf {
+  class Texture;
+}
 
 #include "TileSetID.h"
 
@@ -17,6 +22,7 @@ namespace render {
     int cellWidth;
     int cellHeight;
     std::string imageFile;
+    sf::Texture textureTileset;
     // Operations
   public:
     TileSet (TileSetID newID);
@@ -24,6 +30,7 @@ namespace render {
     int const getCellWidth ();
     int const getCellHeight ();
     int const getTileSetID ();
+    sf::Texture& getTexture ();
     // Setters and Getters
   };
 
