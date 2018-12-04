@@ -2,33 +2,43 @@
 #ifndef AI__HEURISTICIA__H
 #define AI__HEURISTICIA__H
 
-#include <SFML/Graphics.hpp>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 namespace engine {
   class Moteur;
 };
+namespace ai {
+  class Sommet;
+};
 namespace sf {
   class RenderWindow;
+};
+namespace state {
+  class Position;
 };
 namespace ai {
   class IA;
 }
 
+#include "Sommet.h"
+#include "state/Position.h"
 #include "IA.h"
 
 namespace ai {
 
   /// class HeuristicIA - 
   class HeuristicIA : public ai::IA {
+    // Associations
     // Operations
   public:
+    std::vector<state::Position> AlgorithmeA (engine::Moteur& moteur, int i, int indiceVoisin);
+    int isPresentSom (std::vector<Sommet> listeSommet, Sommet sommet);
+    int indiceMinimum (std::vector<int>  liste);
     void run (engine::Moteur& moteur, sf::RenderWindow& window);
     int findIndiceVoisin (engine::Moteur& moteur, int personnage);
-    int findchoixOptimalDep (engine::Moteur&  moteur, int indiceVoisin, int personnage);
-    int indiceMinimum (std::vector<int> liste);
+    int isPresentPos (std::vector<Sommet> listeSommet, state::Position position);
     int indiceMaximum (std::vector<int> liste);
-    state::Position findRefuge (engine::Moteur& moteur, int personnage);
     // Setters and Getters
   };
 

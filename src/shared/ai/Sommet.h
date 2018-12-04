@@ -4,12 +4,17 @@
 
 #include <vector>
 
+namespace state {
+  class Position;
+};
 namespace ai {
   class Sommet;
 };
 namespace state {
   class Etat;
 }
+
+#include "state/Position.h"
 
 namespace ai {
 
@@ -21,20 +26,23 @@ namespace ai {
     int distanceSource;
     int distanceDestination;
     Sommet* predecesseur;
-    Sommet* suivant;
     // Operations
   public:
-    Sommet (state::Position newPosition);
+    Sommet (Sommet* predecesseur);
     Sommet* getPredecesseur ();
     void setPredecesseur (Sommet* newPredecesseur);
     int getDistanceSource ();
     void setDistanceSource (int newDistanceSource);
     int getDistanceDestination ();
     void setDistanceDestination (int newDistanceDestination);
-    state::Position getPosition ();
+    state::Position& getPosition ();
     void setPosition (state::Position newPosition);
     std::vector<Sommet> getVoisins (state::Etat& etat);
     int getCoutTotal ();
+    ~Sommet ();
+    const Sommet* getPredecesseurC ();
+    void setPredecesseurC (const Sommet* newPredecesseur);
+    Sommet ();
     // Setters and Getters
   };
 

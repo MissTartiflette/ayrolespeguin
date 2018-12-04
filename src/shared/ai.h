@@ -2,8 +2,8 @@
 #ifndef __AI__H
 #define __AI__H
 
+#include "ai/Sommet.h"
 #include "ai/IA.h"
 #include "ai/RandomIA.h"
 #include "ai/HeuristicIA.h"
-#include "ai/Sommet.h"
 #endif
