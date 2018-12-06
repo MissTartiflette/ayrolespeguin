@@ -4,12 +4,7 @@ using namespace render;
 
 
 bool Surface::loadGrille(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
-    	/*
-        // on charge la texture du tileset
-        if (!texture.loadFromFile(tileset)){
-            return false;
-		}*/
-		
+    			
 		texture = textureTileset;
 		
       	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
@@ -49,12 +44,7 @@ bool Surface::loadGrille(state::Etat& etatLayer, sf::Texture& textureTileset, sf
 
 
 bool Surface::loadPersonnage(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
-    	/*
-        // on charge la texture du tileset
-        if (!texture.loadFromFile(tileset)){
-            return false;
-		}*/
-		
+    			
 		texture = textureTileset;
 		
       	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
@@ -91,20 +81,12 @@ bool Surface::loadPersonnage(state::Etat& etatLayer, sf::Texture& textureTileset
 }
 
 bool Surface::loadCurseur(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
-    	/*
-        // on charge la texture du tileset
-        if (!texture.loadFromFile(tileset)){
-            return false;
-		}
-		*/
-		
+    			
 		texture = textureTileset;
 		
       	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
 	   	quads.setPrimitiveType(sf::Quads);
        	quads.resize(width * height * 4);
-        // on remplit le tableau de vertex, avec un quad par tuile
-		//On met a jour les tuiles des personnages en fonction de leur statut
 		
 	  	// on récupère le numéro de tuile courant
 		int tileNumber=etatLayer.getCurseur()->getCodeTuile();
@@ -132,6 +114,46 @@ bool Surface::loadCurseur(state::Etat& etatLayer, sf::Texture& textureTileset, s
 		return true;
 }
 
+bool Surface::loadInfos(state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height){
+
+	texture = textureTileset;
+		
+      	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
+	   	quads.setPrimitiveType(sf::Quads);
+       	quads.resize(width * height * 4);
+		
+	  	// on récupère le numéro de tuile courant
+		int tileNumber=0;
+		
+		for (size_t i = 0; i< etatLayer.getPersonnages().size(); i++){
+			if (etatLayer.getPersonnages()[i]->getStatut()==state::SELECTIONNE){
+				tileNumber = etatLayer.getPersonnages()[i]->getCodeTuile();
+			}
+		}
+		
+		
+	    // on en déduit sa position dans la texture du tileset
+	    int tu = tileNumber % (texture.getSize().x / tileSize.x);
+	    int tv = tileNumber / (texture.getSize().x / tileSize.x);
+
+	    // on récupère un pointeur vers le quad à définir dans le tableau de vertex
+	    sf::Vertex* quad = &quads[0];
+		
+		// on définit ses quatre coins
+		quad[1].position = sf::Vector2f(5,440);
+		quad[0].position = sf::Vector2f(69,440);
+		quad[3].position = sf::Vector2f(69,504);
+		quad[2].position = sf::Vector2f(5,504);
+		
+		// on définit ses quatre coordonnées de texture
+		quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
+		quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
+		quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
+		quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+	
+	return true;
+
+}
 
 void Surface::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         // on applique la transformation

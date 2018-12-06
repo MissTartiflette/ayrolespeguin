@@ -40,7 +40,7 @@ TerrainPraticable::TerrainPraticable (TerrainPraticableID id, int newX, int newY
 	}
 	else if (id == FORTERESSE){
 		nom = "Forteresse";
-		statistiques.setPV(5);
+		statistiques.setPV(10);
 		statistiques.setAttaque(0);
 		statistiques.setDefense(0);
 		statistiques.setEsquive(0);
@@ -48,7 +48,7 @@ TerrainPraticable::TerrainPraticable (TerrainPraticableID id, int newX, int newY
 	}
 	else if (id == MAISON){
 		nom = "Maison";
-		statistiques.setPV(1);
+		statistiques.setPV(5);
 		statistiques.setAttaque(0);
 		statistiques.setDefense(0);
 		statistiques.setEsquive(0);

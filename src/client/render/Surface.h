@@ -30,6 +30,7 @@ namespace render {
     bool loadGrille (state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int  height);
     bool loadPersonnage (state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height);
     bool loadCurseur (state::Etat& etatLayer, sf::Texture&   textureTileset, sf::Vector2u  tileSize, unsigned int  width, unsigned int  height);
+    bool loadInfos (state::Etat& etatLayer, sf::Texture& textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height);
     virtual void  draw (sf::RenderTarget& target, sf::RenderStates states) const;
     void updateTilesPersonnages (state::Etat& etatLayer);
     // Setters and Getters

@@ -19,9 +19,9 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		codeArme=1;
 		champMove=3;
 		champAttack=2;
-		statistiques.setPV(20);
-		statistiques.setAttaque(15);
-		statistiques.setDefense(10);
+		statistiques.setPV(100);
+		statistiques.setAttaque(50);
+		statistiques.setDefense(30);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(30);
 		if (newCamp == true){
@@ -35,9 +35,9 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		codeArme=2;
 		champMove=3;
 		champAttack=1;
-		statistiques.setPV(20);
-		statistiques.setAttaque(15);
-		statistiques.setDefense(10);
+		statistiques.setPV(100);
+		statistiques.setAttaque(50);
+		statistiques.setDefense(30);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(30);
 		if (newCamp == true){
@@ -51,9 +51,9 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		codeArme=3;
 		champMove=5;
 		champAttack=1;
-		statistiques.setPV(20);
-		statistiques.setAttaque(15);
-		statistiques.setDefense(10);
+		statistiques.setPV(100);
+		statistiques.setAttaque(50);
+		statistiques.setDefense(30);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(30);
 		if (newCamp == true){
@@ -67,9 +67,9 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
 		codeArme=4;
 		champMove=3;
 		champAttack=1;
-		statistiques.setPV(20);
-		statistiques.setAttaque(15);
-		statistiques.setDefense(10);
+		statistiques.setPV(100);
+		statistiques.setAttaque(50);
+		statistiques.setDefense(30);
 		statistiques.setEsquive(10);
 		statistiques.setCritique(30);
 		if (newCamp == true){

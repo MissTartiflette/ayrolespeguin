@@ -13,6 +13,8 @@ using namespace state;
 
 
 StateLayer::StateLayer(state::Etat& etat){
+
+	police.loadFromFile("res/8-BIT-WONDER.TTF");
 	
 	TileSet tilesetGrille(GRILLETILESET);
 	std::unique_ptr<TileSet> ptr_tilesetGrille (new TileSet(tilesetGrille));
@@ -26,16 +28,16 @@ StateLayer::StateLayer(state::Etat& etat){
 	std::unique_ptr<TileSet> ptr_tilesetCurseur (new TileSet(tilesetCurseur));
 	tilesets.push_back(move(ptr_tilesetCurseur));
 
-	/*TileSet tilesetInfos(INFOSTILESET);
+	TileSet tilesetInfos(INFOSTILESET);
 	std::unique_ptr<TileSet> ptr_tilesetInfos (new TileSet(tilesetInfos));
-	tilesets.push_back(move(ptr_tilesetInfos));*/
+	tilesets.push_back(move(ptr_tilesetInfos));
 }
 
 void StateLayer::initSurfaces(state::Etat& etat){	
 	Surface surfGrille;
 	Surface surfPersonnage;
 	Surface surfCurseur;
-	//Surface surfInfos;
+	Surface surfInfos;
 
 	surfGrille.loadGrille(etat, tilesets[0]->getTexture(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etat.getGrille().size(), etat.getGrille()[0].size());
 
@@ -43,10 +45,12 @@ void StateLayer::initSurfaces(state::Etat& etat){
 
 	surfCurseur.loadCurseur(etat, tilesets[2]->getTexture(), sf::Vector2u(tilesets[2]->getCellWidth(), tilesets[2]->getCellHeight()), 1, 1);
 	
+	surfInfos.loadInfos(etat, tilesets[3]->getTexture(), sf::Vector2u(tilesets[3]->getCellWidth(), tilesets[3]->getCellHeight()), 1, 1);
+	
 	std::unique_ptr<Surface> ptr_surfGrille (new Surface(surfGrille));
 	std::unique_ptr<Surface> ptr_surfPersonnage (new Surface(surfPersonnage));
 	std::unique_ptr<Surface> ptr_surfCurseur (new Surface(surfCurseur));
-	//std::unique_ptr<Surface> ptr_surfInfos (new Surface(surfInfos));
+	std::unique_ptr<Surface> ptr_surfInfos (new Surface(surfInfos));
 	
 	if(surfaces.size()!=0){
 		while(surfaces.size()!=0){
@@ -57,7 +61,7 @@ void StateLayer::initSurfaces(state::Etat& etat){
 	surfaces.push_back(move(ptr_surfGrille));
 	surfaces.push_back(move(ptr_surfPersonnage));
 	surfaces.push_back(move(ptr_surfCurseur));
-	//surfaces.push_back(move(ptr_surfInfos));
+	surfaces.push_back(move(ptr_surfInfos));
 	
 }
 
@@ -88,10 +92,8 @@ void StateLayer::draw (sf::RenderWindow& window){
 	window.draw(*surfaces[2]);	// Dessin du curseur
 	//window.draw(*surfaces[3]);	// Dessin des infos
 	
-	// create a quad
-	sf::VertexArray quad(sf::Quads, 4);
-
 	// Rectangle degrade en (0,400) et de taille 400x200
+	sf::VertexArray quad(sf::Quads, 4);
 	quad[0].position = sf::Vector2f(0.f, 400.f);
 	quad[1].position = sf::Vector2f(400.f, 400.f);
 	quad[2].position = sf::Vector2f(400.f, 600.f);
@@ -106,7 +108,8 @@ void StateLayer::draw (sf::RenderWindow& window){
 	rectangle.setFillColor(sf::Color::Black);
 	
 	window.draw(quad);
-	window.draw(rectangle);	
+	window.draw(rectangle);
+	window.draw(*surfaces[3]);
 	window.display();
 }
 
@@ -117,10 +120,8 @@ void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& wi
 	
 	window.draw(rectangle);
 	
-	sf::Font font;
-	font.loadFromFile("res/8-BIT-WONDER.TTF");
 	sf::Text text;
-	text.setFont(font);
+	text.setFont(police);
 	text.setString(chaine);
 	text.setCharacterSize(10);
 	text.setFillColor(sf::Color::White);

@@ -70,16 +70,9 @@ int main(int argc,char* argv[]){
 				bool demarrage = true ;				
 				
 				while (window.isOpen()){
+				
 					sf::Event event;
 					
-					
-					// Appel à l'IA choisie pour le tour adverse
-					if(strcmp(argv[1],"heuristic_ai")==0){
-						heuristic_ai.run(moteur, window);
-					}
-					else {
-						random_ai.run(moteur, window);
-					}
 					// Verication de fin de tour et reinitialisations de debut de tour
 					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
@@ -106,13 +99,21 @@ int main(int argc,char* argv[]){
 						demarrage = false;
 					}
 					
+					// Appel à l'IA choisie pour le tour adverse
+					if(strcmp(argv[1],"heuristic_ai")==0){
+						heuristic_ai.run(moteur, window);
+					}
+					else {
+						random_ai.run(moteur, window);
+					}
+					
 					while (window.pollEvent(event)){
 						// Fermeture de la fenetre
 						if (event.type == sf::Event::Closed){
 							window.close();
 						}
 						
-						else if (event.type==sf::Event::KeyPressed){
+						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false){
 							moteur.gestionCurseur(event, window, largeur_map_cases, longueur_map_cases);
 						}
 					}

@@ -12,7 +12,8 @@ using namespace state;
 using namespace std;
 
 
-/**Initialisation
+/** Pseudo Code de l'algorithme de recherche de chemin
+Initialisation
 Sommet source (S)
 Sommet destination (D)
 Liste des sommets à explorer (E) : sommet source S
@@ -33,7 +34,9 @@ FinFaire*/
 
 void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 
-		if(moteur.getJoueurActif()==false){
+		if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
+		
+		bool armeeAdverseAneantie = true;
 			
 		for (size_t i = 0; i < moteur.getEtat().getPersonnages().size(); i++){
 			int action=-1;
@@ -44,55 +47,61 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 					moteur.getEtat().getPersonnages()[i]->setStatut(SELECTIONNE);
 					Position objectif;
 					vector<Position> listeAttaques = moteur.getEtat().getPersonnages()[i]-> getLegalAttack(moteur.getEtat());
-				
-					// Si le personnage a moins de 5 PV et su'il se trouve sur un refuge, il termine son tour
-					if(moteur.getEtat().getPersonnages()[i]->getStatistiques().getPV()<=5 && (moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Maison" || moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Forteresse")){
+					armeeAdverseAneantie = true;
+					
+					// On vérifie qu'il reste des cibles
+					for (size_t l = 0; l < moteur.getEtat().getPersonnages().size(); l++){
+						if (moteur.getEtat().getPersonnages()[l]->getCamp() != camp && moteur.getEtat().getPersonnages()[l]->getStatut() != MORT){
+							armeeAdverseAneantie = false;
+							break;
+						}
+					}
+					
+					// Si les cibles adverses sont toutes mortes, le personnage termine son tour pour déclencher
+					// la fin de partie
+					if (armeeAdverseAneantie){
 						action = 2;
 					}
+					
+					// S'il reste des adversaires
 					else{
-						objectif = findObjectif(moteur, i);						
+						// Si le personnage a moins de 5 PV et su'il se trouve sur un refuge, il termine son tour
+						if(moteur.getEtat().getPersonnages()[i]->getStatistiques().getPV()<=5 && (moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Maison" || moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Forteresse")){
+							action = 2;
+						}
 						
-						// Si la position de l'objectif est occupée, on en déduit que c'est un ennemi à attaquer
-						if(moteur.getEtat().getGrille()[objectif.getX()][objectif.getY()]->isOccupe(moteur.getEtat())!=-1){
-						
-							bool resTest = false;
-							for (size_t k = 0; k < listeAttaques.size(); k++){
-								if(objectif.equals(listeAttaques[k])){
-									resTest = true;
-									break;
+						else{
+							objectif = findObjectif(moteur, i);
+							// Si la position de l'objectif est occupée, on en déduit que c'est un ennemi
+							// attaquer
+							if(moteur.getEtat().getGrille()[objectif.getX()][objectif.getY()]->isOccupe(moteur.getEtat())!=-1){							
+								bool resTest = false;
+								for (size_t k = 0; k < listeAttaques.size(); k++){
+									if(objectif.equals(listeAttaques[k])){
+										resTest = true;
+										break;
+									}
+								}					
+								
+								// Si la position de l'ennemi est dans le champ d'attaque, on demande une attaque
+								if (resTest){
+									action = 1;
 								}
-							}					
-							
-							// Si la position de l'ennemi est dans le champ d'attaque, on demande une attaque
-							if (resTest){
-								action = 1;
 							}
 						}
 					}
-					// Si l'objectif est d'atteindre un refuge ou de se rapprocher d'un ennemi, on demande un deplacement
+					// Si l'objectif est d'atteindre un refuge ou de se rapprocher d'un ennemi, on demande un 							deplacement
 					if(action == -1){
 						action = 0;
 					}
 					
-					
-					//vector<Position> listeAttaques = moteur.getEtat().getPersonnages()[i]-> getLegalAttack(moteur.getEtat());
-					/*if(action!=2){
-						if (listeAttaques.size() !=0){
-							action=1;
-						}
-						else{
-							action=0;
-						}
-					}*/
+					sleep(1);
 					
 					// 0 : Cas du deplacement
 					if (action==0){ 
-						size_t pointMouv=moteur.getEtat().getPersonnages()[i]->getChampMove();
 						if(moteur.getEtat().getPersonnages()[i]->getChampMove() != 0){
 							int indiceVoisin=this->findIndiceVoisin(moteur, i);
-							if(indiceVoisin!=-1){
-								
-								//vector<Position> chemin=AlgorithmeA(moteur, i, indiceVoisin);
+							if(indiceVoisin!=-1){								
 								vector<Position> chemin=AlgorithmeA(moteur, i, objectif);
 								if(chemin.size()>=1){
 									Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1], camp);
@@ -104,33 +113,8 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 								else{
 									action=2;
 								}
-								/*
-								if(chemin.size()!=0){
-									if(chemin.size()>=pointMouv){
-										for(size_t k=0; k<pointMouv; k++){
-
-											Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1-k], camp);
-											unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
-											moteur.addCommande(0, move(ptr_deplacement));
-											moteur.update(window);
-											usleep(100000);
-										}
-									}
-									else{
-										for(size_t k=0; k<chemin.size(); k++){
-
-											Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1-k], camp);
-											unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
-											moteur.addCommande(0, move(ptr_deplacement));
-											moteur.update(window);
-											usleep(100000);
-										}
-									}
-								}
-								else{action=2;}*/
 							}
-							else{action=2;}
-								
+							else{action=2;}								
 						}
 						else{
 							action=2;
@@ -140,59 +124,8 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 					
 					// 1 : Cas de l'attaque
 					else if (action == 1){
-						
-							vector<int> listePV, listeIndice, listeScores;
-							int bonus_attaque=-1;
-							int score = 0;
-							std::string nomArme_attaquant, nomArme_cible;
-							
-							for(size_t j=0; j<listeAttaques.size();j++){
-
-								int indiceCiblePotentielle = moteur.getEtat().getGrille()[listeAttaques[j].getX()][listeAttaques[j].getY()]->isOccupe(moteur.getEtat());
-								
-								//On ajoute dans listePV les PVs de toutes les cibles potentielles
-								if (indiceCiblePotentielle != -1){
-									listePV.push_back(moteur.getEtat().getPersonnages()[indiceCiblePotentielle]->getStatistiques().getPV());
-									listeIndice.push_back(indiceCiblePotentielle);
-								}
-							}
-							
-							for (size_t j=0; j < listeIndice.size(); j++){
-								nomArme_attaquant = moteur.getEtat().getPersonnages()[i]->getNomArme();
-								nomArme_cible = moteur.getEtat().getPersonnages()[listeIndice[j]]->getNomArme();
-								score = 0;
-								if(nomArme_cible==nomArme_attaquant){
-									bonus_attaque=0;
-								}
-								else if(nomArme_attaquant=="Arc" || nomArme_cible=="Arc"){
-									bonus_attaque=0;
-								}
-								else if((nomArme_attaquant=="Hache" && nomArme_cible=="Lance")|| (nomArme_attaquant=="Lance" && nomArme_cible=="Epee") || (nomArme_attaquant=="Epee" && nomArme_cible=="Hache")){
-									bonus_attaque=5;
-								}
-								else if ((nomArme_cible=="Hache" && nomArme_attaquant=="Lance")|| (nomArme_cible=="Lance" && nomArme_attaquant=="Epee") || (nomArme_cible=="Epee" && nomArme_attaquant=="Hache")){
-									bonus_attaque=-5;
-								}
-								
-								// Prise en compte du taux de coup critique, de l'attaque et du bonus d'attaque
-								score = score + bonus_attaque + moteur.getEtat().getPersonnages()[i]->getStatistiques().getAttaque() + moteur.getEtat().getPersonnages()[i]->getStatistiques().getCritique(); 
-								
-								// Prise en compte de l'esquive, des PV et de la defense de l'adversaire
-								score = score - (moteur.getEtat().getPersonnages()[listeIndice[j]]->getStatistiques().getEsquive() + moteur.getEtat().getPersonnages()[listeIndice[j]]->getStatistiques().getDefense() + moteur.getEtat().getPersonnages()[listeIndice[j]]->getStatistiques().getPV());
-								listeScores.push_back(score);
-								
-								cout << "Attaque contre " << moteur.getEtat().getPersonnages()[listeIndice[j]]->getNom();
-								cout << " : " << score << endl;
-								
-								
-							
-							}
-							//On veut attaquer la cible la plus faible									
-							int indiceMaxScore=indiceMaximum(listeScores);//On détermine l'indice du PV min dans listePV  
-							int indiceCible=listeIndice[indiceMaxScore];//On détermine l'indice de notre cible dans la liste de personnages
-
 							// Commande d'attaque
-							Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[indiceCible], camp);
+							Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[moteur.getEtat().getGrille()[objectif.getX()][objectif.getY()]->isOccupe(moteur.getEtat())], camp);							
 							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 							moteur.addCommande(0, move(ptr_attaque));
 							moteur.update(window);
@@ -527,10 +460,10 @@ state::Position HeuristicIA::findObjectif(engine::Moteur& moteur, int indicePers
 				bonus_attaque=0;
 			}
 			else if((nomArme_attaquant=="Hache" && nomArme_cible=="Lance")|| (nomArme_attaquant=="Lance" && nomArme_cible=="Epee") || (nomArme_attaquant=="Epee" && nomArme_cible=="Hache")){
-				bonus_attaque=5;
+				bonus_attaque=2*5;
 			}
 			else if ((nomArme_cible=="Hache" && nomArme_attaquant=="Lance")|| (nomArme_cible=="Lance" && nomArme_attaquant=="Epee") || (nomArme_cible=="Epee" && nomArme_attaquant=="Hache")){
-				bonus_attaque=-5;
+				bonus_attaque=2*(-5);
 			}
 								
 			// Prise en compte du taux de coup critique, de l'attaque et du bonus d'attaque
@@ -542,7 +475,7 @@ state::Position HeuristicIA::findObjectif(engine::Moteur& moteur, int indicePers
 			// Prise en compte de la distance à l'adversaire
 			score = score - (moteur.getEtat().getPersonnages()[indicePerso]->getPosition().distance(moteur.getEtat().getPersonnages()[i]->getPosition()));
 				
-			cout << nomArme_cible << " : " << score << endl;
+			//cout << nomArme_cible << " : " << score << endl;
 				
 			listeScores.push_back(score);
 			listeIndice.push_back(i);

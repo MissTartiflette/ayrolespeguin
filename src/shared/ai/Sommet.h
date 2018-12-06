@@ -22,8 +22,8 @@ namespace ai {
   class Sommet {
     // Attributes
   private:
-    state::Position position;
     int distanceSource;
+    state::Position position;
     int distanceDestination;
     Sommet* predecesseur;
     // Operations

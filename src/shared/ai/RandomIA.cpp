@@ -13,7 +13,7 @@ using namespace std;
 
 void RandomIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 	// L'IA effectue ces actions uniquement si c'est son tour
-	if(moteur.getJoueurActif()==false){
+	if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
 		int randomAction;
 		int randomPosition;
 		int randomAttaque;

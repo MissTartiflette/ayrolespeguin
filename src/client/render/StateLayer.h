@@ -7,6 +7,9 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+namespace sf {
+  class Font;
+};
 namespace state {
   class Etat;
 };
@@ -35,6 +38,7 @@ namespace render {
   protected:
     std::vector<std::unique_ptr<TileSet>> tilesets;
     std::vector<std::unique_ptr<Surface>> surfaces;
+    sf::Font police;
     // Operations
   public:
     StateLayer (state::Etat& etat);
