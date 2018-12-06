@@ -71,7 +71,6 @@ bool Moteur::verificationFinDeTour(){
 			*/			
 		}
 		
-		
 		// Si tous les personnages du joueur non actif ne sont pas morts, la partie n'est pas terminee
 		else{
 			if (etatActuel.getPersonnages()[i]->getStatut() != MORT ){
@@ -159,7 +158,6 @@ void Moteur::verificationDebutDeTour(){
 				}
 			}
 		}
-		
 		changementTour = !changementTour;
 	}
 }
@@ -203,29 +201,35 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 		}
 		
 		// Enter (selection)
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){								
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
+			std::string newChaine;
 			if(numeroPerso != -1){
 				// Selection du personnage
 				if(etatActuel.getPersonnages()[numeroPerso]->getCamp() && etatActuel.getPersonnages()[numeroPerso]->getStatut() != ATTENTE && etatActuel.getPersonnages()[numeroPerso]->getStatut() != MORT){
+				
 					etatActuel.getCurseur()->setCodeTuile(3);
-					cout<< "\t\t-> Début du tour de " << etatActuel.getPersonnages()[numeroPerso]->getNom() << " <-" << endl;
-					etatActuel.getPersonnages()[numeroPerso]->setStatut(SELECTIONNE);
 					
+					newChaine = "Debut du tour de " + etatActuel.getPersonnages()[numeroPerso]->getNom();
+					cout<< "\t\t->" << newChaine << " <-" << endl;
+					
+					etatActuel.getPersonnages()[numeroPerso]->setStatut(SELECTIONNE);
 					etatActuel.notifyObservers(stateEvent, etatActuel, window);
 				}									
 				else if (etatActuel.getPersonnages()[numeroPerso]->getStatut() == ATTENTE){
-					cout << "\t\tCe personnage a déjà terminé son tour." << endl;
+					newChaine = "Ce personnage a deja termine son tour";
+					cout << "\t\t" << newChaine << endl;
 				}
-				else{	cout<<"Ce personnage appartient à l'adversaire !" <<endl;}
+				else{	newChaine = "Ce personnage appartient a l'adversaire !";
+					cout<< newChaine <<endl;}
 			}
 			
 			// Affichage du type de terrain							
-			else{	std::string newChaine = "Ce terrain est de type " + etatActuel.getGrille()[yCurs][xCurs]->getNom();
+			else{	newChaine = "Ce terrain est de type " + etatActuel.getGrille()[yCurs][xCurs]->getNom();
 					cout << newChaine << endl;
-					stateEvent.texte = newChaine;
-					stateEvent.stateEventID = TEXTECHANGED;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
 			}
+			stateEvent.texte = newChaine;
+			stateEvent.stateEventID = TEXTECHANGED;
+			etatActuel.notifyObservers(stateEvent, etatActuel, window);
 		}
 							
 		// Déplacement du curseur
@@ -234,7 +238,11 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			etatActuel.getCurseur()->move(nextPosCurs);
 			etatActuel.notifyObservers(stateEvent, etatActuel, window);			
 			
-			std::string newChaine = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->getNom();
+			std::string newChaine;
+			int resTest = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->isOccupe(etatActuel);
+			
+			if (resTest != -1){newChaine = etatActuel.getPersonnages()[resTest]->getNom();}
+			else{newChaine = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->getNom();}
 			stateEvent.texte = newChaine;
 			stateEvent.stateEventID = TEXTECHANGED;
 			etatActuel.notifyObservers(stateEvent, etatActuel, window);

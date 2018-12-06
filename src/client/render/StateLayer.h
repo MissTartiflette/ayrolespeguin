@@ -48,6 +48,7 @@ namespace render {
     void stateChanged (const state::StateEvent& e, state::Etat& etat, sf::RenderWindow& window);
     void draw (sf::RenderWindow& window);
     void writeTexteAction (const std::string chaine, sf::RenderWindow& window);
+    void writeStatistiques (const std::string chaine, sf::RenderWindow& window);
     // Setters and Getters
   };
 

@@ -118,41 +118,53 @@ bool Surface::loadInfos(state::Etat& etatLayer, sf::Texture& textureTileset, sf:
 
 	texture = textureTileset;
 		
-      	// on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
-	   	quads.setPrimitiveType(sf::Quads);
-       	quads.resize(width * height * 4);
+    // on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
+	quads.setPrimitiveType(sf::Quads);
+    quads.resize(width * height * 4);
 		
-	  	// on récupère le numéro de tuile courant
-		int tileNumber=8;
+	// on récupère le numéro de tuile courant
+	int tileNumber=8;
+	int indicePerso=-1;
 		
-		for (size_t i = 0; i< etatLayer.getPersonnages().size(); i++){
-			if (etatLayer.getPersonnages()[i]->getStatut()==state::SELECTIONNE){
-				tileNumber = etatLayer.getPersonnages()[i]->getCodeTuile();
-			}
+	for (size_t i = 0; i< etatLayer.getPersonnages().size(); i++){
+		if (etatLayer.getPersonnages()[i]->getStatut()==state::SELECTIONNE){
+			tileNumber = etatLayer.getPersonnages()[i]->getCodeTuile();
+			indicePerso = i;
+			break;
 		}
+	}
 		
-		
-	    // on en déduit sa position dans la texture du tileset
-	    int tu = tileNumber % (texture.getSize().x / tileSize.x);
-	    int tv = tileNumber / (texture.getSize().x / tileSize.x);
+	// on en déduit sa position dans la texture du tileset
+	int tu = tileNumber % (texture.getSize().x / tileSize.x);
+	int tv = tileNumber / (texture.getSize().x / tileSize.x);
 
-	    // on récupère un pointeur vers le quad à définir dans le tableau de vertex
-	    sf::Vertex* quad = &quads[0];
+	// on récupère un pointeur vers le quad à définir dans le tableau de vertex
+	sf::Vertex* quad = &quads[0];
+	if(indicePerso!=-1){
+		// Personnage de l'armee bleue affiché à gauche
+		if (etatLayer.getPersonnages()[indicePerso]->getCamp()==true){
+			quad[0].position = sf::Vector2f(5+64,440);
+			quad[1].position = sf::Vector2f(0+5,440);
+			quad[3].position = sf::Vector2f(5+64,440+64);
+			quad[2].position = sf::Vector2f(0+5,440+64);
+		}
+			
+		// Personnage de l'armee rouge affiché à droite
+		else{
+			quad[0].position = sf::Vector2f(400-5-64,440);
+			quad[1].position = sf::Vector2f(400-5,440);
+			quad[2].position = sf::Vector2f(400-5,440+64);
+			quad[3].position = sf::Vector2f(400-5-64,440+64);		
+		}
+	}
 		
-		// on définit ses quatre coins
-		quad[1].position = sf::Vector2f(5,440);
-		quad[0].position = sf::Vector2f(69,440);
-		quad[3].position = sf::Vector2f(69,504);
-		quad[2].position = sf::Vector2f(5,504);
-		
-		// on définit ses quatre coordonnées de texture
-		quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
-		quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
-		quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
-		quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+	// on définit ses quatre coordonnées de texture
+	quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
+	quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
+	quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
+	quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
 	
 	return true;
-
 }
 
 void Surface::draw(sf::RenderTarget& target, sf::RenderStates states) const {

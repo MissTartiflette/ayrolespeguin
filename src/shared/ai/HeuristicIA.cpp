@@ -410,7 +410,6 @@ Position HeuristicIA::findRefuge(engine::Moteur& moteur, int personnage){
 			// Recherche des refuges (maisons ou forteresses) non occupées
 			if ((moteur.getEtat().getGrille()[i][j]->getNom() == "Maison" || moteur.getEtat().getGrille()[i][j]->getNom() == "Forteresse") && moteur.getEtat().getGrille()[i][j]->isOccupe(moteur.getEtat()) == -1){
 				positionRefuge = moteur.getEtat().getGrille()[i][j]->getPosition();
-				cout << moteur.getEtat().getGrille()[i][j]->getNom() << " : " << i << "," << j << endl;
 				listeRefuges.push_back(positionRefuge);
 			}
 		}
@@ -420,7 +419,6 @@ Position HeuristicIA::findRefuge(engine::Moteur& moteur, int personnage){
 		for(size_t k = 0; k < listeRefuges.size(); k++){
 			listeDistances.push_back(moteur.getEtat().getPersonnages()[personnage]->getPosition().distance(listeRefuges[k]));
 		}
-		cout << indiceMinimum(listeDistances)<<endl;
 		return listeRefuges[indiceMinimum(listeDistances)];
 	}
 	else{

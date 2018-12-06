@@ -14,7 +14,8 @@ using namespace state;
 
 StateLayer::StateLayer(state::Etat& etat){
 
-	police.loadFromFile("res/8-BIT-WONDER.TTF");
+	//police.loadFromFile("res/8-BIT-WONDER.TTF");
+	police.loadFromFile("res/Pixellari.ttf");
 	
 	TileSet tilesetGrille(GRILLETILESET);
 	std::unique_ptr<TileSet> ptr_tilesetGrille (new TileSet(tilesetGrille));
@@ -87,10 +88,6 @@ void StateLayer::stateChanged (const state::StateEvent& e, state::Etat& etat, sf
 
 void StateLayer::draw (sf::RenderWindow& window){
 	window.clear();
-	window.draw(*surfaces[0]);	// Dessin de la grille				
-	window.draw(*surfaces[1]);	// Dessin des personnages
-	window.draw(*surfaces[2]);	// Dessin du curseur
-	//window.draw(*surfaces[3]);	// Dessin des infos
 	
 	// Rectangle degrade en (0,400) et de taille 400x200
 	sf::VertexArray quad(sf::Quads, 4);
@@ -103,13 +100,24 @@ void StateLayer::draw (sf::RenderWindow& window){
 	quad[2].color = sf::Color::Black;
 	quad[3].color = sf::Color::Black;
 	
+	// Rectangle noir pour les messages
 	sf::RectangleShape rectangle(sf::Vector2f(390.f, 30.f));
 	rectangle.setPosition(5.f, 405.f);
 	rectangle.setFillColor(sf::Color::Black);
+	/*
+	// Rectangle noir de Statistiques
+	sf::RectangleShape rectangle2(sf::Vector2f(100.f, 102.f));
+	rectangle2.setPosition(5+64+5, 400+5+30+5);
+	rectangle2.setFillColor(sf::Color::Black);*/
 	
+	window.draw(*surfaces[0]);	// Dessin de la grille				
+	window.draw(*surfaces[1]);	// Dessin des personnages
+	window.draw(*surfaces[2]);	// Dessin du curseur
 	window.draw(quad);
 	window.draw(rectangle);
-	window.draw(*surfaces[3]);
+	//window.draw(rectangle2);
+	
+	window.draw(*surfaces[3]); // Dessin des infos
 	window.display();
 }
 
@@ -118,21 +126,48 @@ void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& wi
 	rectangle.setPosition(5.f, 405.f);
 	rectangle.setFillColor(sf::Color::Black);
 	
-	window.draw(rectangle);
-	
 	sf::Text text;
 	text.setFont(police);
 	text.setString(chaine);
-	text.setCharacterSize(10);
+	text.setCharacterSize(15);
 	text.setFillColor(sf::Color::White);
 	text.setPosition(10.f, 400.f);
 	
 	sf::FloatRect textRect = text.getLocalBounds();
-	text.setOrigin(textRect.left + textRect.width/2.0f,
-		           textRect.top  + textRect.height/2.0f);
+	text.setOrigin((int)(textRect.left + textRect.width/2.0f),
+		           (int)(textRect.top  + textRect.height/2.0f));
 	text.setPosition(sf::Vector2f(400/2.0f, 420));
+	
+	window.draw(rectangle);
 	window.draw(text);
 	window.display();
 }
 
+void StateLayer::writeStatistiques(const std::string chaine, sf::RenderWindow& window){
+	// Rectangle noir de Statistiques
+	sf::RectangleShape rectangle2(sf::Vector2f(100.f, 102.f));
+	rectangle2.setPosition(5+64+5, 400+5+30+5);
+	rectangle2.setFillColor(sf::Color::Black);
+	
+	std::string chaine0 = "Oliver\nPV\nAtk\nDef\nEsq\nCrt";
+	sf::Text text;
+	text.setFont(police);
+	text.setString(chaine0);
+	text.setCharacterSize(15);
+	text.setFillColor(sf::Color::White);
+	text.setPosition(5+64+5+4,400+5+30+5+2);
+	
+	std::string chaine2 = "\n:\t100\n:\t50\n:\t30\n:\t10\n:\t30";
+	sf::Text text2;
+	text2.setFont(police);
+	text2.setString(chaine2);
+	text2.setCharacterSize(15);
+	text2.setFillColor(sf::Color::White);
+	text2.setPosition(5+64+5+4+30,400+5+30+5+2);
+	
+	window.draw(rectangle2);
+	window.draw(text);
+	window.draw(text2);
+	window.display();
+}
 
