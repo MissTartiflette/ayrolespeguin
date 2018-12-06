@@ -123,7 +123,7 @@ bool Surface::loadInfos(state::Etat& etatLayer, sf::Texture& textureTileset, sf:
        	quads.resize(width * height * 4);
 		
 	  	// on récupère le numéro de tuile courant
-		int tileNumber=0;
+		int tileNumber=8;
 		
 		for (size_t i = 0; i< etatLayer.getPersonnages().size(); i++){
 			if (etatLayer.getPersonnages()[i]->getStatut()==state::SELECTIONNE){
