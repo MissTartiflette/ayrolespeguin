@@ -14,10 +14,14 @@ namespace engine {
 };
 namespace sf {
   class RenderWindow;
+};
+namespace engine {
+  class Action;
 }
 
 #include "state/Etat.h"
 #include "Commande.h"
+#include "Action.h"
 
 namespace engine {
 
@@ -35,13 +39,14 @@ namespace engine {
     Moteur ();
     ~Moteur ();
     state::Etat& getEtat ();
-    void addCommandePassive ();
     void addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd);
     void update (sf::RenderWindow& window);
     bool verificationFinDeTour ();
     void verificationDebutDeTour ();
     bool getJoueurActif ();
     void gestionCurseur (sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases);
+    void updateAction (sf::RenderWindow&  window, Action* action);
+    void undo (sf::RenderWindow& window, Action* action);
     // Setters and Getters
   };
 
