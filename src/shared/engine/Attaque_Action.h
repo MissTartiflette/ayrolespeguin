@@ -32,6 +32,8 @@ namespace engine {
     Attaque_Action (state::Personnage& attaquant, state::Personnage& cible, bool joueur);
     void apply (state::Etat& etat);
     void undo (state::Etat& etat);
+    state::Personnage& getCible ();
+    state::Personnage& getAttaquant ();
     // Setters and Getters
   };
 

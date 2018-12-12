@@ -18,24 +18,27 @@ namespace ai {
   class IA;
 };
 namespace engine {
-  class Commande;
+  class Action;
 }
 
 #include "IA.h"
-#include "engine/Moteur.h"
-#include "engine/Commande.h"
+#include "engine/Action.h"
 
 namespace ai {
 
   /// class DeepIA - 
-  class DeepIA : public ai::IA, public engine::Moteur, public engine::Commande {
+  class DeepIA : public ai::IA {
+    // Attributes
+  public:
+    int profondeur     = 2;
+    bool campChoisi;
     // Operations
   public:
     void run (engine::Moteur& moteur, sf::RenderWindow& window);
     int max (engine::Moteur& moteur, int profondeur);
     int min (engine::Moteur& moteur, int profondeur);
-    int fonctionEvaluation (state::Etat& etat);
-    std::vector<engine::Commande&> findActionsPossibles (state::Etat& etat);
+    int fonctionEvaluation (engine::Moteur& moteur);
+    std::vector<engine::Action*> findActionsPossibles (state::Etat& etat, bool campChoisi);
     // Setters and Getters
   };
 

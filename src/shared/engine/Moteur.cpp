@@ -49,39 +49,17 @@ void Moteur::update (sf::RenderWindow& window){
 void Moteur::updateAction (sf::RenderWindow& window, Action* action){
 	StateEvent stateEvent(ALLCHANGED);
 	
-	//map<int, std::unique_ptr<Action>>::iterator it;
+	action->apply(etatActuel); 
+	etatActuel.notifyObservers(stateEvent, etatActuel, window);
 
-	//for(size_t i=0; i<actionsActuelles.size();i++){
-		// On n'execute que les actions du joueur dont c'est le tour
-		//if (action->joueur == joueurActif){
-			action->apply(etatActuel); 
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
-			
-		//}
-	//}
-/**
-	for(it=actionsActuelles.begin(); it!=actionsActuelles.end(); it++){
-		actionsActuelles.erase(it);
-	}*/
 }
 
 void Moteur::undo (sf::RenderWindow& window, Action* action){
 	StateEvent stateEvent(ALLCHANGED);
 
-	//map<int, std::unique_ptr<Action>>::iterator it;
-
-	//for(size_t i=0; i<actionsActuelles.size();i++){
-		
-		//cout<<action->joueur<<endl;
-		//if (action->joueur == joueurActif){
-			action->undo(etatActuel);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
-			
-		//}
-	//}
-	/**for(it=actionsActuelles.begin(); it!=actionsActuelles.end(); it++){
-		actionsActuelles.erase(it);
-	}*/
+	action->undo(etatActuel);
+	etatActuel.notifyObservers(stateEvent, etatActuel, window);
+	
 }
 
 bool Moteur::verificationFinDeTour(){

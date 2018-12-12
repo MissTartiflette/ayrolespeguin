@@ -26,6 +26,7 @@ namespace engine {
     FinActions_Action (state::Personnage& cible, bool joueur);
     void apply (state::Etat& etat);
     void undo (state::Etat& etat);
+    state::Personnage& getCible ();
     // Setters and Getters
   };
 

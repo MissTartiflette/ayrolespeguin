@@ -28,6 +28,8 @@ namespace engine {
     Dep_Action (state::Personnage& cible, state::Position& destination, bool joueur);
     void apply (state::Etat& etat);
     void undo (state::Etat& etat);
+    state::Personnage& getCible ();
+    state::Position& getDestination ();
     // Setters and Getters
   };
 

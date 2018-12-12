@@ -7,6 +7,8 @@ namespace state {
   class Etat;
 }
 
+#include "ActionID.h"
+
 namespace engine {
 
   /// class Action - 
@@ -14,10 +16,14 @@ namespace engine {
     // Attributes
   public:
     bool joueur;
+  protected:
+    ActionID id;
     // Operations
   public:
     virtual void apply (state::Etat& etat) = 0;
     virtual void undo (state::Etat& etat) = 0;
+    ActionID getActionID ();
+    bool getJoueur ();
     // Setters and Getters
   };
 

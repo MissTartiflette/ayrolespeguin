@@ -39,6 +39,7 @@ namespace ai {
     int indiceMaximum (std::vector<int> liste);
     std::vector<state::Position> findRefuge (engine::Moteur& moteur, int personnage);
     std ::vector<state::Position> findObjectif (engine::Moteur& moteur, int indicePerso);
+    void runRollback (engine::Moteur& moteur, sf::RenderWindow& window);
     // Setters and Getters
   };
 

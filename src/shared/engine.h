@@ -6,6 +6,11 @@
 #include "engine/Commande.h"
 #include "engine/Attaque.h"
 #include "engine/Deplacement.h"
+#include "engine/ActionID.h"
+#include "engine/Action.h"
 #include "engine/Moteur.h"
 #include "engine/FinActions.h"
+#include "engine/Attaque_Action.h"
+#include "engine/Dep_Action.h"
+#include "engine/FinActions_Action.h"
 #endif
