@@ -7,8 +7,11 @@
 #include "ai.h"
 
 using namespace ai;
+using namespace engine;
+using namespace state;
 using namespace std;
 
+/*
 void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){// à compléter et corriger 
 	int max_val=-30000;
 	int valeur;
@@ -97,29 +100,37 @@ int DeepIA::max(engine::Moteur& moteur, int profondeur){
 		}
 	}
 	return maxValue;
-}
+}*/
 
-std::vector<engine::Action*> findActionsPossibles(state::Etat& etat){
-	int indicePersonnage = 4;
+
+std::vector<engine::Action*> DeepIA::findActionsPossibles(state::Etat& etat){
+	
 	std::vector<engine::Action*> listeActions;
+	std::vector<state::Position> listeAttaques;
+	std::vector<state::Position> listePositions;
 	
-	// Ajout des attaques possibles
-	std::vector<Position> listeAttaques = etat.getPersonnages()[indicePersonnage]->getLegalAttack(etat);
-	for (size_t i = 0; i < listeAttaques.size(); i++){
-		Attaque_Action attaquePossible(*etatActuel.getPersonnages()[indicePersonnage], *etatActuel.getPersonnages()[listeAttaques[isOccupe()]], etatActuel.getPersonnages()[attaquant]->getCamp());						
-		listeActions.push_back(&attaquePossible);
+	for (size_t indicePersonnage = 0; indicePersonnage < etat.getPersonnages().size(); indicePersonnage++){
+		// Parcours des personnages de l'IA
+		if(etat.getPersonnages()[indicePersonnage]->getCamp() == camp && etat.getPersonnages()[indicePersonnage]->getStatut()!= state::MORT && etat.getPersonnages()[indicePersonnage]->getStatut()!= state::ATTENTE){
+		
+			// Ajout des attaques possibles
+			listeAttaques = etat.getPersonnages()[indicePersonnage]->getLegalAttack(etat);
+			for (size_t i = 0; i < listeAttaques.size(); i++){
+				engine::Attaque_Action attaquePossible(*etat.getPersonnages()[indicePersonnage], *etat.getPersonnages()[etat.getGrille()[listeAttaques[i].getX()][listeAttaques[i].getY()]->isOccupe(etat)], etat.getPersonnages()[indicePersonnage]->getCamp());						
+				listeActions.push_back(&attaquePossible);
+			}
+			
+			// Ajout des déplacements possibles
+			listePositions = etat.getPersonnages()[indicePersonnage]->getLegalMove(etat);
+			for (size_t i = 0; i < listePositions.size(); i++){
+				engine::Dep_Action deplacementPossible(*etat.getPersonnages()[indicePersonnage], listePositions[i], etat.getPersonnages()[indicePersonnage]->getCamp());
+				listeActions.push_back(&deplacementPossible);
+			}
+			
+			// Ajout de la fin du tour d'actions
+			engine::FinActions_Action finaction(*etat.getPersonnages()[indicePersonnage], etat.getPersonnages()[indicePersonnage]->getCamp());
+			listeActions.push_back(&finaction);			
+		}
 	}
-	
-	// Ajout des déplacements possibles
-	std::vector<Position> listePositions = etat.getPersonnages()[indicePersonnage]->getLegalMove(etat);
-	for (size_t i = 0; i < listePositions.size(); i++){
-		Dep_Action deplacementPossible(*etatActuel.getPersonnages()[indicePersonnage], listePositions[i], joueurActif);
-		listeCommandes.push_back(&deplacementPossible);
-	}
-	
-	// Ajout de la fin du tour d'actions
-	FinActions_Action finaction(*etatActuel.getPersonnages()[numeroPerso], etatActuel.getPersonnages()[numeroPerso]->getCamp());
-	listeCommandes.push_back(&finaction);
-	
 	return listeActions;
 }

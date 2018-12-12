@@ -12,6 +12,7 @@ using namespace std;
 FinActions_Action::FinActions_Action (state::Personnage& cible, bool joueur):cible(cible){
 	joueur=joueur;
 	oldStatut=cible.getStatut();
+	oldCodeTuile=cible.getCodeTuile();
 }
 
 void FinActions_Action:: apply (state::Etat& etat){
@@ -27,5 +28,7 @@ void FinActions_Action:: apply (state::Etat& etat){
 }
 
 void FinActions_Action::undo (state::Etat& etat){
-	cible.setStatut(oldStatut);
+	//cible.setStatut(oldStatut);
+	cible.setStatut(state::DISPONIBLE);
+	cible.setCodeTuile(oldCodeTuile);
 }

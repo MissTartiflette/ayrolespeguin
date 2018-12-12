@@ -80,6 +80,9 @@ void Dep_Action::apply (state::Etat& etat){
 }
 
 void Dep_Action::undo (state::Etat& etat){
+
+	cible.setStatut(state::DISPONIBLE);
+
 	cible.getPosition().setX(oldPos.getX());
 	cible.getPosition().setY(oldPos.getY());
 

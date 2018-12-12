@@ -4,19 +4,18 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 #include <SFML/Graphics.hpp>
 
 namespace state {
   class Etat;
 };
 namespace engine {
+  class Action;
   class Commande;
 };
 namespace sf {
   class RenderWindow;
-};
-namespace engine {
-  class Action;
 }
 
 #include "state/Etat.h"
@@ -34,6 +33,7 @@ namespace engine {
     std::map<int, std::unique_ptr<Commande>> commandesActuelles;
     bool changementTour;
     bool joueurActif;
+    std::vector<Action*> listeActionsJouees;
     // Operations
   public:
     Moteur ();
@@ -47,6 +47,8 @@ namespace engine {
     void gestionCurseur (sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases);
     void updateAction (sf::RenderWindow&  window, Action* action);
     void undo (sf::RenderWindow& window, Action* action);
+    void gestionCurseurRollback (sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases);
+    void addAction (Action* newAction);
     // Setters and Getters
   };
 

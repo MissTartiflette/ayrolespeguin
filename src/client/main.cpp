@@ -36,7 +36,7 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 
-		else if(strcmp(argv[1],"random_ai")==0 || strcmp(argv[1],"heuristic_ai")==0){
+		else if(strcmp(argv[1],"random_ai")==0 || strcmp(argv[1],"heuristic_ai")==0 || strcmp(argv[1], "rollback") == 0 || strcmp(argv[1],"deep_ai")==0){
 			
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
@@ -59,12 +59,21 @@ int main(int argc,char* argv[]){
 				
 				RandomIA random_ai;
 				HeuristicIA heuristic_ai;
+				DeepIA deep_ai;
+				bool rollback = false;
 				
 				if(strcmp(argv[1],"heuristic_ai")==0){
 					cout<<"\t\t--- HeuristicAI ---"<<endl;
 				}
 				else if(strcmp(argv[1],"random_ai")==0){
 					cout<<"\t\t--- RandomAI ---"<<endl;
+				}
+				else if(strcmp(argv[1],"deep_ai")==0){
+					cout<<"\t\t--- DeepAI ---"<<endl;
+				}
+				else if(strcmp(argv[1],"rollback")==0){
+					cout<<"\t\t--- Rollback ---"<<endl;
+					rollback = true;
 				}
 				
 				bool demarrage = true ;				
@@ -96,12 +105,25 @@ int main(int argc,char* argv[]){
 						cout << "*                                                         *" << endl;
 						cout << "*  Terminer le tour d'actions  : touche Z                 *" << endl;
 						cout << "***********************************************************" << endl;
+						
+						if(rollback){
+							cout<<"\nAppuyez sur R lors de votre tour pour déclencher le retour en arrière\n"<< endl;
+						}
+						
 						demarrage = false;
 					}
 					
 					// Appel à l'IA choisie pour le tour adverse
-					if(strcmp(argv[1],"heuristic_ai")==0){
-						heuristic_ai.run(moteur, window);
+					if(strcmp(argv[1],"heuristic_ai")==0 || strcmp(argv[1],"rollback")==0){
+						if(rollback){
+							heuristic_ai.runRollback(moteur, window);
+						}
+						else{
+							heuristic_ai.run(moteur, window);
+						}
+					}
+					else if (strcmp(argv[1],"deep_ai")==0){
+						deep_ai.run(moteur, window);
 					}
 					else {
 						random_ai.run(moteur, window);
@@ -113,6 +135,10 @@ int main(int argc,char* argv[]){
 							window.close();
 						}
 						
+						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false && rollback){
+							moteur.gestionCurseurRollback(event, window, largeur_map_cases, longueur_map_cases);
+						}
+						
 						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false){
 							moteur.gestionCurseur(event, window, largeur_map_cases, longueur_map_cases);
 						}
@@ -121,15 +147,10 @@ int main(int argc,char* argv[]){
 			}
 		}
 		
-		else if(strcmp(argv[1],"engine")==0 || strcmp(argv[1],"rollback")==0){
-			int rollback=false;
-			if(strcmp(argv[1],"rollback")==0){
-				rollback=true;
-				cout<<"--- Rollback ---"<<endl;
-			}
-			else{
+		else if(strcmp(argv[1],"engine")==0){
+			
 			cout<<"--- Moteur du jeu ---"<<endl;
-			}
+			
 			//----------------------------
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
@@ -175,7 +196,7 @@ int main(int argc,char* argv[]){
 						
 						// Commandes du premier tour pour la simulation (effectuees a l'appuis d'une touche)
 						else if(event.type==sf::Event::KeyPressed && !moteur.getEtat().getFin() && moteur.getEtat().getTour() == 1){
-							if(!rollback){					
+												
 							// Deplacement chevalier bleu
 							Position destination1(3,22);
 							Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1,true);
@@ -233,175 +254,8 @@ int main(int argc,char* argv[]){
 							moteur.addCommande(9, move(ptr_finactions3));
 						
 							moteur.update(window);							
-							}
-							else{
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[0]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[0]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[0]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[0]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[0]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[0]->getType()<<endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[0]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[0]->getPosition().getY()<<endl;
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[0]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getEsquive() << endl;
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[0]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[0]->getChampAttack()<<endl;
-
-								Position destination1(1,22);
-								Dep_Action dep_action1(*moteur.getEtat().getPersonnages()[0], destination1,true);
-								//unique_ptr<Action> ptr_dep_action1 (new Dep_Action(dep_action1));
-								//Action* ptr_dep_action1 = new Dep_Action(dep_action1);
-								Action* ptr_dep_action1 = &dep_action1;
-								moteur.updateAction(window, move(ptr_dep_action1));
-								sleep(1);
-
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[0]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[0]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[0]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[0]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[0]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[0]->getType()<<endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[0]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[0]->getPosition().getY()<<endl;
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[0]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getEsquive() << endl;
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[0]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[0]->getChampAttack()<<endl;
-
-								FinActions_Action fin_action1(*moteur.getEtat().getPersonnages()[0], true);
-								//Action* ptr_fin_action1 = new FinActions_Action(fin_action1);
-								Action* ptr_fin_action1 = &fin_action1;
-								moteur.updateAction(window, move(ptr_fin_action1));
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								sleep(1);
-								moteur.undo(window, move(ptr_fin_action1));sleep(1);
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								//delete ptr_fin_action1;
-								moteur.undo(window, move(ptr_dep_action1));
-								sleep(1);
-								//delete ptr_dep_action1;
-
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[0]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[0]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[0]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[0]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[0]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[0]->getType()<<endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[0]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[0]->getPosition().getY()<<endl;
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[0]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getEsquive() << endl;
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[0]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[0]->getChampAttack()<<endl;
-
-								Attaque_Action attaque_action1(*moteur.getEtat().getPersonnages()[0], *moteur.getEtat().getPersonnages()[7], true);
-								//Action* ptr_attaque_action1 = new Attaque_Action(attaque_action1);
-								Action* ptr_attaque_action1 = &attaque_action1;
-								moteur.updateAction(window, move(ptr_attaque_action1));
-
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[0]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[0]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[0]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[0]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[0]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[0]->getType()<<endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[0]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[0]->getPosition().getY()<<endl;
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[0]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getEsquive() << endl;
-
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[0]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[0]->getChampAttack()<<endl;
-
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[7]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[7]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[7]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[7]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[7]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[7]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[7]->getType()<<endl;
-
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[7]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[7]->getPosition().getY()<<endl;
-
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[7]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[7]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[7]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[7]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[7]->getStatistiques().getEsquive() << endl;
-
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[7]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[7]->getChampAttack()<<endl;
-
-								sleep(1);
-								moteur.undo(window, move(ptr_attaque_action1));sleep(1);
-
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[0]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[0]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[0]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[0]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[0]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[0]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[0]->getType()<<endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[0]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[0]->getPosition().getY()<<endl;
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[0]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[0]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[0]->getStatistiques().getEsquive() << endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[0]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[0]->getPosition().getY()<<endl;
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[0]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[0]->getChampAttack()<<endl;
-
-								cout<< "Nom : " << moteur.getEtat().getPersonnages()[7]->getNom()<<endl;
-								cout<< "Camp : " << moteur.getEtat().getPersonnages()[7]->getCamp()<<endl;
-								cout<< "Nom Arme : " << moteur.getEtat().getPersonnages()[7]->getNomArme()<<endl;
-								cout<< "Code Arme : " << moteur.getEtat().getPersonnages()[7]->getCodeArme()<<endl;
-								cout<< "Code tuile : " << moteur.getEtat().getPersonnages()[7]->getCodeTuile()<<endl;
-								cout<< "Statut : " << moteur.getEtat().getPersonnages()[7]->getStatut()<<endl;
-								cout<< "Type ID : " << moteur.getEtat().getPersonnages()[7]->getType()<<endl;
-								cout<< "Position : " <<moteur.getEtat().getPersonnages()[7]->getPosition().getX()<<", "<<
-	moteur.getEtat().getPersonnages()[7]->getPosition().getY()<<endl;
-								cout<<"Statistiques :" <<endl;
-								cout<<" - PV : " <<moteur.getEtat().getPersonnages()[7]->getStatistiques().getPV()<<endl;
-								cout<<" - Attaque : "<< moteur.getEtat().getPersonnages()[7]->getStatistiques().getAttaque() << endl;
-								cout<< " - Defense : "<< moteur.getEtat().getPersonnages()[7]->getStatistiques().getDefense() << endl;
-								cout<<" - Critique : " << moteur.getEtat().getPersonnages()[7]->getStatistiques().getCritique() << endl;
-								cout<< " - Esquive : " << moteur.getEtat().getPersonnages()[7]->getStatistiques().getEsquive() << endl;
-								cout<<" Champ move : " << moteur.getEtat().getPersonnages()[7]->getChampMove()<<endl;
-								cout<<" Champ attack : " << moteur.getEtat().getPersonnages()[7]->getChampAttack()<<endl;
-								sleep(1);
-								
-
-
-								
-								//delete ptr_attaque_action1;
-							}								
+							
+												
 							if(moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);

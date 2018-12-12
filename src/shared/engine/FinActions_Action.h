@@ -20,6 +20,7 @@ namespace engine {
   private:
     state::Personnage& cible;
     state::StatutPersonnageID oldStatut;
+    int oldCodeTuile;
     // Operations
   public:
     FinActions_Action (state::Personnage& cible, bool joueur);

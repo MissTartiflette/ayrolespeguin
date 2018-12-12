@@ -153,6 +153,129 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 	}
 }
 
+void HeuristicIA::runRollback (engine::Moteur& moteur, sf::RenderWindow& window){
+
+		if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
+		
+		bool armeeAdverseAneantie = true;
+			
+		for (size_t i = 0; i < moteur.getEtat().getPersonnages().size(); i++){
+			int action=-1;
+			
+			if (moteur.getEtat().getPersonnages()[i]-> getCamp() == camp){
+				size_t indiceObjectif=0;
+				while (moteur.getEtat().getPersonnages()[i]->getStatut() != MORT && moteur.getEtat().getPersonnages()[i]->getStatut() != ATTENTE){
+					moteur.getEtat().getPersonnages()[i]->setStatut(SELECTIONNE);
+					vector<Position> objectif;
+					vector<Position> listeAttaques = moteur.getEtat().getPersonnages()[i]-> getLegalAttack(moteur.getEtat());
+					armeeAdverseAneantie = true;
+					
+					// On vérifie qu'il reste des cibles
+					for (size_t l = 0; l < moteur.getEtat().getPersonnages().size(); l++){
+						if (moteur.getEtat().getPersonnages()[l]->getCamp() != camp && moteur.getEtat().getPersonnages()[l]->getStatut() != MORT){
+							armeeAdverseAneantie = false;
+							break;
+						}
+					}
+					
+					// Si les cibles adverses sont toutes mortes, le personnage termine son tour pour déclencher
+					// la fin de partie
+					if (armeeAdverseAneantie){
+						action = 2;
+					}
+					
+					// S'il reste des adversaires
+					else{
+						// Si le personnage a moins de 5 PV et su'il se trouve sur un refuge, il termine son tour
+						if(moteur.getEtat().getPersonnages()[i]->getStatistiques().getPV()<=5 && (moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Maison" || moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Forteresse")){
+							action = 2;
+						}
+						
+						else{
+							objectif = findObjectif(moteur, i); 
+							// Si la position de l'objectif est occupée, on en déduit que c'est un ennemi
+							// attaquer
+							if(moteur.getEtat().getGrille()[objectif[indiceObjectif].getX()][objectif[indiceObjectif].getY()]->isOccupe(moteur.getEtat())!=-1){
+								
+								bool resTest = false;
+								for (size_t k = 0; k < listeAttaques.size(); k++){
+									if(objectif[indiceObjectif].equals(listeAttaques[k])){
+										resTest = true;
+										break;
+									}
+								}					
+								
+								// Si la position de l'ennemi est dans le champ d'attaque, on demande une attaque
+								if (resTest){
+									action = 1;
+								}
+							}
+						}
+					}
+					// Si l'objectif est d'atteindre un refuge ou de se rapprocher d'un ennemi, on demande un 							deplacement
+					if(action == -1){
+						action = 0;
+					}
+					
+					sleep(1);
+					
+					// 0 : Cas du deplacement
+					if (action==0){ 
+						if(moteur.getEtat().getPersonnages()[i]->getChampMove() != 0){
+							int indiceVoisin=this->findIndiceVoisin(moteur, i);
+							if(indiceVoisin!=-1){
+								
+								indiceObjectif=0;	
+													
+								vector<Position> chemin=AlgorithmeA(moteur, i, objectif[indiceObjectif]);
+								while(chemin.size()==0 && indiceObjectif!=(objectif.size()-1)){
+									indiceObjectif++;	
+									chemin=AlgorithmeA(moteur, i, objectif[indiceObjectif]);
+								}
+								if(chemin.size()!=0){
+									Dep_Action deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1], camp);
+									Dep_Action* ptr_deplacement (new Dep_Action(deplacement));
+									moteur.addAction(move(ptr_deplacement));
+									moteur.updateAction(window, move(ptr_deplacement));
+									moteur.update(window);
+								}
+								else{
+									action=2;
+								}
+							}
+							else{action=2;}								
+						}
+						else{
+							action=2;
+						}
+					}
+					
+					// 1 : Cas de l'attaque
+					else if (action == 1){
+							// Commande d'attaque
+							Attaque_Action attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[moteur.getEtat().getGrille()[objectif[indiceObjectif].getX()][objectif[indiceObjectif].getY()]->isOccupe(moteur.getEtat())], camp);												
+							Attaque_Action* ptr_attaque (new Attaque_Action(attaque));
+							moteur.addAction(move(ptr_attaque));
+							moteur.updateAction(window, move(ptr_attaque));
+							moteur.update(window);
+							sleep(1);
+						}
+					
+					// 2 : Cas de fin d'actions
+					else if (action == 2){
+						FinActions_Action finactions(*moteur.getEtat().getPersonnages()[i], camp);
+						FinActions_Action* ptr_finactions (new FinActions_Action(finactions));
+						moteur.addAction(move(ptr_finactions));
+						moteur.updateAction(window, move(ptr_finactions));
+						moteur.update(window);
+						usleep(200000);
+					}
+					
+				}		
+			}
+		}
+	}
+}
 
 
 vector<Position> HeuristicIA::AlgorithmeA(engine::Moteur& moteur, int i, state::Position posDestination){

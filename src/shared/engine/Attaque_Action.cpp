@@ -185,6 +185,7 @@ void Attaque_Action::undo (state::Etat& etat){
 	cible.getPosition().setX(oldPositionCible.getX());
 	cible.getPosition().setY(oldPositionCible.getY());
 
-	attaquant.setStatut(oldStatutAttaquant);
+	//attaquant.setStatut(oldStatutAttaquant);
+	attaquant.setStatut(state::DISPONIBLE);
 	cible.setStatut(oldStatutCible);
 }
