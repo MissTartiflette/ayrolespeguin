@@ -13,14 +13,18 @@ namespace sf {
 };
 namespace state {
   class Etat;
+  class Position;
 };
 namespace ai {
+  class Sommet;
   class IA;
 };
 namespace engine {
   class Action;
 }
 
+#include "state/Position.h"
+#include "Sommet.h"
 #include "IA.h"
 #include "engine/Action.h"
 
@@ -28,6 +32,7 @@ namespace ai {
 
   /// class DeepIA - 
   class DeepIA : public ai::IA {
+    // Associations
     // Attributes
   public:
     int profondeur     = 2;
@@ -38,7 +43,15 @@ namespace ai {
     int max (engine::Moteur& moteur, int profondeur);
     int min (engine::Moteur& moteur, int profondeur);
     int fonctionEvaluation (engine::Moteur& moteur);
-    std::vector<engine::Action*> findActionsPossibles (state::Etat& etat, bool campChoisi);
+    std::vector<engine::Action*> findActionsPossibles (state::Etat& etat, bool campChoisi, engine::Moteur& moteur);
+    std::vector<state::Position> AlgorithmeA (engine::Moteur& moteur, int i, state::Position posDestination);
+    int isPresentSom (std::vector<Sommet> listeSommet, Sommet sommet);
+    int isPresentPos (std::vector<Sommet> listeSommet, state::Position position);
+    int findIndiceVoisin (engine::Moteur& moteur, int personnage);
+    int indiceMinimum (std::vector<int> liste);
+    int indiceMaximum (std::vector<int> liste);
+    std::vector<state::Position> findRefuge (engine::Moteur& moteur, int personnage);
+    std::vector<state::Position> findObjectif (engine::Moteur& moteur, int personnage);
     // Setters and Getters
   };
 

@@ -65,7 +65,7 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 					
 					// S'il reste des adversaires
 					else{
-						// Si le personnage a moins de 5 PV et su'il se trouve sur un refuge, il termine son tour
+						// Si le personnage a moins de 5 PV et qu'il se trouve sur un refuge, il termine son tour
 						if(moteur.getEtat().getPersonnages()[i]->getStatistiques().getPV()<=5 && (moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Maison" || moteur.getEtat().getGrille()[moteur.getEtat().getPersonnages()[i]->getPosition().getX()][moteur.getEtat().getPersonnages()[i]->getPosition().getY()]->getNom() == "Forteresse")){
 							action = 2;
 						}

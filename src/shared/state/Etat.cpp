@@ -123,23 +123,23 @@ int Etat::initPersonnages(Correspondances& correspondance){
 	 
 	 Personnage chevalier_bleu(CHEVALIER, true, "Bruce", 3, 23);
 	 std::unique_ptr<Personnage> ptrCB(new Personnage(chevalier_bleu));
-	 personnages.push_back(move(ptrCB));
+	 //personnages.push_back(move(ptrCB));
 	 
 	 Personnage guerrier_bleu(GUERRIER, true, "Arthur", 4, 22);
 	 std::unique_ptr<Personnage> ptrGB(new Personnage(guerrier_bleu));
-	 personnages.push_back(move(ptrGB));
+	 //personnages.push_back(move(ptrGB));
 	 
 	 Personnage archer_rouge(ARCHER, false, "Clint", 17, 5);
 	 std::unique_ptr<Personnage> ptrAR(new Personnage(archer_rouge));
-	 personnages.push_back(move(ptrAR));
+	 //personnages.push_back(move(ptrAR));
 	 
 	 Personnage brigand_rouge(BRIGAND, false, "Peter", 20, 2);
 	 std::unique_ptr<Personnage> ptrBR(new Personnage(brigand_rouge));
-	 personnages.push_back(move(ptrBR));
+	 //personnages.push_back(move(ptrBR));
 	 
 	 Personnage chevalier_rouge(CHEVALIER, false, "Tony", 23, 3);
 	 std::unique_ptr<Personnage> ptrCR(new Personnage(chevalier_rouge));
-	 personnages.push_back(move(ptrCR));
+	 //personnages.push_back(move(ptrCR));
 	 
 	 Personnage guerrier_rouge(GUERRIER, false, "Steve", 3, 21);
 	 std::unique_ptr<Personnage> ptrGR(new Personnage(guerrier_rouge));
