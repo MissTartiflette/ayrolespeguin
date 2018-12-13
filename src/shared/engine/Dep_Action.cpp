@@ -55,8 +55,8 @@ void Dep_Action::apply (state::Etat& etat){
 				cible.getPosition().setX(newPos.getX());
 				cible.getPosition().setY(newPos.getY());
 				cible.setChampMove(cible.getChampMove()-1);
-				//cout << cible.getNom() << " se déplace sur la case de coordonnées [" << newPos.getX() << ", " << newPos.getY() << "] avec succès !" << endl;	
-				//cout << "\tIl lui reste " << cible.getChampMove() << " points de deplacement." << endl;
+				cout << cible.getNom() << " se déplace sur la case de coordonnées [" << newPos.getX() << ", " << newPos.getY() << "] avec succès !" << endl;	
+				cout << "\tIl lui reste " << cible.getChampMove() << " points de deplacement." << endl;
 				
 				// Nouveau bonus de terrain
 				TerrainPraticable& refTerrainDestination = static_cast<TerrainPraticable&>(*etat.getGrille()[newPos.getY()][newPos.getX()]);
@@ -64,30 +64,30 @@ void Dep_Action::apply (state::Etat& etat){
 								
 				if (refTerrainDestination.getTerrainPraticableID() == FORET){
 					cible.getStatistiques().setEsquive(cible.getStatistiques().getEsquive()+refTerrainDestination.getStatistiques().getEsquive());
-					//cout << "+ Il obtient un bonus de +" ;
-					//cout << refTerrainDestination.getStatistiques().getEsquive() << " en ESQUIVE sur cette case FORET. +" << endl;
+					cout << "+ Il obtient un bonus de +" ;
+					cout << refTerrainDestination.getStatistiques().getEsquive() << " en ESQUIVE sur cette case FORET. +" << endl;
 					
 				}
 				else if (refTerrainDestination.getTerrainPraticableID() == COLLINE){
 					cible.getStatistiques().setDefense(cible.getStatistiques().getDefense()+refTerrainDestination.getStatistiques().getDefense());
-					//cout << "+ Il obtient un bonus de +" ;
-					//cout << refTerrainDestination.getStatistiques().getDefense() << " en DEFENSE sur cette case COLLINE. +" << endl;
+					cout << "+ Il obtient un bonus de +" ;
+					cout << refTerrainDestination.getStatistiques().getDefense() << " en DEFENSE sur cette case COLLINE. +" << endl;
 				}
 				
 			}
 			else{
-				//cerr << "Deplacement non autorise " << endl;
+				cerr << "Deplacement non autorise " << endl;
 			}
 		}
 		else {
-			//cout<< "Deplacement impossible, tous les points de " << cible.getNom() << " de mouvement ont été utilisés pour ce tour." << endl;
+			cout<< "Deplacement impossible, tous les points de " << cible.getNom() << " de mouvement ont été utilisés pour ce tour." << endl;
 		}
 	}
 	else if (cible.getStatut()==ATTENTE){
-		//cout << cible.getNom() << " a terminé toutes son tour d'actions, il ne peut plus se déplacer." <<endl; 
+		cout << cible.getNom() << " a terminé toutes son tour d'actions, il ne peut plus se déplacer." <<endl; 
 	}
 	
-	//cout << "\n" ;
+	cout << "\n" ;
 }
 
 void Dep_Action::undo (state::Etat& etat){

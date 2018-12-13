@@ -17,16 +17,49 @@ void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){
 			//if (moteur.getEtat().getPersonnages()[i]-> getCamp() == camp){
 				//while (moteur.getEtat().getPersonnages()[4]->getStatut() != MORT && moteur.getEtat().getPersonnages()[4]->getStatut() != ATTENTE){
 		campChoisi=false;
-		int max_val=-30000;
-		int valeur;
-		std::vector<Action*> listeActions;
-	
-		listeActions = findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
-		cout<<"taille liste Actions :"<<listeActions.size()<<endl;
-		for(size_t k=0; k<listeActions.size(); k++){
-			cout<<"ID action "<<k<<" : " << listeActions[k]->getActionID()<<endl;
+		//int max_val=-30000;
+		//int valeur;
+		//std::vector<Action*> listeActions;
+		
+		scoreOptimal = -30000;
+		
+		findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
+		
+		for (int i = 0; i < listeCoupsSimules.size(); i++){
+			listeCoupsSimules[listeCoupsSimules.size()-i-1]->undo(moteur.getEtat());
+			listeCoupsSimules.pop_back();
 		}
-		sleep(1); 
+		
+		cout << "Preparation aux commandes de l'IA optimales..."<< endl;
+		sleep(5);
+		
+		//cout<<"taille liste Actions :"<<listeActions.size()<<endl;
+		cout<<"Taille listeCoupsOptimaux :"<<listeCoupsOptimaux.size()<<endl;
+		
+		for(size_t i=0; i<listeCoupsOptimaux.size(); i++){
+			cout<<"ID action "<<i<<" de Coups Optimaux : " << listeCoupsOptimaux[i]->getActionID()<<endl;
+			if(listeCoupsOptimaux[i]->getActionID()==DEP_ACTION){
+				Dep_Action& listeActionsI=static_cast<Dep_Action&>(*listeCoupsOptimaux[i]);
+				Deplacement deplacement(listeActionsI.getCible(), listeActionsI.getDestination(),listeActionsI.getJoueur());
+				unique_ptr<Commande> meilleureCommande(new Deplacement(deplacement));
+				moteur.addCommande(i, move(meilleureCommande));
+			}
+			else if(listeCoupsOptimaux[i]->getActionID()==ATTAQUE_ACTION){
+				Attaque_Action& listeActionsI=static_cast<Attaque_Action&>(*listeCoupsOptimaux[i]);
+				Attaque attaque(listeActionsI.getAttaquant(), listeActionsI.getCible(),listeActionsI.getJoueur());
+				unique_ptr<Commande> meilleureCommande (new Attaque(attaque));
+				moteur.addCommande(i, move(meilleureCommande));
+			}
+			else if(listeCoupsOptimaux[i]->getActionID()==FINACTIONS_ACTION){
+				FinActions_Action& listeActionsI=static_cast<FinActions_Action&>(*listeCoupsOptimaux[i]);
+				FinActions finactions(listeActionsI.getCible(),listeActionsI.getJoueur());
+				unique_ptr<Commande> meilleureCommande (new FinActions(finactions));
+				moteur.addCommande(i, move(meilleureCommande));
+			}
+		}
+		moteur.update(window);
+		sleep(5);
+		/*
 		for(size_t i=0; i<listeActions.size(); i++){
 			
 			listeActions[i]->apply(moteur.getEtat());	
@@ -55,9 +88,9 @@ void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){
 				
 			}
 			listeActions[i]->undo(moteur.getEtat());	
-		}
+		}*/
 		
-		moteur.update(window);
+		//moteur.update(window);
 	//}
 	}
 }
@@ -103,7 +136,8 @@ int DeepIA::min(engine::Moteur& moteur, int profondeur){
 		
 		//cout<<"camp choisi : " << campChoisi<<endl;
 		campChoisi=!campChoisi;
-		std::vector<engine::Action*> listeActions = findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
+		//std::vector<engine::Action*> listeActions = findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
+		std::vector<engine::Action*> listeActions;
 		cout<<"taille : " <<listeActions.size()<<endl;
 		//cout<<"camp choisi : " << campChoisi<<endl;
 		int valeur; 
@@ -131,7 +165,8 @@ int DeepIA::max(engine::Moteur& moteur, int profondeur){
 	}
 	else{
 		campChoisi=!campChoisi;
-		std::vector<engine::Action*> listeActions = findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
+		//std::vector<engine::Action*> listeActions = findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
+		std::vector<engine::Action*> listeActions;
 		cout<<"taille : " <<listeActions.size()<<endl;
 		int valeur;
 		for(size_t i=0; i<listeActions.size(); i++){
@@ -147,16 +182,18 @@ int DeepIA::max(engine::Moteur& moteur, int profondeur){
 	return maxValue;
 }
 
-std::vector<engine::Action*> DeepIA::findActionsPossibles(state::Etat& etat, bool campChoisi, engine::Moteur& moteur){
+void DeepIA::findActionsPossibles(state::Etat& etat, bool campChoisi, engine::Moteur& moteur){
 	
 	std::vector<engine::Action*> listeActions;
 	std::vector<state::Position> listeAttaques;
 	std::vector<state::Position> listePositions;
+	// Test "1v1" : Archer bleu contre guerrier rouge
+	int indicePersonnage = 7;
+	if (campChoisi == true){indicePersonnage = 0;}
 	
-	for (size_t indicePersonnage = 0; indicePersonnage < etat.getPersonnages().size(); indicePersonnage++){
+	//for (size_t indicePersonnage = 0; indicePersonnage < etat.getPersonnages().size(); indicePersonnage++){
 		// Parcours des personnages du camp choisi (false=IA)
 		if(etat.getPersonnages()[indicePersonnage]->getCamp() == campChoisi && etat.getPersonnages()[indicePersonnage]->getStatut()!= state::MORT && etat.getPersonnages()[indicePersonnage]->getStatut()!= state::ATTENTE){
-		
 			// Ajout des attaques possibles
 			listeAttaques = etat.getPersonnages()[indicePersonnage]->getLegalAttack(etat);
 			for (size_t i = 0; i < listeAttaques.size(); i++){
@@ -182,10 +219,76 @@ std::vector<engine::Action*> DeepIA::findActionsPossibles(state::Etat& etat, boo
 				engine::FinActions_Action finaction(*etat.getPersonnages()[indicePersonnage], etat.getPersonnages()[indicePersonnage]->getCamp());
 				Action* ptr_fin_action = new FinActions_Action(finaction);
 				listeActions.push_back(ptr_fin_action);	
-			}		
+			}
+			
+			cout << "Nombre d'actions possibles : " <<listeActions.size() << endl;
+			
+			// SIMULATIONS
+			for(size_t i = 0; i < listeActions.size(); i++){
+				listeActions[i]->apply(etat);
+				
+				if (campChoisi == false){
+					listeCoupsSimules.push_back(move(listeActions[i]));
+					cout << "Coup effectue par l'IA : " << listeCoupsSimules.size() << endl;
+				}
+				else{
+					nbActionsJoueurSimulees++;
+					listeCoupsSimules.push_back(move(listeActions[i]));
+				}
+				findActionsPossibles(etat, campChoisi, moteur);
+			}
 		}
-	}
-	return listeActions;
+		
+		// Le perso est en attente
+		else{
+			// Si c'est le tour de l'IA est fini on simule le tour du joueur
+			if(campChoisi == false){
+				campChoisi = true;
+				etat.getPersonnages()[indicePersonnage]->setStatut(state::DISPONIBLE);
+				cout << "XX changement de joueur simule XX : " << campChoisi << endl;
+				findActionsPossibles(etat, campChoisi, moteur);
+			}
+			// Si c'est le tour du joueur est terminé
+			else{
+				int newScore = fonctionEvaluation(moteur);
+				if (newScore > scoreOptimal){
+					scoreOptimal = newScore;
+					cout << "changement de score !! : "<< scoreOptimal << endl;
+					cout << "Le joueur a simulé ce nombre d'actions : " << nbActionsJoueurSimulees << endl;
+					listeCoupsOptimaux = listeCoupsSimules;
+					for (int j = 0; j <= nbActionsJoueurSimulees-1; j++){
+						listeCoupsOptimaux.pop_back();
+					}
+					
+					cout << "Taille coup optimaux :" << listeCoupsOptimaux.size() << endl;
+					sleep(4);
+				}
+				
+				cout << "Taille avant annulations : " << listeCoupsSimules.size() << endl;
+				// On annule les coups du joueurs
+				/*for(size_t j = 0; j<=nbActionsJoueurSimulees-1; j++){
+					cout << "Coup annulé" << endl;
+					listeCoupsSimules[listeCoupsSimules.size()-1]->undo(etat);
+					listeCoupsSimules.pop_back();
+				}*/
+				nbActionsJoueurSimulees--;
+				
+				// On annule le dernier coup de l'IA
+				listeCoupsSimules[listeCoupsSimules.size()-1]->undo(etat);
+				listeCoupsSimules.pop_back();
+				
+				// Si il n'y a pas eu de nouveau coup
+				if(nbActionsJoueurSimulees == 0){
+					listeCoupsSimules[listeCoupsSimules.size()-1]->undo(etat);
+					listeCoupsSimules.pop_back();
+				}
+				
+				cout << "Taille après annulations joueur: " << listeCoupsSimules.size() << endl;
+				campChoisi = false;
+			}
+		}
+	//}
+	//return listeActions;
 }
 
 vector<Position> DeepIA::AlgorithmeA(engine::Moteur& moteur, int i, state::Position posDestination){

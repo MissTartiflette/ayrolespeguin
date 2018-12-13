@@ -58,7 +58,7 @@ void Attaque_Action::apply (state::Etat& etat){
 				
 								
 				if (contreAtk == true){
-					//cout << "\tCONTRE-ATTAQUE" << endl;
+					cout << "\tCONTRE-ATTAQUE" << endl;
 				}
 				
 				//-----------------triangle des armes--------------------------------
@@ -81,15 +81,15 @@ void Attaque_Action::apply (state::Etat& etat){
 				}
 
 				//------------------------succes ou echec----------------------------------
-				//cout << "\t- " << attaquant.getNom() << " attaque " << cible.getNom() << " ! -" << endl;
-				//cout << afficheBonus << endl;
+				cout << "\t- " << attaquant.getNom() << " attaque " << cible.getNom() << " ! -" << endl;
+				cout << afficheBonus << endl;
 				srand(time(NULL));
 				int chanceEsquive=rand()%100 + 1;
 				
 				//------------------------echec de l'attaque-------------------------------
 				if(chanceEsquive<=esquive_cible){
-					//cout << "\t|\t " << cible.getNom() << " évite l'attaque." << endl;
-					//cout << "\t|\t L'attaque échoue ! " << endl;
+					cout << "\t|\t " << cible.getNom() << " évite l'attaque." << endl;
+					cout << "\t|\t L'attaque échoue ! " << endl;
 				}
 				//------------------------succes de l'attaque-------------------------------
 				else{
@@ -99,7 +99,7 @@ void Attaque_Action::apply (state::Etat& etat){
 					int bonus_critique=0;
 					if(chanceCritique<=critique_attaquant){
 						bonus_critique=5;
-						//cout << "\t|\t COUP CRITIQUE ! (+" << bonus_critique << " dégâts)" << endl;
+						cout << "\t|\t COUP CRITIQUE ! (+" << bonus_critique << " dégâts)" << endl;
 					}
 
 				//-------------------------Calcul degats------------------------------------
@@ -109,15 +109,15 @@ void Attaque_Action::apply (state::Etat& etat){
 					}
 				//---------------------------Attaque--------------------------------------
 					cible.getStatistiques().setPV(pv_cible-degats);
-					//cout << "\t|\t " << cible.getNom() << " perd " << degats << " PV. " << endl;
-					//cout << "\t|\t Il ne lui reste plus que " << cible.getStatistiques().getPV() << " PV."<< endl;
+					cout << "\t|\t " << cible.getNom() << " perd " << degats << " PV. " << endl;
+					cout << "\t|\t Il ne lui reste plus que " << cible.getStatistiques().getPV() << " PV."<< endl;
 				}
 
 				if(cible.getStatistiques().getPV()==0){
 					cible.setStatut(MORT);
 					cible.getPosition().setX(-1);
 					cible.getPosition().setY(-1);
-					//cout << "\t\t++ " << cible.getNom() << " est mort. ++" << endl;
+					cout << "\t\t++ " << cible.getNom() << " est mort. ++" << endl;
 					
 					// Si un personnage meurt lors d'une contre-attaque, le tour du personnage qui a 
 					// contre-attaqué ne se termine pas
@@ -159,22 +159,22 @@ void Attaque_Action::apply (state::Etat& etat){
 		// Cas attaque impossible
 		else{
 			if (contreAtk == true){
-				//cout << "\t CONTRE-ATTAQUE IMPOSSIBLE : ennemi hors de portée !" << endl;
+				cout << "\t CONTRE-ATTAQUE IMPOSSIBLE : ennemi hors de portée !" << endl;
 				FinActions_Action finattaque(cible, joueur);
 				//FinActions finattaque(cible, joueur);
 				//sleep(2);
 				finattaque.apply(etat);
 			}
 			else{
-				//cout << "\tAttaque non autorisée !" << endl;
+				cout << "\tAttaque non autorisée !" << endl;
 			}		
 		}
 	}
 	else if(attaquant.getStatut()==ATTENTE){
-		//cout << attaquant.getNom() << " a terminé son tour d'actions, il ne peut plus attaquer." <<endl;  
+		cout << attaquant.getNom() << " a terminé son tour d'actions, il ne peut plus attaquer." <<endl;  
 	}
 	
-	//cout << "\n" ;
+	cout << "\n" ;
 
 }
 

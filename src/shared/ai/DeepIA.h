@@ -2,10 +2,11 @@
 #ifndef AI__DEEPIA__H
 #define AI__DEEPIA__H
 
-#include <SFML/Graphics.hpp>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 namespace engine {
+  class Action;
   class Moteur;
 };
 namespace sf {
@@ -18,9 +19,6 @@ namespace state {
 namespace ai {
   class Sommet;
   class IA;
-};
-namespace engine {
-  class Action;
 }
 
 #include "state/Position.h"
@@ -37,13 +35,17 @@ namespace ai {
   public:
     int profondeur     = 2;
     bool campChoisi;
+    int scoreOptimal     = 0;
+    std::vector<engine::Action*> listeCoupsOptimaux;
+    std::vector<engine::Action*> listeCoupsSimules;
+    int nbActionsJoueurSimulees     = 0;
     // Operations
   public:
     void run (engine::Moteur& moteur, sf::RenderWindow& window);
     int max (engine::Moteur& moteur, int profondeur);
     int min (engine::Moteur& moteur, int profondeur);
     int fonctionEvaluation (engine::Moteur& moteur);
-    std::vector<engine::Action*> findActionsPossibles (state::Etat& etat, bool campChoisi, engine::Moteur& moteur);
+    void findActionsPossibles (state::Etat& etat, bool campChoisi, engine::Moteur& moteur);
     std::vector<state::Position> AlgorithmeA (engine::Moteur& moteur, int i, state::Position posDestination);
     int isPresentSom (std::vector<Sommet> listeSommet, Sommet sommet);
     int isPresentPos (std::vector<Sommet> listeSommet, state::Position position);

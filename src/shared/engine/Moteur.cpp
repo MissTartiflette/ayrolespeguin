@@ -430,11 +430,10 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 		cout << "ROLLBACK ! : " << listeActionsJouees.size() << " actions a annuler" << endl;
 		if (listeActionsJouees.size()>0){
 			for(int i = listeActionsJouees.size()-1; i >= 0; i--){
-				/*cout << "i=" << i << endl;
-				cout << listeActionsJouees[i] << endl;*/
 				undo(window, move(listeActionsJouees[i]));
-				sleep(1);
+				
 				cout << "Annulation " << i << " effectuee" << endl;
+				usleep(750000);
 				listeActionsJouees.pop_back();
 			}
 		}
