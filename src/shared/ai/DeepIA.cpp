@@ -25,7 +25,7 @@ void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){
 		
 		findActionsPossibles(moteur.getEtat(), campChoisi, moteur);
 		
-		for (int i = 0; i < listeCoupsSimules.size(); i++){
+		for (size_t i = 0; i < listeCoupsSimules.size(); i++){
 			listeCoupsSimules[listeCoupsSimules.size()-i-1]->undo(moteur.getEtat());
 			listeCoupsSimules.pop_back();
 		}

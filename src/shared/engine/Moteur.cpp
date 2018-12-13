@@ -667,7 +667,6 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 							
 			FinActions_Action finaction(*etatActuel.getPersonnages()[numeroPerso], etatActuel.getPersonnages()[numeroPerso]->getCamp());
 			FinActions_Action* ptr_finaction(new FinActions_Action(finaction));
-			cout << ptr_finaction << endl;
 			listeActionsJouees.push_back(move(ptr_finaction));
 			
 			updateAction(window, move(ptr_finaction));							
