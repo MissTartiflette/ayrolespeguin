@@ -80,10 +80,10 @@ int main(int argc,char* argv[]){
 					}
 					
 					// Appel à l'IA choisie pour le tour adverse
-					if(moteur.getJoueurActif() == true){
+					if(moteur.getJoueurActif() == true && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
 						armeeBleue.run(moteur, window);
 					}
-					else {
+					else if(moteur.getJoueurActif() == false && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
 						armeeRouge.run(moteur, window);
 					}
 					
