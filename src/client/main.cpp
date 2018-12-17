@@ -35,6 +35,67 @@ int main(int argc,char* argv[]){
 		if(strcmp(argv[1],"hello")==0){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
+		
+		else if(strcmp(argv[1], "record") == 0){
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			std::string chemin_fichier_map_txt = "res/map1.txt";
+			
+			// Creation des tables de correspondances et du moteur
+			Correspondances tab_corres = Correspondances();
+			Moteur moteur;
+			
+			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
+				moteur.getEtat().initPersonnages(tab_corres);
+				moteur.getEtat().initCurseur();
+				StateLayer stateLayer(moteur.getEtat());
+				stateLayer.initSurfaces(moteur.getEtat());
+								
+				StateLayer* ptr_stateLayer=&stateLayer;
+				moteur.getEtat().registerObserver(ptr_stateLayer);
+				
+				sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
+				
+				HeuristicIA armeeRouge;
+				HeuristicIA armeeBleue;
+				armeeBleue.setCamp(true);
+				
+				cout << "\t\t--- Record ---" << endl;
+				
+				bool demarrage = true ;
+				
+				while (window.isOpen()){				
+					sf::Event event;									
+					// Verication de fin de tour et reinitialisations de debut de tour
+					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+					}
+					if (demarrage){
+						stateLayer.draw(window);
+											
+						cout << "\n\t\t--- Tour " << moteur.getEtat().getTour() << " ---\n" << endl;
+						
+						demarrage = false;
+					}
+					
+					// Appel à l'IA choisie pour le tour adverse
+					if(moteur.getJoueurActif() == true){
+						armeeBleue.run(moteur, window);
+					}
+					else {
+						armeeRouge.run(moteur, window);
+					}
+					
+					while (window.pollEvent(event)){
+						// Fermeture de la fenetre
+						if (event.type == sf::Event::Closed){
+							window.close();
+						}
+					}					
+				}
+			}
+		} 
 
 		else if(strcmp(argv[1],"random_ai")==0 || strcmp(argv[1],"heuristic_ai")==0 || strcmp(argv[1], "rollback") == 0 || strcmp(argv[1],"deep_ai")==0){
 			
