@@ -44,6 +44,7 @@ void Moteur::update (sf::RenderWindow& window){
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
 		commandesActuelles.erase(it);
 	}
+	commandesActuelles.clear();
 }
 
 void Moteur::updateAction (sf::RenderWindow& window, Action* action){
