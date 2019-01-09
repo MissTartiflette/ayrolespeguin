@@ -3,7 +3,8 @@
 #include "state.h"
 #include <iostream>
 #include <unistd.h>
-
+#include "../../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
+#include <SFML/Graphics.hpp>
 
 using namespace state;
 using namespace engine;
@@ -28,7 +29,7 @@ void Moteur::addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd){
 	
 }
 
-void Moteur::update (sf::RenderWindow& window){
+void Moteur::update (){
 	StateEvent stateEvent(ALLCHANGED);
 
 	map<int, std::unique_ptr<Commande>>::iterator it;
@@ -37,8 +38,8 @@ void Moteur::update (sf::RenderWindow& window){
 		// On n'execute que les commandes du joueur dont c'est le tour
 		if (commandesActuelles[i]->joueur == joueurActif){
 			commandesActuelles[i]->execute(etatActuel);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
-			
+			etatActuel.notifyObservers(stateEvent, etatActuel);
+			//sleep(1);
 		}
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
@@ -47,19 +48,19 @@ void Moteur::update (sf::RenderWindow& window){
 	commandesActuelles.clear();
 }
 
-void Moteur::updateAction (sf::RenderWindow& window, Action* action){
+void Moteur::updateAction (Action* action){
 	StateEvent stateEvent(ALLCHANGED);
 	
 	action->apply(etatActuel); 
-	etatActuel.notifyObservers(stateEvent, etatActuel, window);
+	etatActuel.notifyObservers(stateEvent, etatActuel);
 
 }
 
-void Moteur::undo (sf::RenderWindow& window, Action* action){
+void Moteur::undo (Action* action){
 	StateEvent stateEvent(ALLCHANGED);
 
 	action->undo(etatActuel);
-	etatActuel.notifyObservers(stateEvent, etatActuel, window);
+	etatActuel.notifyObservers(stateEvent, etatActuel);
 	
 }
 
@@ -179,12 +180,12 @@ bool Moteur::getJoueurActif(){
 	return joueurActif;
 }
 
-
-void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases){
+/*
+void Moteur::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cases, unsigned int longueur_map_cases){
 
 	StateEvent stateEvent(ALLCHANGED);
 
-	/*  CURSEUR  */
+	//CURSEUR  
 							
 	// Appui d'une flèche directionnelle ou de Enter sans selection 
 	// (moteur.getEtat().verifStatut()!=-1)
@@ -226,7 +227,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 					cout<< "\t\t->" << newChaine << " <-" << endl;
 					
 					etatActuel.getPersonnages()[numeroPerso]->setStatut(SELECTIONNE);
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 				}									
 				else if (etatActuel.getPersonnages()[numeroPerso]->getStatut() == ATTENTE){
 					newChaine = "Ce personnage a deja termine son tour";
@@ -242,14 +243,14 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			}
 			stateEvent.texte = newChaine;
 			stateEvent.stateEventID = TEXTECHANGED;
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
+			etatActuel.notifyObservers(stateEvent, etatActuel);
 		}
 							
 		// Déplacement du curseur
 		if (changementX != 0 || changementY !=0){
 			Position nextPosCurs(xCurs+changementX, yCurs+changementY);
 			etatActuel.getCurseur()->move(nextPosCurs);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);			
+			etatActuel.notifyObservers(stateEvent, etatActuel);			
 			
 			std::string newChaine;
 			int resTest = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->isOccupe(etatActuel);
@@ -258,7 +259,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			else{newChaine = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->getNom();}
 			stateEvent.texte = newChaine;
 			stateEvent.stateEventID = TEXTECHANGED;
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
+			etatActuel.notifyObservers(stateEvent, etatActuel);
 			
 			changementX = 0;
 			changementY = 0;
@@ -279,7 +280,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 		
 		// Changement de couleur du curseur
 		etatActuel.getCurseur()->setCodeTuile(1);
-		etatActuel.notifyObservers(stateEvent, etatActuel, window);
+		etatActuel.notifyObservers(stateEvent, etatActuel);
 		
 		// Actions
 		while((cible==-1) || (cible==attaquant)){	
@@ -293,7 +294,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champDroit=champDroit-1;
 					champGauche++;	
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 					usleep(200000);
 				}
 			}
@@ -306,7 +307,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champGauche=champGauche-1;
 					champDroit++;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 					usleep(200000);
 				}
 			}
@@ -319,7 +320,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champBas=champBas-1;
 					champHaut++;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 					usleep(200000);
 				}
 			}
@@ -331,7 +332,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champHaut=champHaut-1;
 					champBas++;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window); 
+					etatActuel.notifyObservers(stateEvent, etatActuel); 
 					usleep(200000);
 				}
 			}
@@ -341,13 +342,13 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 				cible=-2;
 				cout<< "\tAttaque annulée" << endl;									
 				etatActuel.getCurseur()->setCodeTuile(3);
-				etatActuel.notifyObservers(stateEvent, etatActuel, window);
+				etatActuel.notifyObservers(stateEvent, etatActuel);
 				
 				if(!etatActuel.getCurseur()->getPosition().equals(etatActuel.getPersonnages()[attaquant]->getPosition())){
 					Position nextPosCurs(etatActuel.getPersonnages()[attaquant]->getPosition().getX(), etatActuel.getPersonnages()[attaquant]->getPosition().getY());
 					etatActuel.getCurseur()->move(nextPosCurs);
 									
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 				}
 			}
 								
@@ -364,10 +365,10 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			addCommande(0, move(ptr_attaque));
 			
 			etatActuel.getCurseur()->setCodeTuile(2);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);				
-			update(window);
+			etatActuel.notifyObservers(stateEvent, etatActuel);				
+			update();
 			etatActuel.getCurseur()->setCodeTuile(0);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);									
+			etatActuel.notifyObservers(stateEvent, etatActuel);									
 		}
 	}
 	
@@ -399,7 +400,7 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			unique_ptr<Commande> ptr_finaction (new FinActions(finaction));
 			addCommande(0, move(ptr_finaction));								
 			etatActuel.getCurseur()->setCodeTuile(0);
-			update(window);
+			update();
 		}
 		
 		// Deplacement du curseur et du personnage selectionne
@@ -410,19 +411,19 @@ void Moteur::gestionCurseur(sf::Event newEvent, sf::RenderWindow& window, unsign
 			addCommande(0, move(ptr_deplacement));
 								
 			etatActuel.getCurseur()->move(nextPos);
-			update(window);
+			update();
 								
 			changementX = 0;
 			changementY = 0;
 		}
 	}
-}
-
-void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases){
+}*/
+/**
+void Moteur::gestionCurseurRollback(sf::Event newEvent, unsigned int largeur_map_cases, unsigned int longueur_map_cases){
 
 	StateEvent stateEvent(ALLCHANGED);
 
-	/*  CURSEUR  */
+	//CURSEUR  
 	
 	// ROLLBACK
 	//
@@ -431,7 +432,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 		cout << "ROLLBACK ! : " << listeActionsJouees.size() << " actions a annuler" << endl;
 		if (listeActionsJouees.size()>0){
 			for(int i = listeActionsJouees.size()-1; i >= 0; i--){
-				undo(window, move(listeActionsJouees[i]));
+				undo(move(listeActionsJouees[i]));
 				
 				cout << "Annulation " << i << " effectuee" << endl;
 				usleep(750000);
@@ -450,7 +451,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 		if(!persoSelectionne){
 			etatActuel.getCurseur()->setCodeTuile(0);
 		}
-		etatActuel.notifyObservers(stateEvent, etatActuel, window);
+		etatActuel.notifyObservers(stateEvent, etatActuel);
 		cout << "FIN DU ROLLBACK" << endl;
 	}	
 	
@@ -495,7 +496,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 					cout<< "\t\t->" << newChaine << " <-" << endl;
 					
 					etatActuel.getPersonnages()[numeroPerso]->setStatut(SELECTIONNE);
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 				}									
 				else if (etatActuel.getPersonnages()[numeroPerso]->getStatut() == ATTENTE){
 					newChaine = "Ce personnage a deja termine son tour";
@@ -511,14 +512,14 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 			}
 			stateEvent.texte = newChaine;
 			stateEvent.stateEventID = TEXTECHANGED;
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
+			etatActuel.notifyObservers(stateEvent, etatActuel);
 		}
 							
 		// Déplacement du curseur
 		if (changementX != 0 || changementY !=0){
 			Position nextPosCurs(xCurs+changementX, yCurs+changementY);
 			etatActuel.getCurseur()->move(nextPosCurs);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);			
+			etatActuel.notifyObservers(stateEvent, etatActuel);			
 			
 			std::string newChaine;
 			int resTest = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->isOccupe(etatActuel);
@@ -527,7 +528,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 			else{newChaine = etatActuel.getGrille()[nextPosCurs.getX()][nextPosCurs.getY()]->getNom();}
 			stateEvent.texte = newChaine;
 			stateEvent.stateEventID = TEXTECHANGED;
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);
+			etatActuel.notifyObservers(stateEvent, etatActuel);
 			
 			changementX = 0;
 			changementY = 0;
@@ -548,7 +549,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 		
 		// Changement de couleur du curseur
 		etatActuel.getCurseur()->setCodeTuile(1);
-		etatActuel.notifyObservers(stateEvent, etatActuel, window);
+		etatActuel.notifyObservers(stateEvent, etatActuel);
 		
 		// Actions
 		while((cible==-1) || (cible==attaquant)){	
@@ -562,7 +563,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champDroit=champDroit-1;
 					champGauche++;	
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 					usleep(200000);
 				}
 			}
@@ -575,7 +576,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champGauche=champGauche-1;
 					champDroit++;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 					usleep(200000);
 				}
 			}
@@ -588,7 +589,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champBas=champBas-1;
 					champHaut++;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 					usleep(200000);
 				}
 			}
@@ -600,7 +601,7 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champHaut=champHaut-1;
 					champBas++;
-					etatActuel.notifyObservers(stateEvent, etatActuel, window); 
+					etatActuel.notifyObservers(stateEvent, etatActuel); 
 					usleep(200000);
 				}
 			}
@@ -610,13 +611,13 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 				cible=-2;
 				cout<< "\tAttaque annulée" << endl;									
 				etatActuel.getCurseur()->setCodeTuile(3);
-				etatActuel.notifyObservers(stateEvent, etatActuel, window);
+				etatActuel.notifyObservers(stateEvent, etatActuel);
 				
 				if(!etatActuel.getCurseur()->getPosition().equals(etatActuel.getPersonnages()[attaquant]->getPosition())){
 					Position nextPosCurs(etatActuel.getPersonnages()[attaquant]->getPosition().getX(), etatActuel.getPersonnages()[attaquant]->getPosition().getY());
 					etatActuel.getCurseur()->move(nextPosCurs);
 									
-					etatActuel.notifyObservers(stateEvent, etatActuel, window);
+					etatActuel.notifyObservers(stateEvent, etatActuel);
 				}
 			}
 								
@@ -631,13 +632,13 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 			Attaque_Action attaque(*etatActuel.getPersonnages()[attaquant], *etatActuel.getPersonnages()[cible], etatActuel.getPersonnages()[attaquant]->getCamp());
 			Attaque_Action* ptr_attaque (new Attaque_Action(attaque));
 			listeActionsJouees.push_back(move(ptr_attaque));
-			updateAction(window, move(ptr_attaque));
+			updateAction(move(ptr_attaque));
 			
 			etatActuel.getCurseur()->setCodeTuile(2);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);				
-			update(window);
+			etatActuel.notifyObservers(stateEvent, etatActuel);				
+			update();
 			etatActuel.getCurseur()->setCodeTuile(0);
-			etatActuel.notifyObservers(stateEvent, etatActuel, window);									
+			etatActuel.notifyObservers(stateEvent, etatActuel);									
 		}
 	}
 	
@@ -670,9 +671,9 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 			FinActions_Action* ptr_finaction(new FinActions_Action(finaction));
 			listeActionsJouees.push_back(move(ptr_finaction));
 			
-			updateAction(window, move(ptr_finaction));							
+			updateAction(move(ptr_finaction));							
 			etatActuel.getCurseur()->setCodeTuile(0);
-			update(window);
+			update();
 		}
 		
 		// Deplacement du curseur et du personnage selectionne
@@ -684,15 +685,58 @@ void Moteur::gestionCurseurRollback(sf::Event newEvent, sf::RenderWindow& window
 			
 			
 			etatActuel.getCurseur()->move(nextPos);
-			updateAction(window, move(ptr_deplacement));
-			update(window);
+			updateAction(move(ptr_deplacement));
+			update();
 								
 			changementX = 0;
 			changementY = 0;
 		}
 	}
-}
+}*/
 
 void Moteur::addAction(Action* newAction){
 	listeActionsJouees.push_back(move(newAction));
+}
+
+void Moteur::addCommands(const Json::Value& in){
+}
+
+void Moteur::run (){
+}
+
+
+void Moteur::curseurChanged(Etat& etat, CurseurEventID& touche, int acteur, int cible, state::Position& position){
+	
+	if(touche==A){
+		Attaque attaque(*etatActuel.getPersonnages()[acteur], *etatActuel.getPersonnages()[cible], etatActuel.getPersonnages()[acteur]->getCamp());
+		unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+		addCommande(0, move(ptr_attaque));
+	}
+	else if(touche==Z){
+		FinActions finaction(*etatActuel.getPersonnages()[acteur], etatActuel.getPersonnages()[acteur]->getCamp());
+		unique_ptr<Commande> ptr_finaction (new FinActions(finaction));
+		addCommande(0, move(ptr_finaction));
+	}
+	else if(touche==M){
+		Deplacement deplacement(*etatActuel.getPersonnages()[acteur], position, joueurActif);
+		unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
+		addCommande(0, move(ptr_deplacement));
+	}
+	else if(touche==UPDATE){
+		update();
+	}
+
+	else if(touche==R){
+		cout << listeActionsJouees.size() << " actions a annuler" << endl;
+		if (listeActionsJouees.size()>0){
+			for(int i = listeActionsJouees.size()-1; i >= 0; i--){
+				undo(move(listeActionsJouees[i]));
+				
+				cout << "Annulation " << i << " effectuee" << endl;
+				usleep(750000);
+				listeActionsJouees.pop_back();
+			}
+		}
+	}
+
 }

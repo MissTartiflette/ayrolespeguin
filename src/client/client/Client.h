@@ -2,37 +2,36 @@
 #ifndef CLIENT__CLIENT__H
 #define CLIENT__CLIENT__H
 
-#include <memory>
 #include <mutex>
 
-namespace Engine {
-  class Observer;
-};
-namespace render {
-  class Scene;
-};
-namespace Engine {
+namespace engine {
   class Moteur;
 };
 namespace ai {
-  class AI;
+  class IA;
+};
+namespace engine {
+  class Observer;
+};
+namespace render {
+  class StateLayer;
 }
 
-#include "Engine/Observer.h"
-#include "render/Scene.h"
-#include "Engine/Moteur.h"
-#include "ai/AI.h"
+#include "engine/Moteur.h"
+#include "engine/Observer.h"
+#include "render/StateLayer.h"
+#include "ai/IA.h"
 
 namespace client {
 
   /// class Client - 
-  class Client : public Engine::Observer {
+  class Client : public engine::Observer {
     // Associations
     // Attributes
   private:
-    engine::Moteur& moteur;
-    std::unique_ptr<ai::IA> armeeBleu;
-    std::unique_ptr<ai::IA> armeeRouge;
+    engine::Moteur moteur;
+    ai::IA* armeeBleue;
+    ai::IA* armeeRouge;
     mutable std::mutex draw_mutex;
     // Operations
   public:

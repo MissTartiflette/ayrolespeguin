@@ -5,7 +5,7 @@
 #include <map>
 #include <memory>
 #include <unistd.h>
-
+#include <thread>
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
 
@@ -19,12 +19,14 @@ void testSFML() {
 #include "render.h"
 #include "engine.h"
 #include "ai.h"
+#include "client.h"
 
 using namespace std;
 using namespace state;
 using namespace render;
 using namespace engine;
 using namespace ai;
+using namespace client;
 
 int main(int argc,char* argv[]){
 
@@ -36,27 +38,102 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 		
-		else if(strcmp(argv[1], "record") == 0){
+		else if(strcmp(argv[1], "thread") == 0){
+			cout << "\t\t--- thread ---" << endl;
+
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			std::string chemin_fichier_map_txt = "res/map1.txt";
+			
+			// Creation des tables de correspondances et du moteur
+			Correspondances tab_corres = Correspondances();
+			sf::RenderWindow window(sf::VideoMode(400,400+200),"Map");
+			//sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
+			Moteur moteur;
+			Client client; //un client un est un observer - observateur du moteur de jeu
+			moteur.registerObserver(&client); //on enregistre client comme observateur
+			
+
+			StateLayer stateLayer(moteur.getEtat(), window);
+			stateLayer.initSurfaces(moteur.getEtat());
+										
+			StateLayer* ptr_stateLayer=&stateLayer;
+			moteur.getEtat().registerObserver(ptr_stateLayer);
+			Moteur* ptr_moteur=&moteur;
+			stateLayer.registerObserver(ptr_moteur);
+
+			RandomIA armeeRouge;
+			RandomIA armeeBleue;
+			
+			armeeBleue.setCamp(true);
+					
+			bool demarrage = true ;
+
+			while (window.isOpen()){				
+					sf::Event event;									
+					// Verication de fin de tour et reinitialisations de debut de tour
+					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+								moteur.verificationDebutDeTour();
+								StateEvent majDisponibilite(ALLCHANGED);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
+					}
+					if (demarrage){
+						stateLayer.draw(window);
+											
+						cout << "\n\t\t--- Tour " << moteur.getEtat().getTour() << " ---\n" << endl;
+						
+						demarrage = false;
+					}
+					
+					// Appel à l'IA choisie pour le tour adverse
+					if(moteur.getJoueurActif() == true && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
+						armeeBleue.run(moteur);
+						moteur.notifyUpdating(); //moteur est sur le point d'executer ses commandes et notifie son observer
+					}
+					else if(moteur.getJoueurActif() == false && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
+						armeeRouge.run(moteur);
+						moteur.notifyUpdating(); //moteur est sur le point d'executer ses commandes et notifie son observer
+					}
+					
+					while (window.pollEvent(event)){
+						// Fermeture de la fenetre
+						if (event.type == sf::Event::Closed){
+							window.close();
+						}
+					}					
+				
+			}
+
+		}
+		else if(strcmp(argv[1], "record") == 0 || strcmp(argv[1], "thread") == 0){
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
 			
 			// Creation des tables de correspondances et du moteur
 			Correspondances tab_corres = Correspondances();
 			Moteur moteur;
+			/*if(strcmp(argv[1], "thread") == 0){
+				std::thread th(Moteur);
+			}*/
 			
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
 				moteur.getEtat().initCurseur();
-				StateLayer stateLayer(moteur.getEtat());
+
+				sf::RenderWindow window(sf::VideoMode(400,400+200),"Map");
+				StateLayer stateLayer(moteur.getEtat(), window);
 				stateLayer.initSurfaces(moteur.getEtat());
 								
 				StateLayer* ptr_stateLayer=&stateLayer;
 				moteur.getEtat().registerObserver(ptr_stateLayer);
+				Moteur* ptr_moteur=&moteur;
+				stateLayer.registerObserver(ptr_moteur);
 				
-				sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
+				//sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
+				
 				
 				HeuristicIA armeeRouge;
 				HeuristicIA armeeBleue;
+			
 				armeeBleue.setCamp(true);
 				
 				cout << "\t\t--- Record ---" << endl;
@@ -69,7 +146,7 @@ int main(int argc,char* argv[]){
 					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
 					}
 					if (demarrage){
 						stateLayer.draw(window);
@@ -81,10 +158,10 @@ int main(int argc,char* argv[]){
 					
 					// Appel à l'IA choisie pour le tour adverse
 					if(moteur.getJoueurActif() == true && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
-						armeeBleue.run(moteur, window);
+						armeeBleue.run(moteur);
 					}
 					else if(moteur.getJoueurActif() == false && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
-						armeeRouge.run(moteur, window);
+						armeeRouge.run(moteur);
 					}
 					
 					while (window.pollEvent(event)){
@@ -110,13 +187,19 @@ int main(int argc,char* argv[]){
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
 				moteur.getEtat().initCurseur();
-				StateLayer stateLayer(moteur.getEtat());
+
+				sf::RenderWindow window(sf::VideoMode(400,400+200),"Map");
+				StateLayer stateLayer(moteur.getEtat(), window);
 				stateLayer.initSurfaces(moteur.getEtat());
 								
 				StateLayer* ptr_stateLayer=&stateLayer;
 				moteur.getEtat().registerObserver(ptr_stateLayer);
+				Moteur* ptr_moteur=&moteur;
+				stateLayer.registerObserver(ptr_moteur);
 				
-				sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
+				//sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
+
+				
 				
 				RandomIA random_ai;
 				HeuristicIA heuristic_ai;
@@ -147,7 +230,7 @@ int main(int argc,char* argv[]){
 					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
 					}
 					
 					// Action au demarrage du jeu
@@ -177,17 +260,17 @@ int main(int argc,char* argv[]){
 					// Appel à l'IA choisie pour le tour adverse
 					if(strcmp(argv[1],"heuristic_ai")==0 || strcmp(argv[1],"rollback")==0){
 						if(rollback){
-							heuristic_ai.runRollback(moteur, window);
+							heuristic_ai.runRollback(moteur);
 						}
 						else{
-							heuristic_ai.run(moteur, window);
+							heuristic_ai.run(moteur);
 						}
 					}
 					else if (strcmp(argv[1],"deep_ai")==0){
-						deep_ai.run(moteur, window);
+						deep_ai.run(moteur);
 					}
 					else {
-						random_ai.run(moteur, window);
+						random_ai.run(moteur);
 					}
 					
 					while (window.pollEvent(event)){
@@ -197,11 +280,11 @@ int main(int argc,char* argv[]){
 						}
 						
 						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false && rollback){
-							moteur.gestionCurseurRollback(event, window, largeur_map_cases, longueur_map_cases);
+							stateLayer.gestionCurseur(event, largeur_map_cases, longueur_map_cases, moteur.getEtat());
 						}
 						
 						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false){
-							moteur.gestionCurseur(event, window, largeur_map_cases, longueur_map_cases);
+							stateLayer.gestionCurseur(event, largeur_map_cases, longueur_map_cases, moteur.getEtat());
 						}
 					}
 				}	
@@ -224,18 +307,24 @@ int main(int argc,char* argv[]){
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
 				moteur.getEtat().initCurseur();
-				StateLayer stateLayer(moteur.getEtat());
+
+				sf::RenderWindow window(sf::VideoMode(400,400),"Map");
+				StateLayer stateLayer(moteur.getEtat(), window);
 				stateLayer.initSurfaces(moteur.getEtat());
 				
 				//----------------------------
 				StateLayer* ptr_stateLayer=&stateLayer;
 				moteur.getEtat().registerObserver(ptr_stateLayer);
 
+				Moteur* ptr_moteur=&moteur;
+				stateLayer.registerObserver(ptr_moteur);
+
 				//------------------------
 				
-				sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),
-													  largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
-													  "Map");
+				//sf::RenderWindow window(sf::VideoMode(longueur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),
+													  //largeur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()),
+													  //"Map");
+				
 
 				bool demarrage = true;
 				
@@ -314,13 +403,13 @@ int main(int argc,char* argv[]){
 							unique_ptr<Commande> ptr_finactions3 (new FinActions(finactions3));
 							moteur.addCommande(9, move(ptr_finactions3));
 						
-							moteur.update(window);							
+							moteur.update();							
 							
 												
 							if(moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
 							}
 						}
 						
@@ -337,12 +426,12 @@ int main(int argc,char* argv[]){
 							unique_ptr<Commande> ptr_attaque2 (new Attaque(attaque2));
 							moteur.addCommande(1, move(ptr_attaque2));
 						
-							moteur.update(window);							
+							moteur.update();							
 														
 							if(moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
 							}
 						}
 						
@@ -392,12 +481,12 @@ int main(int argc,char* argv[]){
 							unique_ptr<Commande> ptr_finactions7 (new FinActions(finactions7));
 							moteur.addCommande(7, move(ptr_finactions7));
 						
-							moteur.update(window);							
+							moteur.update();							
 														
 							if(moteur.verificationFinDeTour()){
 								moteur.verificationDebutDeTour();
 								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);
+								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
 							}
 						}	
 					}
@@ -477,13 +566,13 @@ int main(int argc,char* argv[]){
 			etat_initial.initPersonnages(tab_corres);
 			etat_initial.initCurseur();
 			cout << "Taille liste de personnages : " << etat_initial.getPersonnages().size() << endl;
-			
+			sf::RenderWindow window(sf::VideoMode(400,400),"Map");
 			// -- Affichage de cet Etat --
-			StateLayer layer(etat_initial);			
+			StateLayer layer(etat_initial, window);			
 			// La variable layer.getTilesets()[0] est le tileset de la grille
-			sf::RenderWindow window(sf::VideoMode(	longueur_map_cases*layer.getTilesets()[0]->getCellHeight(),
-													largeur_map_cases*layer.getTilesets()[0]->getCellWidth()),
-													"Map");
+			//sf::RenderWindow window(sf::VideoMode(	longueur_map_cases*layer.getTilesets()[0]->getCellHeight(),
+													//largeur_map_cases*layer.getTilesets()[0]->getCellWidth()),
+													//"Map");
 			
 			layer.initSurfaces(etat_initial);
 	

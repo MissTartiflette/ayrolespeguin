@@ -11,7 +11,7 @@ using namespace std;
 using namespace engine;
 using namespace state;
 
-void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){
+void DeepIA::run(engine::Moteur& moteur){
 	if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
 		//for (size_t i = 0; i < moteur.getEtat().getPersonnages().size(); i++){
 			//if (moteur.getEtat().getPersonnages()[i]-> getCamp() == camp){
@@ -57,7 +57,7 @@ void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){
 				moteur.addCommande(i, move(meilleureCommande));
 			}
 		}
-		moteur.update(window);
+		moteur.update();
 		sleep(5);
 		/*
 		for(size_t i=0; i<listeActions.size(); i++){
@@ -90,7 +90,7 @@ void DeepIA::run(engine::Moteur& moteur, sf::RenderWindow& window){
 			listeActions[i]->undo(moteur.getEtat());	
 		}*/
 		
-		//moteur.update(window);
+		//moteur.update();
 	//}
 	}
 }

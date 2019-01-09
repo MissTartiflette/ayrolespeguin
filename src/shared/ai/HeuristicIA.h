@@ -2,14 +2,10 @@
 #ifndef AI__HEURISTICIA__H
 #define AI__HEURISTICIA__H
 
-#include <SFML/Graphics.hpp>
 #include <vector>
 
 namespace engine {
   class Moteur;
-};
-namespace sf {
-  class RenderWindow;
 };
 namespace state {
   class Position;
@@ -30,7 +26,7 @@ namespace ai {
     // Associations
     // Operations
   public:
-    void run (engine::Moteur& moteur, sf::RenderWindow& window);
+    void run (engine::Moteur& moteur);
     std::vector<state::Position> AlgorithmeA (engine::Moteur& moteur, int i, state::Position posDestination);
     int isPresentSom (std::vector<Sommet> listeSommet, Sommet sommet);
     int isPresentPos (std::vector<Sommet> listeSommet, state::Position position);
@@ -39,7 +35,7 @@ namespace ai {
     int indiceMaximum (std::vector<int> liste);
     std::vector<state::Position> findRefuge (engine::Moteur& moteur, int personnage);
     std ::vector<state::Position> findObjectif (engine::Moteur& moteur, int indicePerso);
-    void runRollback (engine::Moteur& moteur, sf::RenderWindow& window);
+    void runRollback (engine::Moteur& moteur);
     // Setters and Getters
   };
 

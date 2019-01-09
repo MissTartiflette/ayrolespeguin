@@ -32,7 +32,7 @@ Tant que (la liste E est non vide) et (D n’est pas dans E) Faire
 	FinSi
 FinFaire*/
 
-void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
+void HeuristicIA::run (engine::Moteur& moteur){
 
 		if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
 		
@@ -115,7 +115,7 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 									Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1], camp);
 									unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
 									moteur.addCommande(0, move(ptr_deplacement));
-									moteur.update(window);
+									moteur.update();
 								}
 								else{
 									action=2;
@@ -134,7 +134,7 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 							Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[moteur.getEtat().getGrille()[objectif[indiceObjectif].getX()][objectif[indiceObjectif].getY()]->isOccupe(moteur.getEtat())], camp);												
 							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 							moteur.addCommande(0, move(ptr_attaque));
-							moteur.update(window);
+							moteur.update();
 							sleep(1);
 						}
 					
@@ -143,7 +143,7 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 						FinActions finactions(*moteur.getEtat().getPersonnages()[i], camp);
 						unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
 						moteur.addCommande(0, move(ptr_finactions));
-						moteur.update(window);
+						moteur.update();
 						usleep(200000);
 					}
 					
@@ -153,7 +153,7 @@ void HeuristicIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 	}
 }
 
-void HeuristicIA::runRollback (engine::Moteur& moteur, sf::RenderWindow& window){
+void HeuristicIA::runRollback (engine::Moteur& moteur){
 
 		if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
 		
@@ -236,8 +236,8 @@ void HeuristicIA::runRollback (engine::Moteur& moteur, sf::RenderWindow& window)
 									Dep_Action deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1], camp);
 									Dep_Action* ptr_deplacement (new Dep_Action(deplacement));
 									moteur.addAction(move(ptr_deplacement));
-									moteur.updateAction(window, move(ptr_deplacement));
-									moteur.update(window);
+									moteur.updateAction(move(ptr_deplacement));
+									moteur.update();
 								}
 								else{
 									action=2;
@@ -256,8 +256,8 @@ void HeuristicIA::runRollback (engine::Moteur& moteur, sf::RenderWindow& window)
 							Attaque_Action attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[moteur.getEtat().getGrille()[objectif[indiceObjectif].getX()][objectif[indiceObjectif].getY()]->isOccupe(moteur.getEtat())], camp);												
 							Attaque_Action* ptr_attaque (new Attaque_Action(attaque));
 							moteur.addAction(move(ptr_attaque));
-							moteur.updateAction(window, move(ptr_attaque));
-							moteur.update(window);
+							moteur.updateAction(move(ptr_attaque));
+							moteur.update();
 							sleep(1);
 						}
 					
@@ -266,8 +266,8 @@ void HeuristicIA::runRollback (engine::Moteur& moteur, sf::RenderWindow& window)
 						FinActions_Action finactions(*moteur.getEtat().getPersonnages()[i], camp);
 						FinActions_Action* ptr_finactions (new FinActions_Action(finactions));
 						moteur.addAction(move(ptr_finactions));
-						moteur.updateAction(window, move(ptr_finactions));
-						moteur.update(window);
+						moteur.updateAction(move(ptr_finactions));
+						moteur.update();
 						usleep(200000);
 					}
 					

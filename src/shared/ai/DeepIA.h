@@ -3,14 +3,10 @@
 #define AI__DEEPIA__H
 
 #include <vector>
-#include <SFML/Graphics.hpp>
 
 namespace engine {
   class Action;
   class Moteur;
-};
-namespace sf {
-  class RenderWindow;
 };
 namespace state {
   class Etat;
@@ -41,7 +37,7 @@ namespace ai {
     int nbActionsJoueurSimulees     = 0;
     // Operations
   public:
-    void run (engine::Moteur& moteur, sf::RenderWindow& window);
+    void run (engine::Moteur& moteur);
     int max (engine::Moteur& moteur, int profondeur);
     int min (engine::Moteur& moteur, int profondeur);
     int fonctionEvaluation (engine::Moteur& moteur);

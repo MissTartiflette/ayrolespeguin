@@ -5,5 +5,9 @@
 #include "render/TileSetID.h"
 #include "render/TileSet.h"
 #include "render/Surface.h"
+#include "render/CurseurEventID.h"
+#include "render/CurseurEvent.h"
+#include "render/IObservateur.h"
+#include "render/Observateur.h"
 #include "render/StateLayer.h"
 #endif

@@ -11,9 +11,10 @@ using namespace state;
 using namespace std;
 
 
-void RandomIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
+void RandomIA::run (engine::Moteur& moteur){
 	// L'IA effectue ces actions uniquement si c'est son tour
 	if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
+		//int numero=0;
 		int randomAction;
 		int randomPosition;
 		int randomAttaque;
@@ -67,7 +68,8 @@ void RandomIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 							Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], listePositions[randomPosition], camp);
 							unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
 							moteur.addCommande(0, move(ptr_deplacement));
-							moteur.update(window);
+							//numero=numero+1;
+							moteur.update();
 							attaqueImpossible = false;
 							sleep(1);
 						}
@@ -89,7 +91,8 @@ void RandomIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 								Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[indiceCible], camp);
 								unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 								moteur.addCommande(0, move(ptr_attaque));
-								moteur.update(window);
+								//numero=numero+1;
+								moteur.update();
 								deplacementImpossible = false;
 								sleep(1);
 							}
@@ -102,7 +105,8 @@ void RandomIA::run (engine::Moteur& moteur, sf::RenderWindow& window){
 						FinActions finactions(*moteur.getEtat().getPersonnages()[i], camp);
 						unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
 						moteur.addCommande(0, move(ptr_finactions));
-						moteur.update(window);
+						//numero=numero+1;
+						moteur.update();
 						sleep(1);
 					}
 				}		

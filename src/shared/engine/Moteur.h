@@ -5,7 +5,8 @@
 #include <map>
 #include <memory>
 #include <vector>
-#include <SFML/Graphics.hpp>
+#include <mutex>
+#include <json/json.h>
 
 namespace state {
   class Etat;
@@ -13,19 +14,22 @@ namespace state {
 namespace engine {
   class Action;
   class Commande;
+  class Observable;
 };
-namespace sf {
-  class RenderWindow;
+namespace render {
+  class IObservateur;
 }
 
 #include "state/Etat.h"
 #include "Commande.h"
+#include "Observable.h"
+#include "render/IObservateur.h"
 #include "Action.h"
 
 namespace engine {
 
   /// class Moteur - 
-  class Moteur {
+  class Moteur : public engine::Observable, public render::IObservateur {
     // Associations
     // Attributes
   private:
@@ -34,21 +38,27 @@ namespace engine {
     bool changementTour;
     bool joueurActif;
     std::vector<Action*> listeActionsJouees;
+    mutable std::mutex commands_mutex;
+  protected:
+    bool enableRecord     = false;
+    Json::Value record;
+    bool stop     = false;
     // Operations
   public:
     Moteur ();
     ~Moteur ();
     state::Etat& getEtat ();
     void addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd);
-    void update (sf::RenderWindow& window);
+    void update ();
     bool verificationFinDeTour ();
     void verificationDebutDeTour ();
     bool getJoueurActif ();
-    void gestionCurseur (sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases);
-    void updateAction (sf::RenderWindow&  window, Action* action);
-    void undo (sf::RenderWindow& window, Action* action);
-    void gestionCurseurRollback (sf::Event newEvent, sf::RenderWindow& window, unsigned int largeur_map_cases, unsigned int longueur_map_cases);
+    void updateAction (Action* action);
+    void undo (Action* action);
     void addAction (Action* newAction);
+    void addCommands (const Json::Value& in);
+    void run ();
+    void curseurChanged (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position);
     // Setters and Getters
   };
 

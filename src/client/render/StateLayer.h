@@ -9,12 +9,13 @@
 
 namespace sf {
   class Font;
+  class RenderWindow;
 };
 namespace state {
   class Etat;
 };
-namespace sf {
-  class RenderWindow;
+namespace render {
+  class Observateur;
 };
 namespace state {
   class IObserver;
@@ -24,6 +25,7 @@ namespace render {
   class Surface;
 }
 
+#include "Observateur.h"
 #include "state/IObserver.h"
 #include "state/Etat.h"
 #include "TileSet.h"
@@ -32,23 +34,25 @@ namespace render {
 namespace render {
 
   /// class StateLayer - 
-  class StateLayer : public state::IObserver {
+  class StateLayer : public render::Observateur, public state::IObserver {
     // Associations
     // Attributes
   protected:
     std::vector<std::unique_ptr<TileSet>> tilesets;
     std::vector<std::unique_ptr<Surface>> surfaces;
     sf::Font police;
+    sf::RenderWindow& window;
     // Operations
   public:
-    StateLayer (state::Etat& etat);
+    StateLayer (state::Etat& etat, sf::RenderWindow& window);
     std::vector<std::unique_ptr<TileSet>>& getTilesets ();
     std::vector<std::unique_ptr<Surface>>& getSurfaces ();
     void initSurfaces (state::Etat& etat);
-    void stateChanged (const state::StateEvent& e, state::Etat& etat, sf::RenderWindow& window);
+    void stateChanged (const state::StateEvent& e, state::Etat& etat);
     void draw (sf::RenderWindow& window);
     void writeTexteAction (const std::string chaine, sf::RenderWindow& window);
     void writeStatistiques (const std::string chaine, sf::RenderWindow& window);
+    void gestionCurseur (sf::Event  newEvent, unsigned int largeur_map_cases, unsigned int  longueur_map_cases, state::Etat& etatActuel);
     // Setters and Getters
   };
 

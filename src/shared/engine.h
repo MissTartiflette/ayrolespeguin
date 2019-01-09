@@ -6,6 +6,8 @@
 #include "engine/Commande.h"
 #include "engine/Attaque.h"
 #include "engine/Deplacement.h"
+#include "engine/Observer.h"
+#include "engine/Observable.h"
 #include "engine/ActionID.h"
 #include "engine/Action.h"
 #include "engine/Moteur.h"

@@ -2,13 +2,9 @@
 #ifndef AI__RANDOMIA__H
 #define AI__RANDOMIA__H
 
-#include <SFML/Graphics.hpp>
 
 namespace engine {
   class Moteur;
-};
-namespace sf {
-  class RenderWindow;
 };
 namespace ai {
   class IA;
@@ -22,7 +18,7 @@ namespace ai {
   class RandomIA : public ai::IA {
     // Operations
   public:
-    void run (engine::Moteur& moteur, sf::RenderWindow& window);
+    void run (engine::Moteur& moteur);
     // Setters and Getters
   };
 

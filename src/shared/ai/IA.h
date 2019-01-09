@@ -2,17 +2,11 @@
 #ifndef AI__IA__H
 #define AI__IA__H
 
-#include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
 
 namespace engine {
   class Moteur;
-};
-namespace sf {
-  class RenderWindow;
-};
-namespace engine {
   class Commande;
 };
 namespace state {
@@ -30,7 +24,7 @@ namespace ai {
     bool camp     = false;
     // Operations
   public:
-    virtual void run (engine::Moteur& moteur, sf::RenderWindow& window) = 0;
+    virtual void run (engine::Moteur& moteur) = 0;
     void setCamp (bool newCamp);
   protected:
     void listeCommandes (std::vector<std::unique_ptr<engine::Commande>>& liste, state::Etat& etat);
