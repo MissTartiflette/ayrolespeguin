@@ -6,14 +6,15 @@
 #include <memory>
 #include <unistd.h>
 #include <thread>
+
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
-
-
 void testSFML() {
     sf::Texture texture;
 }
 // Fin test SFML
+
+//#include "../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
 
 #include "state.h"
 #include "render.h"
@@ -38,10 +39,119 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 		
+		/* play : lecture d'une partie enregistrée */
+		else if(strcmp(argv[1], "play") == 0){
+			Json::Value root;
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			std::string chemin_fichier_map_txt = "res/map1.txt";
+			std::string fichier_commandes = "res/replay.txt";
+			
+			// Creation des tables de correspondances et du moteur
+			Correspondances tab_corres = Correspondances();
+			Moteur moteur;
+			
+			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
+				sf::RenderWindow window(sf::VideoMode(largeur_map_cases*16,longueur_map_cases*16 +200),"Map");
+				
+				moteur.getEtat().initPersonnages(tab_corres);
+				moteur.getEtat().initCurseur();
+				StateLayer stateLayer(moteur.getEtat(), window);
+				stateLayer.initSurfaces(moteur.getEtat());
+								
+				StateLayer* ptr_stateLayer=&stateLayer;
+				moteur.getEtat().registerObserver(ptr_stateLayer);
+				
+				
+								
+				cout << "\t\t--- Play ---" << endl;
+				
+				bool demarrage = true ;
+				
+				//Ouverture du fichier en lecture
+				std::ifstream commandes_txt(fichier_commandes);
+				
+				// Si le fichier s'est bien ouvert
+				if (commandes_txt){
+					Json::Value root;
+					Json::Reader reader;
+
+					if(!reader.parse(commandes_txt, root)){
+						cout 	<< "Failed to parse commandes\n"
+								<< reader.getFormattedErrorMessages();
+						return 0;
+					}
+					// Fermeture du fichier
+					commandes_txt.close();
+					
+					// Conversion en commandes
+					cout << "Taille du tableau de commandes de "<< fichier_commandes << " : " << root["tabCmd"].size() << endl;
+					
+					Position buf_destination(0,0);
+					
+					for (unsigned int i = 0; i < root["tabCmd"].size(); i++){
+						if(root["tabCmd"][i]["id"].asUInt() == 1){
+							buf_destination.setX(root["tabCmd"][i]["xDestination"].asUInt());
+							buf_destination.setY(root["tabCmd"][i]["yDestination"].asUInt());
+							Deplacement deplacement(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()], buf_destination, root["tabCmd"][i]["joueur"].asUInt());
+							
+							unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
+							moteur.addCommande(i, move(ptr_deplacement));
+						}
+						else if(root["tabCmd"][i]["id"].asUInt() == 2){
+							Attaque attaque(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["attaquant"].asUInt()], *moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()], root["tabCmd"][i]["joueur"].asUInt());
+							
+							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+							moteur.addCommande(i, move(ptr_attaque));
+						}
+						else if(root["tabCmd"][i]["id"].asUInt() == 3){
+							FinActions finactions(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()],root["tabCmd"][i]["joueur"].asUInt());
+							unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
+							moteur.addCommande(i, move(ptr_finactions));
+						}
+						else{
+							cout << "La commande " << i << " est inconnue" << endl;
+						}						
+					}
+					cout << "Pour lancer la partie, appuyez sur la touche P\n" << endl;														
+				}
+				
+				else{
+					cerr << "Impossible d'ouvrir le fichier des commandes enregistrées (lecture)." << endl;
+					return 0;
+				}
+				
+				bool partie_rejouee = false;
+				sf::Event event;
+				
+				while (window.isOpen()){				
+					// Appel à l'IA choisie pour le tour adverse
+					if(partie_rejouee == false && sf::Keyboard::isKeyPressed(sf::Keyboard::P)){
+						cout << "--> Debut de la Lecture <--\n" << endl;
+						moteur.update();
+						cout << "--> Lecture Terminée <--" << endl;
+						partie_rejouee = true;
+					}
+								
+					if (demarrage){
+						stateLayer.draw(window);
+						demarrage = false;
+					}
+					
+					while (window.pollEvent(event)){
+						// Fermeture de la fenetre
+						if (event.type == sf::Event::Closed){
+							window.close();
+						}
+					}					
+				}
+			}
+		}
+		
+		/*	thread : le moteur tourne dans un thread séparé*/
 		else if(strcmp(argv[1], "thread") == 0){
 			cout << "\t\t--- thread ---" << endl;
 
-			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			//unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
 			
 			// Creation des tables de correspondances et du moteur

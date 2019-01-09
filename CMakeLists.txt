@@ -37,12 +37,13 @@ file(GLOB_RECURSE shared_sources src/shared/*.cpp)
 
 #jsoncpp
 include_directories ("${PROJECT_SOURCE_DIR}/extern/jsoncpp-1.8.0")
-file(GLOB_RECURSE jsoncpp_sources extern/jsoncpp-1.8.0/*.cpp)
+#file(GLOB_RECURSE jsoncpp_sources extern/jsoncpp-1.8.0/*.cpp)
 
 
 # Executables
 add_executable(client ${client_sources} ${shared_sources})
-add_executable(server ${server_sources} ${shared_sources} ${jsoncpp_sources})
+#add_executable(server ${server_sources} ${shared_sources} ${jsoncpp_sources})
+add_executable(server ${server_sources} ${shared_sources})
 
 # SFML
 if(WIN32)
