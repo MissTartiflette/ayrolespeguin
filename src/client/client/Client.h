@@ -3,12 +3,16 @@
 #define CLIENT__CLIENT__H
 
 #include <mutex>
+#include <SFML/Graphics.hpp>
 
 namespace engine {
   class Moteur;
 };
 namespace ai {
   class IA;
+};
+namespace sf {
+  class RenderWindow;
 };
 namespace engine {
   class Observer;
@@ -33,9 +37,11 @@ namespace client {
     ai::IA* armeeBleue;
     ai::IA* armeeRouge;
     mutable std::mutex draw_mutex;
+    bool demarrage;
+    sf::RenderWindow& window;
     // Operations
   public:
-    Client ();
+    Client (sf::RenderWindow& window);
     void engineUpdated ();
     void engineUpdating ();
     void run ();

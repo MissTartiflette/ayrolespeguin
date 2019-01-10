@@ -21,13 +21,15 @@ void RandomIA::run (engine::Moteur& moteur){
 		bool premierEssai = true;
 		bool deplacementImpossible = false;
 		bool attaqueImpossible = false;
-			
+		//bool attaqueD=false;
+		//bool finTour=false;
 		for (unsigned int i = 0; i < moteur.getEtat().getPersonnages().size(); i++ ){
 			// Reinitialisations de changement de personnage
 			deplacementImpossible = false;
 			attaqueImpossible = false;
 			premierEssai = true;
-			
+			//attaqueD=false;
+			//finTour=false;
 			// Controle des personnages de l'IA (camp = false)
 			if (moteur.getEtat().getPersonnages()[i]-> getCamp() == camp){
 				while (moteur.getEtat().getPersonnages()[i]->getStatut() != MORT && moteur.getEtat().getPersonnages()[i]->getStatut() != ATTENTE){
@@ -56,7 +58,7 @@ void RandomIA::run (engine::Moteur& moteur){
 						}
 					}
 					else{randomAction = rand()%3;}
-														
+												
 					// 0 : Cas du deplacement
 					if (randomAction == 0 && moteur.getEtat().getPersonnages()[i]->getChampMove() != 0){
 						std::vector<Position> listePositions = moteur.getEtat().getPersonnages()[i]-> getLegalMove(moteur.getEtat());
@@ -68,10 +70,13 @@ void RandomIA::run (engine::Moteur& moteur){
 							Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], listePositions[randomPosition], camp);
 							unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
 							moteur.addCommande(0, move(ptr_deplacement));
+							
 							//numero=numero+1;
-							moteur.update();
+							//moteur.update();
+							//cout<<"deplacement"<<endl;
+							moteur.notifyUpdating();
 							attaqueImpossible = false;
-							sleep(1);
+							//usleep(500000);
 						}
 						else{deplacementImpossible = true;}
 					}
@@ -91,10 +96,14 @@ void RandomIA::run (engine::Moteur& moteur){
 								Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[indiceCible], camp);
 								unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 								moteur.addCommande(0, move(ptr_attaque));
+								//attaqueD=true;
+								//cout<<numero<<endl;
 								//numero=numero+1;
-								moteur.update();
+								//moteur.update();
+								//cout<<"attaque"<<endl;
+								moteur.notifyUpdating();
 								deplacementImpossible = false;
-								sleep(1);
+								//usleep(500000);
 							}
 						}
 						else{attaqueImpossible = true;}				
@@ -105,9 +114,13 @@ void RandomIA::run (engine::Moteur& moteur){
 						FinActions finactions(*moteur.getEtat().getPersonnages()[i], camp);
 						unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
 						moteur.addCommande(0, move(ptr_finactions));
+						//finTour=true;
+						//cout<<numero<<endl;
 						//numero=numero+1;
-						moteur.update();
-						sleep(1);
+						//moteur.update();
+						//cout<<"finaction"<<endl;
+						moteur.notifyUpdating();
+						//usleep(500000);
 					}
 				}		
 			}

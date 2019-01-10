@@ -29,6 +29,7 @@ using namespace engine;
 using namespace ai;
 using namespace client;
 
+
 int main(int argc,char* argv[]){
 
 	testSFML();
@@ -150,80 +151,29 @@ int main(int argc,char* argv[]){
 		/*	thread : le moteur tourne dans un thread séparé*/
 		else if(strcmp(argv[1], "thread") == 0){
 			cout << "\t\t--- thread ---" << endl;
-
-			//unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
-			std::string chemin_fichier_map_txt = "res/map1.txt";
 			
-			// Creation des tables de correspondances et du moteur
-			Correspondances tab_corres = Correspondances();
-			sf::RenderWindow window(sf::VideoMode(400,400+200),"Map");
-			//sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
-			Moteur moteur;
-			Client client; //un client un est un observer - observateur du moteur de jeu
-			moteur.registerObserver(&client); //on enregistre client comme observateur
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			sf::RenderWindow window(sf::VideoMode(largeur_map_cases*16, longueur_map_cases*16 + 200),"Map");
+	
+			Client client(window); //un client un est un observer - observateur du moteur de jeu
 			
-
-			StateLayer stateLayer(moteur.getEtat(), window);
-			stateLayer.initSurfaces(moteur.getEtat());
-										
-			StateLayer* ptr_stateLayer=&stateLayer;
-			moteur.getEtat().registerObserver(ptr_stateLayer);
-			Moteur* ptr_moteur=&moteur;
-			stateLayer.registerObserver(ptr_moteur);
-
-			RandomIA armeeRouge;
-			RandomIA armeeBleue;
-			
-			armeeBleue.setCamp(true);
-					
-			bool demarrage = true ;
-
-			while (window.isOpen()){				
-					sf::Event event;									
-					// Verication de fin de tour et reinitialisations de debut de tour
-					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
-								moteur.verificationDebutDeTour();
-								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
-					}
-					if (demarrage){
-						stateLayer.draw(window);
-											
-						cout << "\n\t\t--- Tour " << moteur.getEtat().getTour() << " ---\n" << endl;
-						
-						demarrage = false;
-					}
-					
-					// Appel à l'IA choisie pour le tour adverse
-					if(moteur.getJoueurActif() == true && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
-						armeeBleue.run(moteur);
-						moteur.notifyUpdating(); //moteur est sur le point d'executer ses commandes et notifie son observer
-					}
-					else if(moteur.getJoueurActif() == false && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
-						armeeRouge.run(moteur);
-						moteur.notifyUpdating(); //moteur est sur le point d'executer ses commandes et notifie son observer
-					}
-					
-					while (window.pollEvent(event)){
-						// Fermeture de la fenetre
-						if (event.type == sf::Event::Closed){
-							window.close();
-						}
-					}					
+			while (window.isOpen()){
 				
+				client.run();
+				sleep(2);
+				window.close();									
+						
 			}
 
 		}
-		else if(strcmp(argv[1], "record") == 0 || strcmp(argv[1], "thread") == 0){
+		else if(strcmp(argv[1], "record") == 0){
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
 			std::string chemin_fichier_map_txt = "res/map1.txt";
 			
 			// Creation des tables de correspondances et du moteur
 			Correspondances tab_corres = Correspondances();
 			Moteur moteur;
-			/*if(strcmp(argv[1], "thread") == 0){
-				std::thread th(Moteur);
-			}*/
+			
 			
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
@@ -250,7 +200,18 @@ int main(int argc,char* argv[]){
 				
 				bool demarrage = true ;
 				
-				while (window.isOpen()){				
+				while (window.isOpen()){	
+
+					/*
+					//gestion des evenements clic souris bouton
+					render->handleEvent();
+					//gestion de l'ia
+					ia->run();
+					//gestion de l'engine
+					engine->update();
+					//update de l'affichage
+					render->update();	*/
+						
 					sf::Event event;									
 					// Verication de fin de tour et reinitialisations de debut de tour
 					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){

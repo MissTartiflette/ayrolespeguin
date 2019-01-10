@@ -106,7 +106,7 @@ void Attaque::execute (state::Etat& etat){
 					// contre-attaqué ne se termine pas
 					if (contreAtk == false){
 						FinActions finattaque(attaquant, joueur);
-						sleep(2);
+						usleep(500000);
 						finattaque.execute(etat);
 					}
 				}
@@ -115,19 +115,19 @@ void Attaque::execute (state::Etat& etat){
 					if(contreAtk==false){
 						Attaque contre_attaque(cible, attaquant, !joueur);
 						contre_attaque.contreAtk=true;
-						sleep(2);
+						usleep(500000);
 						contre_attaque.execute(etat);	
 					}
 					if(contreAtk==true){
 						/*// Le tour du contre-attaquant ne se termine pas apres sa contre-attaque
 						if(attaquant.getType()==ARCHER && cible.getType()!=ARCHER){
 							FinActions finattaque(attaquant, joueur);
-							sleep(2);
+							usleep(500000);
 							finattaque.execute(etat);		
 						}*/
 						//else{
 							FinActions finattaque(cible, joueur);
-							sleep(2);
+							usleep(500000);
 							finattaque.execute(etat);
 						//}		
 					}
@@ -141,7 +141,7 @@ void Attaque::execute (state::Etat& etat){
 			if (contreAtk == true){
 				cout << "\t CONTRE-ATTAQUE IMPOSSIBLE : ennemi hors de portée !" << endl;
 				FinActions finattaque(cible, joueur);
-				sleep(2);
+				usleep(500000);
 				finattaque.execute(etat);
 			}
 			else{

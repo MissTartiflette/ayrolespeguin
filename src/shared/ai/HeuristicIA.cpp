@@ -115,7 +115,8 @@ void HeuristicIA::run (engine::Moteur& moteur){
 									Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1], camp);
 									unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
 									moteur.addCommande(0, move(ptr_deplacement));
-									moteur.update();
+									//moteur.update();
+									moteur.notifyUpdating();
 								}
 								else{
 									action=2;
@@ -134,7 +135,8 @@ void HeuristicIA::run (engine::Moteur& moteur){
 							Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[moteur.getEtat().getGrille()[objectif[indiceObjectif].getX()][objectif[indiceObjectif].getY()]->isOccupe(moteur.getEtat())], camp);												
 							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 							moteur.addCommande(0, move(ptr_attaque));
-							moteur.update();
+							//moteur.update();
+							moteur.notifyUpdating();
 							sleep(1);
 						}
 					
@@ -143,7 +145,8 @@ void HeuristicIA::run (engine::Moteur& moteur){
 						FinActions finactions(*moteur.getEtat().getPersonnages()[i], camp);
 						unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
 						moteur.addCommande(0, move(ptr_finactions));
-						moteur.update();
+						//moteur.update();
+						moteur.notifyUpdating();
 						usleep(200000);
 					}
 					
@@ -238,6 +241,7 @@ void HeuristicIA::runRollback (engine::Moteur& moteur){
 									moteur.addAction(move(ptr_deplacement));
 									moteur.updateAction(move(ptr_deplacement));
 									moteur.update();
+									//moteur.notifyUpdating();
 								}
 								else{
 									action=2;
@@ -258,6 +262,7 @@ void HeuristicIA::runRollback (engine::Moteur& moteur){
 							moteur.addAction(move(ptr_attaque));
 							moteur.updateAction(move(ptr_attaque));
 							moteur.update();
+							//moteur.notifyUpdating();
 							sleep(1);
 						}
 					
@@ -268,6 +273,7 @@ void HeuristicIA::runRollback (engine::Moteur& moteur){
 						moteur.addAction(move(ptr_finactions));
 						moteur.updateAction(move(ptr_finactions));
 						moteur.update();
+						//moteur.notifyUpdating();
 						usleep(200000);
 					}
 					
