@@ -2,6 +2,7 @@
 #ifndef ENGINE__ATTAQUE__H
 #define ENGINE__ATTAQUE__H
 
+#include <json/json.h>
 
 namespace state {
   class Etat;
@@ -25,6 +26,7 @@ namespace engine {
   public:
     Attaque (state::Personnage& attaquant, state::Personnage& cible, bool joueur);
     void execute (state::Etat& etat);
+    Json::Value serialize ();
     // Setters and Getters
   };
 

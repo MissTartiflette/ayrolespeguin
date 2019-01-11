@@ -14,8 +14,6 @@ void testSFML() {
 }
 // Fin test SFML
 
-//#include "../../extern/jsoncpp-1.8.0/jsoncpp.cpp"
-
 #include "state.h"
 #include "render.h"
 #include "engine.h"
@@ -29,7 +27,6 @@ using namespace engine;
 using namespace ai;
 using namespace client;
 
-
 int main(int argc,char* argv[]){
 
 	testSFML();
@@ -38,6 +35,22 @@ int main(int argc,char* argv[]){
 		/*	hello : Affichage simple */
 		if(strcmp(argv[1],"hello")==0){
 			cout<<"Bonjour tout le monde"<<endl;
+		}
+		
+		/*	thread : le moteur tourne dans un thread séparé */
+		else if(strcmp(argv[1], "thread") == 0){
+			cout << "\t\t--- Thread ---" << endl;
+			
+			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
+			sf::RenderWindow window(sf::VideoMode(largeur_map_cases*16, longueur_map_cases*16 + 200),"Map");
+	
+			Client client(window);
+			
+			while (window.isOpen()){
+				client.run();
+				sleep(2);
+				window.close();
+			}
 		}
 		
 		/* play : lecture d'une partie enregistrée */
@@ -65,70 +78,84 @@ int main(int argc,char* argv[]){
 				
 								
 				cout << "\t\t--- Play ---" << endl;
+				cout << "Pour lancer la partie, appuyez sur la touche P\n" << endl;						
 				
-				bool demarrage = true ;
-				
-				//Ouverture du fichier en lecture
-				std::ifstream commandes_txt(fichier_commandes);
-				
-				// Si le fichier s'est bien ouvert
-				if (commandes_txt){
-					Json::Value root;
-					Json::Reader reader;
-
-					if(!reader.parse(commandes_txt, root)){
-						cout 	<< "Failed to parse commandes\n"
-								<< reader.getFormattedErrorMessages();
-						return 0;
-					}
-					// Fermeture du fichier
-					commandes_txt.close();
-					
-					// Conversion en commandes
-					cout << "Taille du tableau de commandes de "<< fichier_commandes << " : " << root["tabCmd"].size() << endl;
-					
-					Position buf_destination(0,0);
-					
-					for (unsigned int i = 0; i < root["tabCmd"].size(); i++){
-						if(root["tabCmd"][i]["id"].asUInt() == 1){
-							buf_destination.setX(root["tabCmd"][i]["xDestination"].asUInt());
-							buf_destination.setY(root["tabCmd"][i]["yDestination"].asUInt());
-							Deplacement deplacement(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()], buf_destination, root["tabCmd"][i]["joueur"].asUInt());
-							
-							unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
-							moteur.addCommande(i, move(ptr_deplacement));
-						}
-						else if(root["tabCmd"][i]["id"].asUInt() == 2){
-							Attaque attaque(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["attaquant"].asUInt()], *moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()], root["tabCmd"][i]["joueur"].asUInt());
-							
-							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
-							moteur.addCommande(i, move(ptr_attaque));
-						}
-						else if(root["tabCmd"][i]["id"].asUInt() == 3){
-							FinActions finactions(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()],root["tabCmd"][i]["joueur"].asUInt());
-							unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
-							moteur.addCommande(i, move(ptr_finactions));
-						}
-						else{
-							cout << "La commande " << i << " est inconnue" << endl;
-						}						
-					}
-					cout << "Pour lancer la partie, appuyez sur la touche P\n" << endl;														
-				}
-				
-				else{
-					cerr << "Impossible d'ouvrir le fichier des commandes enregistrées (lecture)." << endl;
-					return 0;
-				}
-				
+				bool demarrage = true ;				
 				bool partie_rejouee = false;
 				sf::Event event;
+				StateEvent stateEvent(ALLCHANGED);
 				
 				while (window.isOpen()){				
-					// Appel à l'IA choisie pour le tour adverse
+					// Au premier appui sur P, on ouvre le fichier et on execute les commandes
 					if(partie_rejouee == false && sf::Keyboard::isKeyPressed(sf::Keyboard::P)){
-						cout << "--> Debut de la Lecture <--\n" << endl;
-						moteur.update();
+						
+						cout << "--> Debut de la lecture <--" << endl;
+						
+						//Ouverture du fichier en lecture
+						std::ifstream commandes_txt(fichier_commandes);
+						if (commandes_txt){
+							Json::Value root;
+							Json::Reader reader;
+							if(!reader.parse(commandes_txt, root)){
+								cout 	<< "Failed to parse commandes\n"
+										<< reader.getFormattedErrorMessages();
+								return 0;
+							}
+							// Fermeture du fichier en lecture
+							commandes_txt.close();
+							
+							cout << "Taille du tableau de commandes de "<< fichier_commandes << " : " << root["tabCmd"].size() << endl;
+												
+							Position pos(0,0);
+							
+							// Conversion en commandes
+							for (unsigned int i = 0; i < root["tabCmd"].size(); i++){
+								// Cas du deplacement
+								if(root["tabCmd"][i]["id"].asUInt() == 1){
+								
+									pos.setX(root["tabCmd"][i]["xDestination"].asUInt());
+									pos.setY(root["tabCmd"][i]["yDestination"].asUInt());
+									Deplacement deplacement(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()], pos, root["tabCmd"][i]["joueur"].asUInt());
+									
+									unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
+									moteur.addCommande(0, move(ptr_deplacement));
+									moteur.update();
+									if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+										moteur.verificationDebutDeTour();
+									}
+								}
+								// Cas de l'attaque
+								else if(root["tabCmd"][i]["id"].asUInt() == 2){
+									Attaque attaque(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["attaquant"].asUInt()], *moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()], root["tabCmd"][i]["joueur"].asUInt());
+									
+									unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+									moteur.addCommande(0, move(ptr_attaque));
+									moteur.update();
+									if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+										moteur.verificationDebutDeTour();
+									}
+								}
+								// Cas de la fin d'actions
+								else if(root["tabCmd"][i]["id"].asUInt() == 3){
+									FinActions finactions(*moteur.getEtat().getPersonnages()[root["tabCmd"][i]["cible"].asUInt()],root["tabCmd"][i]["joueur"].asUInt());
+									unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
+									moteur.addCommande(0, move(ptr_finactions));
+									moteur.update();
+									if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+										moteur.verificationDebutDeTour();
+									}
+								}
+								else{
+									cout << "La commande " << i << " est inconnue" << endl;
+								}						
+							}								
+						}
+						
+						else{
+							cerr << "Impossible d'ouvrir le fichier des commandes enregistrées (lecture)." << endl;
+							return 0;
+						}
+											
 						cout << "--> Lecture Terminée <--" << endl;
 						partie_rejouee = true;
 					}
@@ -147,104 +174,8 @@ int main(int argc,char* argv[]){
 				}
 			}
 		}
-		
-		/*	thread : le moteur tourne dans un thread séparé*/
-		else if(strcmp(argv[1], "thread") == 0){
-			cout << "\t\t--- thread ---" << endl;
-			
-			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
-			sf::RenderWindow window(sf::VideoMode(largeur_map_cases*16, longueur_map_cases*16 + 200),"Map");
-	
-			Client client(window); //un client un est un observer - observateur du moteur de jeu
-			
-			while (window.isOpen()){
 				
-				client.run();
-				sleep(2);
-				window.close();									
-						
-			}
-
-		}
-		else if(strcmp(argv[1], "record") == 0){
-			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
-			std::string chemin_fichier_map_txt = "res/map1.txt";
-			
-			// Creation des tables de correspondances et du moteur
-			Correspondances tab_corres = Correspondances();
-			Moteur moteur;
-			
-			
-			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
-				moteur.getEtat().initPersonnages(tab_corres);
-				moteur.getEtat().initCurseur();
-
-				sf::RenderWindow window(sf::VideoMode(400,400+200),"Map");
-				StateLayer stateLayer(moteur.getEtat(), window);
-				stateLayer.initSurfaces(moteur.getEtat());
-								
-				StateLayer* ptr_stateLayer=&stateLayer;
-				moteur.getEtat().registerObserver(ptr_stateLayer);
-				Moteur* ptr_moteur=&moteur;
-				stateLayer.registerObserver(ptr_moteur);
-				
-				//sf::RenderWindow window(sf::VideoMode(largeur_map_cases*stateLayer.getTilesets()[0]->getCellHeight(),longueur_map_cases*stateLayer.getTilesets()[0]->getCellWidth()+200),"Map");
-				
-				
-				HeuristicIA armeeRouge;
-				HeuristicIA armeeBleue;
-			
-				armeeBleue.setCamp(true);
-				
-				cout << "\t\t--- Record ---" << endl;
-				
-				bool demarrage = true ;
-				
-				while (window.isOpen()){	
-
-					/*
-					//gestion des evenements clic souris bouton
-					render->handleEvent();
-					//gestion de l'ia
-					ia->run();
-					//gestion de l'engine
-					engine->update();
-					//update de l'affichage
-					render->update();	*/
-						
-					sf::Event event;									
-					// Verication de fin de tour et reinitialisations de debut de tour
-					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
-								moteur.verificationDebutDeTour();
-								StateEvent majDisponibilite(ALLCHANGED);
-								moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat());
-					}
-					if (demarrage){
-						stateLayer.draw(window);
-											
-						cout << "\n\t\t--- Tour " << moteur.getEtat().getTour() << " ---\n" << endl;
-						
-						demarrage = false;
-					}
-					
-					// Appel à l'IA choisie pour le tour adverse
-					if(moteur.getJoueurActif() == true && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
-						armeeBleue.run(moteur);
-					}
-					else if(moteur.getJoueurActif() == false && sf::Keyboard::isKeyPressed(sf::Keyboard::H)){
-						armeeRouge.run(moteur);
-					}
-					
-					while (window.pollEvent(event)){
-						// Fermeture de la fenetre
-						if (event.type == sf::Event::Closed){
-							window.close();
-						}
-					}					
-				}
-			}
-		} 
-
+		/*	ia : joueurs contre différents types d'ia*/
 		else if(strcmp(argv[1],"random_ai")==0 || strcmp(argv[1],"heuristic_ai")==0 || strcmp(argv[1], "rollback") == 0 || strcmp(argv[1],"deep_ai")==0){
 			
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
@@ -254,7 +185,7 @@ int main(int argc,char* argv[]){
 			Correspondances tab_corres = Correspondances();
 			Moteur moteur;
 			
-			// Lorsque la map est bien cargee
+			// Lorsque la map est bien chargee
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				moteur.getEtat().initPersonnages(tab_corres);
 				moteur.getEtat().initCurseur();
@@ -351,17 +282,18 @@ int main(int argc,char* argv[]){
 						}
 						
 						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false && rollback){
-							stateLayer.gestionCurseur(event, largeur_map_cases, longueur_map_cases, moteur.getEtat());
+							stateLayer.gestionCurseur(event, largeur_map_cases, longueur_map_cases, moteur.getEtat(), rollback);
 						}
 						
 						else if (event.type==sf::Event::KeyPressed && moteur.getEtat().getFin() == false){
-							stateLayer.gestionCurseur(event, largeur_map_cases, longueur_map_cases, moteur.getEtat());
+							stateLayer.gestionCurseur(event, largeur_map_cases, longueur_map_cases, moteur.getEtat(), rollback);
 						}
 					}
 				}	
 			}
 		}
 		
+		/*	engine : simule 3 tours de jeu */
 		else if(strcmp(argv[1],"engine")==0){
 			
 			cout<<"--- Moteur du jeu ---"<<endl;
@@ -561,66 +493,12 @@ int main(int argc,char* argv[]){
 							}
 						}	
 					}
-					
-					/*
-					if (tourSimule == 1){
-						FinActions finattaque12(*moteur.getEtat().getPersonnages()[4],false);
-						unique_ptr<Commande> ptr_finactions12 (new FinActions(finattaque12));
-						moteur.addCommande(0, move(ptr_finactions12));
-						
-							FinActions finattaque5(*moteur.getEtat().getPersonnages()[4],false);
-							unique_ptr<Commande> ptr_finactions5 (new FinActions(finattaque5));
-							moteur.addCommande(0, move(ptr_finactions5));
-							
-							FinActions finattaque6(*moteur.getEtat().getPersonnages()[5],false);
-							unique_ptr<Commande> ptr_finactions6 (new FinActions(finattaque6));
-							moteur.addCommande(1, move(ptr_finactions6));
-							
-							FinActions finattaque7(*moteur.getEtat().getPersonnages()[6],false);
-							unique_ptr<Commande> ptr_finactions7 (new FinActions(finattaque7));
-							moteur.addCommande(2, move(ptr_finactions7));
-							
-							FinActions finattaque8(*moteur.getEtat().getPersonnages()[7],false);
-							unique_ptr<Commande> ptr_finactions8 (new FinActions(finattaque8));
-							moteur.addCommande(3, move(ptr_finactions8));
-							
-							Position destination3(16,5);
-							Deplacement deplacement3(*moteur.getEtat().getPersonnages()[7], destination3,false);
-							unique_ptr<Commande> ptr_deplacement3 (new Deplacement(deplacement3));
-							moteur.addCommande(4, move(ptr_deplacement3));
-					}
-					
-					
-					else if(tourSimule==0){
-						tourSimule=1;
-												
-						
-						
-						
-						// Pas d'actions pour les autres personnages bleus
-						
-																		
-						FinActions finattaque1(*moteur.getEtat().getPersonnages()[1],true);
-						unique_ptr<Commande> ptr_finactions1 (new FinActions(finattaque1));
-						moteur.addCommande(3, move(ptr_finactions1));
-						
-						// Action du joueur adverse alors que ce n'est pas son tour
-						FinActions finattaque2(*moteur.getEtat().getPersonnages()[5],false);
-						unique_ptr<Commande> ptr_finactions2 (new FinActions(finattaque2));
-						moteur.addCommande(4, move(ptr_finactions2));
-												
-						FinActions finattaque4(*moteur.getEtat().getPersonnages()[3],true);
-						unique_ptr<Commande> ptr_finactions4 (new FinActions(finattaque4));
-						moteur.addCommande(5, move(ptr_finactions4));
-						
-						
-					}*/
 				}
 			}
 		}
 
 
-		/*	render : Affichage du rendu de la map */
+		/*	render : Affichage du rendu de la carte */
 		else if(strcmp(argv[1],"render")==0){
 		
 			cout<<"--- Affichage d'un Etat ---"<<endl;
@@ -667,7 +545,7 @@ int main(int argc,char* argv[]){
 		/*	state : Tests unitaires*/
 		else if(strcmp(argv[1],"state")==0){
 					
-			Personnage perso = Personnage(ARCHER,true, "archerTest",0, 0);
+			Personnage perso = Personnage(ARCHER,true, "archerTest",0, 0, 0);
 			
 			int count_err = 0;
 			

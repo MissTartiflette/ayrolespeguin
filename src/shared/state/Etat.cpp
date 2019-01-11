@@ -113,35 +113,35 @@ int Etat::initGrille (std::string chemin_map_txt, unsigned int longueur, unsigne
 
 int Etat::initPersonnages(Correspondances& correspondance){
 
-	 Personnage archer_bleu(ARCHER, true, "Oliver", 1, 21);
+	 Personnage archer_bleu(ARCHER, true, "Oliver", 1, 21, 0);
 	 std::unique_ptr<Personnage> ptrAB(new Personnage(archer_bleu));
 	 personnages.push_back(move(ptrAB));
 	 
-	 Personnage brigand_bleu(BRIGAND, true, "Jason", 2, 20);
+	 Personnage brigand_bleu(BRIGAND, true, "Jason", 2, 20, 1);
 	 std::unique_ptr<Personnage> ptrBB(new Personnage(brigand_bleu));
 	 personnages.push_back(move(ptrBB));
 	 
-	 Personnage chevalier_bleu(CHEVALIER, true, "Bruce", 3, 23);
+	 Personnage chevalier_bleu(CHEVALIER, true, "Bruce", 3, 23, 2);
 	 std::unique_ptr<Personnage> ptrCB(new Personnage(chevalier_bleu));
 	 personnages.push_back(move(ptrCB));
 	 
-	 Personnage guerrier_bleu(GUERRIER, true, "Arthur", 4, 22);
+	 Personnage guerrier_bleu(GUERRIER, true, "Arthur", 4, 22, 3);
 	 std::unique_ptr<Personnage> ptrGB(new Personnage(guerrier_bleu));
 	 personnages.push_back(move(ptrGB));
 	 
-	 Personnage archer_rouge(ARCHER, false, "Clint", 17, 5);
+	 Personnage archer_rouge(ARCHER, false, "Clint", 17, 5, 4);
 	 std::unique_ptr<Personnage> ptrAR(new Personnage(archer_rouge));
 	 personnages.push_back(move(ptrAR));
 	 
-	 Personnage brigand_rouge(BRIGAND, false, "Peter", 20, 2);
+	 Personnage brigand_rouge(BRIGAND, false, "Peter", 20, 2, 5);
 	 std::unique_ptr<Personnage> ptrBR(new Personnage(brigand_rouge));
 	 personnages.push_back(move(ptrBR));
 	 
-	 Personnage chevalier_rouge(CHEVALIER, false, "Tony", 23, 3);
+	 Personnage chevalier_rouge(CHEVALIER, false, "Tony", 23, 3, 6);
 	 std::unique_ptr<Personnage> ptrCR(new Personnage(chevalier_rouge));
 	 personnages.push_back(move(ptrCR));
 	 
-	 Personnage guerrier_rouge(GUERRIER, false, "Steve", 3, 21);
+	 Personnage guerrier_rouge(GUERRIER, false, "Steve", 3, 21, 7);
 	 std::unique_ptr<Personnage> ptrGR(new Personnage(guerrier_rouge));
 	 personnages.push_back(move(ptrGR));
 	

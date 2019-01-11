@@ -122,7 +122,7 @@ void Attaque::execute (state::Etat& etat){
 						/*// Le tour du contre-attaquant ne se termine pas apres sa contre-attaque
 						if(attaquant.getType()==ARCHER && cible.getType()!=ARCHER){
 							FinActions finattaque(attaquant, joueur);
-							usleep(500000);
+							sleep(2);
 							finattaque.execute(etat);		
 						}*/
 						//else{
@@ -155,3 +155,14 @@ void Attaque::execute (state::Etat& etat){
 	
 	cout << "\n" ;
 }
+
+Json::Value Attaque::serialize(){
+	Json::Value newCmd;
+	newCmd["id"] = id;
+	newCmd["joueur"] = (int)joueur;
+	newCmd["attaquant"] = attaquant.indice;
+	newCmd["cible"] = cible.indice;
+	
+	return newCmd;
+}
+

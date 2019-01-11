@@ -19,7 +19,7 @@ namespace render {
   class IObservateur {
     // Operations
   public:
-    virtual void curseurChanged (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position) = 0;
+    virtual void curseurChanged (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position, bool rollback) = 0;
     // Setters and Getters
   };
 

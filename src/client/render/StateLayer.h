@@ -52,7 +52,7 @@ namespace render {
     void draw (sf::RenderWindow& window);
     void writeTexteAction (const std::string chaine, sf::RenderWindow& window);
     void writeStatistiques (const std::string chaine, sf::RenderWindow& window);
-    void gestionCurseur (sf::Event  newEvent, unsigned int largeur_map_cases, unsigned int  longueur_map_cases, state::Etat& etatActuel);
+    void gestionCurseur (sf::Event  newEvent, unsigned int largeur_map_cases, unsigned int  longueur_map_cases, state::Etat& etatActuel, bool rollback);
     // Setters and Getters
   };
 

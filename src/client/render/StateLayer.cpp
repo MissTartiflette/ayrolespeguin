@@ -172,7 +172,7 @@ void StateLayer::writeStatistiques(const std::string chaine, sf::RenderWindow& w
 	window.display();
 }
 
-void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cases, unsigned int longueur_map_cases, Etat& etatActuel){
+void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cases, unsigned int longueur_map_cases, Etat& etatActuel, bool rollback){
 
 	StateEvent stateEvent(ALLCHANGED);
 
@@ -196,7 +196,7 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 		
 		CurseurEvent curseurEvent0(R);
 		Position nextPos0(0, 0);
-		notifyObservers(etatActuel, curseurEvent0.touche, -1, -1, nextPos0);
+		notifyObservers(etatActuel, curseurEvent0.touche, -1, -1, nextPos0,rollback);
 
 		// Test pour changement de couleur du curseur si le rollback est declenché alors qu'un personnage est selectionne et n'a effectue aucune action
 		bool persoSelectionne = false;
@@ -392,11 +392,11 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 			CurseurEvent curseurEvent1(A);
 			CurseurEvent curseurEvent2(UPDATE);
 			Position nextPos2(0, 0);
-			notifyObservers(etatActuel, curseurEvent1.touche, attaquant, cible, nextPos2);
+			notifyObservers(etatActuel, curseurEvent1.touche, attaquant, cible, nextPos2, rollback);
 			etatActuel.getCurseur()->setCodeTuile(2);
 			etatActuel.notifyObservers(stateEvent, etatActuel);	
 
-			notifyObservers(etatActuel, curseurEvent2.touche, -1, -1, nextPos2);			
+			notifyObservers(etatActuel, curseurEvent2.touche, -1, -1, nextPos2, rollback);			
 			//update();
 			etatActuel.getCurseur()->setCodeTuile(0);
 			etatActuel.notifyObservers(stateEvent, etatActuel);									
@@ -433,10 +433,10 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 			CurseurEvent curseurEvent3(Z);
 			CurseurEvent curseurEvent4(UPDATE);		
 			Position nextPos1(0, 0);
-			notifyObservers(etatActuel, curseurEvent3.touche, numeroPerso, -1, nextPos1);						
+			notifyObservers(etatActuel, curseurEvent3.touche, numeroPerso, -1, nextPos1, rollback);						
 			etatActuel.getCurseur()->setCodeTuile(0);
 			//update();
-			notifyObservers(etatActuel, curseurEvent4.touche, -1, -1, nextPos1);
+			notifyObservers(etatActuel, curseurEvent4.touche, -1, -1, nextPos1, rollback);
 		}
 		
 		// Deplacement du curseur et du personnage selectionne
@@ -448,10 +448,10 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 			addCommande(0, move(ptr_deplacement));*/
 			CurseurEvent curseurEvent5(M);
 			CurseurEvent curseurEvent6(UPDATE);
-			notifyObservers(etatActuel, curseurEvent5.touche, numeroPerso, -1, nextPos);				
+			notifyObservers(etatActuel, curseurEvent5.touche, numeroPerso, -1, nextPos, rollback);				
 			etatActuel.getCurseur()->move(nextPos);
 			//update();
-			notifyObservers(etatActuel, curseurEvent6.touche, -1, -1, nextPos3);
+			notifyObservers(etatActuel, curseurEvent6.touche, -1, -1, nextPos3, rollback);
 								
 			changementX = 0;
 			changementY = 0;

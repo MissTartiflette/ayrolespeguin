@@ -32,6 +32,8 @@ namespace engine {
   class Moteur : public engine::Observable, public render::IObservateur {
     // Associations
     // Attributes
+  public:
+    bool onThread     = false;
   private:
     state::Etat etatActuel;
     std::map<int, std::unique_ptr<Commande>> commandesActuelles;
@@ -56,9 +58,9 @@ namespace engine {
     void updateAction (Action* action);
     void undo (Action* action);
     void addAction (Action* newAction);
-    void addCommands (const Json::Value& in);
-    void run ();
-    void curseurChanged (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position);
+    void curseurChanged (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position, bool rollback);
+    void setEnableRecord (bool val);
+    Json::Value getRecord ();
     // Setters and Getters
   };
 

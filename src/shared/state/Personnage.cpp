@@ -5,7 +5,7 @@ using namespace state;
 using namespace std;
 
 
-Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newX, int newY):Element(){
+Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, int newX, int newY, int newIndice):Element(){
 
 	typeID = id;
 	camp=newCamp;
@@ -13,6 +13,7 @@ Personnage::Personnage(TypePersonnageID id, bool newCamp, std::string newNom, in
     nom = newNom;
     position.setX(newX);
     position.setY(newY);
+    indice=newIndice;
     
     if(id == ARCHER){
     	nomArme="Arc";

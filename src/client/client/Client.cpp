@@ -20,6 +20,7 @@ using namespace ai;
     ai::IA* armeeRouge;
     mutable std::mutex draw_mutex;
 */
+
 bool v1=false;
 bool v2=true;
 void thread_moteur(void* ptr){
@@ -42,6 +43,8 @@ Client::Client (sf::RenderWindow& window): window(window){
 	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres);
 	moteur.getEtat().initPersonnages(tab_corres);
 	moteur.getEtat().initCurseur();
+	
+	moteur.onThread = true;
 
 	armeeRouge=new HeuristicIA();
 	armeeBleue= new HeuristicIA();
@@ -86,19 +89,19 @@ void Client::run (){
 			demarrage = false;
 		}
 		
-			armeeBleue->run(moteur);
+		armeeBleue->run(moteur);
 
-			armeeRouge->run(moteur);
-			while (window.pollEvent(event)){
-				// Fermeture de la fenetre
-				if (event.type == sf::Event::Closed){
-					window.close();
-				}
+		armeeRouge->run(moteur);
+		while (window.pollEvent(event)){
+			// Fermeture de la fenetre
+			if (event.type == sf::Event::Closed){
+				window.close();
+				moteur.getEtat().setFin(true);
+				cout << "\tFENETRE FERMEE - PROCESSUS INTERROMPU" << endl;
+				break;
 			}
-
+		}
 	}
 	v2=false;
 	th.join();
-
-	
 }

@@ -2,6 +2,7 @@
 #ifndef ENGINE__FINACTIONS__H
 #define ENGINE__FINACTIONS__H
 
+#include <json/json.h>
 
 namespace state {
   class Etat;
@@ -23,6 +24,7 @@ namespace engine {
   public:
     FinActions (state::Personnage& cible, bool joueur);
     void execute (state::Etat& etat);
+    Json::Value serialize ();
     // Setters and Getters
   };
 

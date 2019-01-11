@@ -1,0 +1,24 @@
+{
+	"id" : 1,
+	"tabCmd" : 
+	[
+		{
+			"cible" : 2,
+			"id" : 1,
+			"joueur" : true,
+			"xDestination" : 3,
+			"yDestination" : 22
+		},
+		{
+			"attaquant" : 2,
+			"cible" : 7,
+			"id" : 2,
+			"joueur" : true
+		},
+		{
+			"cible" : 0,
+			"id" : 3,
+			"joueur" : true
+		}
+	]
+}

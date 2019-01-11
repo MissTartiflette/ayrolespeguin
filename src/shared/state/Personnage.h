@@ -20,6 +20,8 @@ namespace state {
   class Personnage : public state::Element {
     // Associations
     // Attributes
+  public:
+    int indice;
   protected:
     bool camp;
     std::string nomArme;
@@ -30,7 +32,7 @@ namespace state {
     TypePersonnageID typeID;
     // Operations
   public:
-    Personnage (TypePersonnageID id, bool newCamp, std::string newNom, int newY, int newX);
+    Personnage (TypePersonnageID id, bool newCamp, std::string newNom, int newY, int newX, int newIndice);
     bool isTerrain ();
     bool getCamp ();
     std::string getNomArme ();

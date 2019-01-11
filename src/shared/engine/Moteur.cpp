@@ -14,6 +14,8 @@ using namespace std;
 Moteur::Moteur () : etatActuel(){
 	changementTour = false;
 	joueurActif = true;
+	record["tailleReelle"] = 0;
+	record["tabCmd"][0] = "";
 }
 
 Moteur::~Moteur (){
@@ -25,8 +27,13 @@ state::Etat& Moteur::getEtat (){
 }
 
 void Moteur::addCommande (int priorite, std::unique_ptr<Commande> ptr_cmd){
-	commandesActuelles[priorite]=move(ptr_cmd);
 	
+	if (enableRecord){
+		Json::Value newCmd = ptr_cmd->serialize();
+		record["tabCmd"][record["tailleReelle"].asUInt()] = newCmd;
+		record["tailleReelle"] = record["tailleReelle"].asUInt() + 1;
+	}
+	commandesActuelles[priorite]=move(ptr_cmd);	
 }
 
 void Moteur::update (){
@@ -39,6 +46,7 @@ void Moteur::update (){
 		if (commandesActuelles[i]->joueur == joueurActif){
 			commandesActuelles[i]->execute(etatActuel);
 			etatActuel.notifyObservers(stateEvent, etatActuel);
+			//sleep(1);
 		}
 	}
 	for(it=commandesActuelles.begin(); it!=commandesActuelles.end(); it++){
@@ -178,52 +186,78 @@ void Moteur::verificationDebutDeTour(){
 bool Moteur::getJoueurActif(){
 	return joueurActif;
 }
-	
+
 void Moteur::addAction(Action* newAction){
 	listeActionsJouees.push_back(move(newAction));
 }
 
-void Moteur::addCommands(const Json::Value& in){
-}
-
-void Moteur::run (){
-	
-	update();
-
-}
-
-void Moteur::curseurChanged(Etat& etat, CurseurEventID& touche, int acteur, int cible, state::Position& position){
+void Moteur::curseurChanged(Etat& etat, CurseurEventID& touche, int acteur, int cible, state::Position& position, bool rollback){
 	
 	if(touche==A){
-		Attaque attaque(*etatActuel.getPersonnages()[acteur], *etatActuel.getPersonnages()[cible], etatActuel.getPersonnages()[acteur]->getCamp());
-		unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
-		addCommande(0, move(ptr_attaque));
+		if (rollback){
+			Attaque_Action attaque(*etatActuel.getPersonnages()[acteur], *etatActuel.getPersonnages()[cible], etatActuel.getPersonnages()[acteur]->getCamp());
+			Attaque_Action* ptr_attaque (new Attaque_Action(attaque));
+			addAction(move(ptr_attaque));
+			updateAction(move(ptr_attaque));
+		}
+		else{
+			Attaque attaque(*etatActuel.getPersonnages()[acteur], *etatActuel.getPersonnages()[cible], etatActuel.getPersonnages()[acteur]->getCamp());
+			unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
+			addCommande(0, move(ptr_attaque));
+		}
+		
 	}
 	else if(touche==Z){
-		FinActions finaction(*etatActuel.getPersonnages()[acteur], etatActuel.getPersonnages()[acteur]->getCamp());
-		unique_ptr<Commande> ptr_finaction (new FinActions(finaction));
-		addCommande(0, move(ptr_finaction));
+		if (rollback){
+			FinActions_Action finaction(*etatActuel.getPersonnages()[acteur], etatActuel.getPersonnages()[acteur]->getCamp());
+			FinActions_Action* ptr_finaction (new FinActions_Action(finaction));
+			addAction(move(ptr_finaction));
+			updateAction(move(ptr_finaction));
+		}
+		else{
+			FinActions finaction(*etatActuel.getPersonnages()[acteur], etatActuel.getPersonnages()[acteur]->getCamp());
+			unique_ptr<Commande> ptr_finaction (new FinActions(finaction));
+			addCommande(0, move(ptr_finaction));
+		}
 	}
 	else if(touche==M){
-		Deplacement deplacement(*etatActuel.getPersonnages()[acteur], position, joueurActif);
-		unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
-		addCommande(0, move(ptr_deplacement));
+		if (rollback){
+			Dep_Action deplacement(*etatActuel.getPersonnages()[acteur], position, joueurActif);
+			Dep_Action* ptr_deplacement (new Dep_Action(deplacement));
+			addAction(move(ptr_deplacement));
+			updateAction(move(ptr_deplacement));
+		}
+		else{
+			Deplacement deplacement(*etatActuel.getPersonnages()[acteur], position, joueurActif);
+			unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
+			addCommande(0, move(ptr_deplacement));
+		}
 	}
 	else if(touche==UPDATE){
 		update();
 	}
 
 	else if(touche==R){
-		cout << listeActionsJouees.size() << " actions a annuler" << endl;
-		if (listeActionsJouees.size()>0){
-			for(int i = listeActionsJouees.size()-1; i >= 0; i--){
-				undo(move(listeActionsJouees[i]));
-				
-				cout << "Annulation " << i << " effectuee" << endl;
-				usleep(750000);
-				listeActionsJouees.pop_back();
+		if (rollback){
+			cout << listeActionsJouees.size() << " actions a annuler" << endl;
+			if (listeActionsJouees.size()>0){
+				for(int i = listeActionsJouees.size()-1; i >= 0; i--){
+					undo(move(listeActionsJouees[i]));
+					
+					cout << "Annulation " << i << " effectuee" << endl;
+					usleep(750000);
+					listeActionsJouees.pop_back();
+				}
 			}
 		}
 	}
-
 }
+
+void Moteur::setEnableRecord(bool val){
+	enableRecord = val;
+}
+
+Json::Value Moteur::getRecord(){
+	return record;
+}
+

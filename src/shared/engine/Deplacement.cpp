@@ -16,11 +16,10 @@ void Deplacement::execute (state::Etat& etat){
 
 	bool deplacementPossible=false;
 	if (cible.getStatut()!=ATTENTE && cible.getStatut()!=MORT){
-
 		if(cible.getChampMove()!=0){
 			vector<Position> listePosMouv=cible.getLegalMove(etat);
 			
-			for(size_t j=0; j<listePosMouv.size(); j++){			
+			for(size_t j=0; j<listePosMouv.size(); j++){
 				if(listePosMouv[j].equals(destination)){
 					deplacementPossible=true;
 					break;
@@ -74,4 +73,16 @@ void Deplacement::execute (state::Etat& etat){
 	}
 	
 	cout << "\n" ;
+}
+
+Json::Value Deplacement::serialize(){
+
+	Json::Value newCmd;
+	newCmd["id"] = id;
+	newCmd["joueur"] = (int)joueur;
+	newCmd["cible"] = cible.indice;
+	newCmd["xDestination"] = destination.getX();
+	newCmd["yDestination"] = destination.getY();
+	
+	return newCmd;
 }

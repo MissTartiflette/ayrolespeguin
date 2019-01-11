@@ -27,7 +27,7 @@ namespace render {
     // Operations
   public:
     void registerObserver (IObservateur* observer);
-    void notifyObservers (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position);
+    void notifyObservers (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position, bool rollback);
     // Setters and Getters
   };
 

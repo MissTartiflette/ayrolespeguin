@@ -2,6 +2,7 @@
 #ifndef ENGINE__COMMANDE__H
 #define ENGINE__COMMANDE__H
 
+#include <json/json.h>
 
 namespace state {
   class Etat;
@@ -22,6 +23,7 @@ namespace engine {
   public:
     CommandeID getCommandeID ();
     virtual void execute (state::Etat& etat) = 0;
+    virtual Json::Value serialize () = 0;
     // Setters and Getters
   };
 

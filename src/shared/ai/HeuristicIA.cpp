@@ -10,7 +10,7 @@ using namespace ai;
 using namespace engine;
 using namespace state;
 using namespace std;
-//
+
 
 /** Pseudo Code de l'algorithme de recherche de chemin
 Initialisation
@@ -115,8 +115,14 @@ void HeuristicIA::run (engine::Moteur& moteur){
 									Deplacement deplacement(*moteur.getEtat().getPersonnages()[i], chemin[chemin.size()-1], camp);
 									unique_ptr<Commande> ptr_deplacement (new Deplacement(deplacement));
 									moteur.addCommande(0, move(ptr_deplacement));
-									//moteur.update();
-									moteur.notifyUpdating();
+									
+									if (moteur.onThread){
+										moteur.notifyUpdating();
+									}
+									else{
+										moteur.update();
+									}
+									
 								}
 								else{
 									action=2;
@@ -135,8 +141,14 @@ void HeuristicIA::run (engine::Moteur& moteur){
 							Attaque attaque(*moteur.getEtat().getPersonnages()[i], *moteur.getEtat().getPersonnages()[moteur.getEtat().getGrille()[objectif[indiceObjectif].getX()][objectif[indiceObjectif].getY()]->isOccupe(moteur.getEtat())], camp);												
 							unique_ptr<Commande> ptr_attaque (new Attaque(attaque));
 							moteur.addCommande(0, move(ptr_attaque));
-							//moteur.update();
-							moteur.notifyUpdating();
+							
+							if (moteur.onThread){
+								moteur.notifyUpdating();
+							}
+							else{
+								moteur.update();
+							}
+							
 							sleep(1);
 						}
 					
@@ -145,8 +157,14 @@ void HeuristicIA::run (engine::Moteur& moteur){
 						FinActions finactions(*moteur.getEtat().getPersonnages()[i], camp);
 						unique_ptr<Commande> ptr_finactions (new FinActions(finactions));
 						moteur.addCommande(0, move(ptr_finactions));
-						//moteur.update();
-						moteur.notifyUpdating();
+						
+						if (moteur.onThread){
+							moteur.notifyUpdating();
+						}
+						else{
+							moteur.update();
+						}
+						
 						usleep(200000);
 					}
 					

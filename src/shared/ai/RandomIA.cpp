@@ -74,7 +74,14 @@ void RandomIA::run (engine::Moteur& moteur){
 							//numero=numero+1;
 							//moteur.update();
 							//cout<<"deplacement"<<endl;
-							moteur.notifyUpdating();
+							
+							if (moteur.onThread){
+								moteur.notifyUpdating();
+							}
+							else{
+								moteur.update();
+							}
+							
 							attaqueImpossible = false;
 							//usleep(500000);
 						}
@@ -101,7 +108,14 @@ void RandomIA::run (engine::Moteur& moteur){
 								//numero=numero+1;
 								//moteur.update();
 								//cout<<"attaque"<<endl;
-								moteur.notifyUpdating();
+								
+								if (moteur.onThread){
+									moteur.notifyUpdating();
+								}
+								else{
+									moteur.update();
+								}
+								
 								deplacementImpossible = false;
 								//usleep(500000);
 							}
@@ -119,7 +133,14 @@ void RandomIA::run (engine::Moteur& moteur){
 						//numero=numero+1;
 						//moteur.update();
 						//cout<<"finaction"<<endl;
-						moteur.notifyUpdating();
+						
+						if (moteur.onThread){
+							moteur.notifyUpdating();
+						}
+						else{
+							moteur.update();
+						}
+						
 						//usleep(500000);
 					}
 				}		

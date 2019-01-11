@@ -2,6 +2,7 @@
 #ifndef ENGINE__DEPLACEMENT__H
 #define ENGINE__DEPLACEMENT__H
 
+#include <json/json.h>
 
 namespace state {
   class Etat;
@@ -24,6 +25,7 @@ namespace engine {
   public:
     Deplacement (state::Personnage& cible, state::Position& destination, bool joueur);
     void execute (state::Etat& etat);
+    Json::Value serialize ();
     // Setters and Getters
   };
 

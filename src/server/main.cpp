@@ -25,10 +25,16 @@ int main(int argc,char* argv[]){
 		if(strcmp(argv[1],"hello")==0){
 			cout<<"Bonjour tout le monde"<<endl;
 			Json::Value root;
+			root["tabCmd"];
+			
+			/*
+			cout << "Taille root : " << root["tabCmd"].size() << endl;
+			root["tabCmd"][0]["id"] =  200;
+			cout << root << endl;
+			*/
 		}
 		
 		/*	record : Enregistrement d'une partie jouée par deux IA*/
-		/*
 		else if(strcmp(argv[1], "record") == 0){
 			
 			unsigned int longueur_map_cases = 25, largeur_map_cases = 25;
@@ -38,6 +44,7 @@ int main(int argc,char* argv[]){
 			// Creation des tables de correspondances et du moteur
 			Correspondances tab_corres = Correspondances();
 			Moteur moteur;
+			moteur.setEnableRecord(true);
 			
 			if(	moteur.getEtat().initGrille(chemin_fichier_map_txt, longueur_map_cases, largeur_map_cases, tab_corres)){
 				// Initialisations de démarrage et création des IA
@@ -47,83 +54,52 @@ int main(int argc,char* argv[]){
 				HeuristicIA armeeBleue;
 				armeeBleue.setCamp(true);
 				
-				
 				cout << "\t\t--- Record ---" << endl;				
-				cout << "On simule trois tours de jeu et on conserve les commandes effectuées dans le fichier ";
-				cout << fichier_commandes << endl;
+				cout << "On enregistre trois tours de jeu dans le fichier " << fichier_commandes << endl;
+				cout << "Deux IA heuristiques jouent l'une contre l'autre" << endl;
+				sleep(2);
+				cout << "--> Début de l'enregistrement <--" << endl;
 				
-				bool demarrage = true ;
+				// On simule 3 tours
+				while (moteur.getEtat().getTour() != 4){
+					// L'armée bleue joue les tours impairs, la rouge les tours pairs
+					if(moteur.getEtat().getTour()%2 != 0){
+						armeeBleue.run(moteur);
+					}
+					else{
+						armeeRouge.run(moteur);
+					}
+					
+					// Verifications de fin de tours pour changer le tour
+					if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
+							moteur.verificationDebutDeTour();
+					}
+				}
 				
+				cout << "--> Fin de l'enregistrement <--" << endl;
+				
+				
+				cout << "--> Debut de l'enregistrement dans le fichier <--" << endl;
 				// Ouverture du fichier en ecriture en effacant son contenu à l'ouverture
 				std::ofstream fichier_ecriture(fichier_commandes, ios::out|ios::trunc);
 				if(fichier_ecriture){
-				
-					Json::Value newTab;
-					
-					// On simule 3 tours de jeu
-					while (moteur.getEtat().getTour() != 4){
-						
-						// L'amée bleue joue les tours impairs
-						if(moteur.getEtat().getTour()%2 != 0){
-							armeeBleue.run(moteur);
-						}
-						// L'amée rouge joue les tours pairs
-						else{
-							armeeRouge.run(moteur);
-						}
-						
-						if(!moteur.getEtat().getFin() && moteur.verificationFinDeTour()){
-							moteur.verificationDebutDeTour();*/
-							/*
-							StateEvent majDisponibilite(ALLCHANGED);
-							moteur.getEtat().notifyObservers(majDisponibilite, moteur.getEtat(), window);*/
-						/*}
-					}
-					
-					
-					
-					// Deplacement chevalier bleu
-					Position destination1(3,22);
-					Deplacement deplacement1(*moteur.getEtat().getPersonnages()[2], destination1,true);
-										
-					newTab[0]["id"] = deplacement1.getCommandeID();
-					newTab[0]["joueur"] = deplacement1.joueur;
-					newTab[0]["cible"] = 2;
-					newTab[0]["xDestination"] = destination1.getX();
-					newTab[0]["yDestination"] = destination1.getY();
-					
-					// Attaque chevalier bleu contre archer rouge
-					Attaque attaque1(*moteur.getEtat().getPersonnages()[2], *moteur.getEtat().getPersonnages()[7],true);
-					newTab[1]["id"] = attaque1.getCommandeID();
-					newTab[1]["joueur"] = attaque1.joueur;
-					newTab[1]["attaquant"] = 2;
-					newTab[1]["cible"] = 7;
-					
-					// Fin du tour de l'archer bleu
-					FinActions finactions1(*moteur.getEtat().getPersonnages()[0],true);
-					newTab[2]["id"] = finactions1.getCommandeID();
-					newTab[2]["joueur"] = finactions1.joueur;
-					newTab[2]["cible"] = 0;
-										
-					root["tabCmd"] = newTab;
-					
+									
+					Json::Value root = moteur.getRecord();
 					cout << root << endl;
 					
-					
-					
-					
-					
 					// Ecriture dans le fichier du tableau de commandes de cette partie
-					fichier_ecriture << newTab;
+					fichier_ecriture << root;
 					
 					// Fermeture du fichier
 					fichier_ecriture.close();
+					
+					cout << "--> Fin de l'enregistrement dans le fichier <--" << endl;
 				}
 				else{
 					cerr << "Impossible d'ouvrir le fichier des commandes enregistrées pour l'ecriture" << endl;
-				}	
+				}
 			}
-		}*/
+		}
 	}
 	
     return 0;

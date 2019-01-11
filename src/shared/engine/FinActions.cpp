@@ -23,3 +23,13 @@ void FinActions::execute(state::Etat& etat){
 	
 	cout << "\n" ;
 }
+
+Json::Value FinActions::serialize(){
+
+	Json::Value newCmd;	
+	newCmd["id"] = id;
+	newCmd["joueur"] = (int)joueur;
+	newCmd["cible"] = cible.indice;
+	
+	return newCmd;
+}
