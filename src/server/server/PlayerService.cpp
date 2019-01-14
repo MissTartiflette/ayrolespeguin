@@ -1,0 +1,54 @@
+#include "server.h"
+#include <memory>
+
+using namespace server;
+using namespace std;
+
+PlayerService::PlayerService (Game& game) : AbstractService("/player"), game(game) {
+    
+}
+
+HttpStatus PlayerService::get (Json::Value& out, int id) const {
+    const Player* player = game.getPlayer(id);
+    if (!player)
+        throw ServiceException(HttpStatus::NOT_FOUND,"Invalid player id");
+    out["name"] = player->name;
+    out["free"] = player->free;
+    return HttpStatus::OK;
+}
+
+HttpStatus PlayerService::post (const Json::Value& in, int id) {
+    const Player* player = game.getPlayer(id);
+    if (!player)
+        throw ServiceException(HttpStatus::NOT_FOUND,"Invalid player id");
+    unique_ptr<Player> playermod (new Player(*player));
+    if (in.isMember("name")) {
+        playermod->name = in["name"].asString();
+    }
+    if (in.isMember("free")) {
+        playermod->free = in["free"].asInt();
+    }
+    game.setPlayer(id, std::move(playermod));
+    return HttpStatus::NO_CONTENT;
+}
+
+HttpStatus PlayerService::put (Json::Value& out,const Json::Value& in) {
+	if(game.getPlayersList().size()>=2){
+		throw ServiceException(HttpStatus::OUT_OF_RESOURCES,"Aucune place libre");
+	}
+    string name = in["name"].asString();
+    bool free = in["free"].asInt();
+	Player new_player(name, free);
+	std::unique_ptr<Player> ptr_player (new Player(new_player));
+	out["id"] = game.addPlayer(move(ptr_player));
+    return HttpStatus::CREATED;
+}
+
+HttpStatus PlayerService::remove (int id) {
+    const Player* player = game.getPlayer(id);
+    if (!player)
+        throw ServiceException(HttpStatus::NOT_FOUND,"Invalid player id");
+    game.removePlayer(id);
+    return HttpStatus::NO_CONTENT;
+}
+

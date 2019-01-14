@@ -6,9 +6,14 @@
 #include <memory>
 #include <unistd.h>
 #include <thread>
-
+#include <microhttpd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#define SOCKET_ERROR -1
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 void testSFML() {
     sf::Texture texture;
 }
@@ -27,6 +32,104 @@ using namespace engine;
 using namespace ai;
 using namespace client;
 
+//////////////////////////////////////////////////////////////////////////////
+/*
+class Request {
+public:
+    struct MHD_PostProcessor *pp = nullptr;
+    string data;
+    ~Request() {
+        if (pp) MHD_destroy_post_processor (pp);
+    }
+};
+
+static void request_completed (void *cls, struct MHD_Connection *connection, void **con_cls, enum MHD_RequestTerminationCode toe){
+  Request *request = (Request*)*con_cls;
+  if (request) {
+      delete request;
+      *con_cls = nullptr;
+  }
+}
+
+static int post_iterator(void *cls,
+        enum MHD_ValueKind kind,
+        const char *key,
+        const char *filename,
+        const char *content_type,
+        const char *transfer_encoding,
+        const char *data, uint64_t off, size_t size) 
+{
+    return MHD_NO;
+}
+
+// Gestionnaire principal
+static int main_handler (void *cls, struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data, size_t *upload_data_size, void **ptr) {
+    // Données pour une requête (en plusieurs appels à cette fonction)
+    Request *request = (Request*)*ptr;
+
+    // Premier appel pour cette requête
+    if (!request) { 
+        request = new Request();
+        if (!request) {
+            return MHD_NO;
+        }
+        *ptr = request;
+        if (strcmp(method, MHD_HTTP_METHOD_POST) == 0
+         || strcmp(method, MHD_HTTP_METHOD_PUT) == 0) {
+            request->pp = MHD_create_post_processor(connection,1024,&post_iterator,request);
+            if (!request->pp) {
+                cerr << "Failed to setup post processor for " << url << endl;
+                return MHD_NO;
+            }
+        }
+        return MHD_YES;
+    }    
+    
+    // Cas où il faut récupérer les données envoyés par l'utilisateur
+    if (strcmp(method, MHD_HTTP_METHOD_POST) == 0
+     || strcmp(method, MHD_HTTP_METHOD_PUT) == 0) {
+        MHD_post_process(request->pp,upload_data,*upload_data_size);
+        if (*upload_data_size != 0) {
+            request->data = upload_data;
+            *upload_data_size = 0;
+            return MHD_YES;
+        }    
+    }
+
+    HttpStatus status;
+    string response;
+    try {
+
+        ServicesManager *manager = (ServicesManager*) cls;
+        status = manager->queryService(response,request->data,url,method);
+    }
+    catch(ServiceException& e) {
+        status = e.status();
+        response = e.what();
+        response += "\n";
+    }
+    catch(exception& e) {
+        status = HttpStatus::SERVER_ERROR;
+        response = e.what();
+        response += "\n";
+    }
+    catch(...) {
+        status = HttpStatus::SERVER_ERROR;
+        response = "Unknown exception\n";
+    }
+
+    struct MHD_Response *mhd_response;
+    mhd_response = MHD_create_response_from_buffer(response.size(),(void *)response.c_str(),MHD_RESPMEM_MUST_COPY);
+    if (strcmp(method,MHD_HTTP_METHOD_GET) == 0) {
+        MHD_add_response_header(mhd_response,"Content-Type","application/json; charset=utf-8");
+    }
+    int ret = MHD_queue_response(connection, status, mhd_response);
+    MHD_destroy_response(mhd_response);
+    return ret;
+}*/
+///////////////////////////////////////////////////////////
+
+
 int main(int argc,char* argv[]){
 
 	testSFML();
@@ -37,6 +140,97 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 		
+		else if(strcmp(argv[1], "network") == 0){
+
+			
+			struct sockaddr_in addr; 
+			
+			int sock;
+			if(( sock = socket(PF_LOCAL, SOCK_STREAM, 0)) < 0) {
+				printf("error socket\n");
+				return -1;
+			}
+			else{ cout<<"socket : "<<sock<<endl;}
+			int j=1;
+			setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &j, sizeof(j));
+			addr.sin_family = AF_UNIX;
+			addr.sin_port = 8086;
+			
+			int co;
+			if((co=connect(sock, (struct sockaddr*) &addr, sizeof(struct sockaddr_in)))<0) {
+				perror("connect");
+			}
+			else{ cout<<"connect : "<<co<<endl;}
+			
+			if(co!=SOCKET_ERROR){
+			char buffer[32]="";
+			char buffer2[32]="salut toi!";
+			/* Si l'on reçoit des informations : on les affiche à l'écran */
+            if(recv(sock, buffer, 32, 0) != SOCKET_ERROR){
+                cout<<"Recu : "<<buffer<<endl;
+				int sock_err = send(sock, buffer2, 32, 0);
+				if(sock_err != SOCKET_ERROR)
+                        cout<<"Chaine envoyée : "<<buffer2<<endl;
+                else
+                        cout<<"Erreur de transmission"<<endl;
+       		 }
+        	/* sinon, on affiche "Impossible de se connecter" */
+		    else
+		    {
+		        cout<<"Impossible de se connecter"<<endl;
+		    }
+ 
+        	/* On ferme la socket */
+       		 close(sock);
+			}
+			getchar();
+ 
+    		return EXIT_SUCCESS;
+			/*char buf[100]="hello";
+			size_t count=strlen(buf);
+			
+			if(write(sock, (void*) &buf, count)==-1){
+				perror("write");
+			}
+			
+			if(read(sock, (void*) &buf, count)==-1){
+				perror("error read");
+			}*/
+			
+/*
+			char buffer[1024]="hello";
+			ssize_t s;
+			if((s=send(sock, buffer, strlen(buffer), 0)) < 0){
+    			perror("send()");
+    			exit(errno);
+			}
+			else{
+				cout<<s<<endl;
+			}
+			cout<<buffer<<endl;
+			//sleep(3);
+			shutdown(sock, SHUT_RDWR);
+			//close(sock);
+			close(sock);*/
+			
+			/*
+			sf::Http http("http://localhost:8080/");
+
+			sf::Http::Request request;
+			request.setMethod(sf::Http::Request::Get);
+			request.setUri("page/1");
+			request.setHttpVersion(1, 0);
+			request.setField("name","free");
+			
+
+			sf::Http::Response response = http.sendRequest(request);
+			cout<< "status : "<<response.getStatus()<<endl;
+			cout<<"HTTP version : "<<response.getMajorHttpVersion()<< "."<<response.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response.getField("Content-Type")<<endl;
+			cout<<"body :"<<response.getBody()<<endl;*/
+
+			
+		}
 		/*	thread : le moteur tourne dans un thread séparé */
 		else if(strcmp(argv[1], "thread") == 0){
 			cout << "\t\t--- Thread ---" << endl;
