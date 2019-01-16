@@ -46,6 +46,8 @@ namespace state {
     TypePersonnageID getType ();
     int getCodeArme ();
     void setChampMove (int newChampMove);
+    std::string statsToString ();
+    std::string infosToString ();
     // Setters and Getters
   };
 

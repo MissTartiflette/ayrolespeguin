@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
 #include "render.h"
 #include <iostream>
@@ -33,6 +34,8 @@ StateLayer::StateLayer(state::Etat& etat, sf::RenderWindow& window): window(wind
 	TileSet tilesetInfos(INFOSTILESET);
 	std::unique_ptr<TileSet> ptr_tilesetInfos (new TileSet(tilesetInfos));
 	tilesets.push_back(move(ptr_tilesetInfos));
+	
+	
 }
 
 void StateLayer::initSurfaces(state::Etat& etat){	
@@ -40,14 +43,15 @@ void StateLayer::initSurfaces(state::Etat& etat){
 	Surface surfPersonnage;
 	Surface surfCurseur;
 	Surface surfInfos;
-
+	
 	surfGrille.loadGrille(etat, tilesets[0]->getTexture(), sf::Vector2u(tilesets[0]->getCellWidth(), tilesets[0]->getCellHeight()), etat.getGrille().size(), etat.getGrille()[0].size());
 
 	surfPersonnage.loadPersonnage(etat, tilesets[1]->getTexture(), sf::Vector2u(tilesets[1]->getCellWidth(), tilesets[1]->getCellHeight()), etat.getPersonnages().size(), 1);
 
 	surfCurseur.loadCurseur(etat, tilesets[2]->getTexture(), sf::Vector2u(tilesets[2]->getCellWidth(), tilesets[2]->getCellHeight()), 1, 1);
 	
-	surfInfos.loadInfos(etat, tilesets[3]->getTexture(), sf::Vector2u(tilesets[3]->getCellWidth(), tilesets[3]->getCellHeight()), 1, 1);
+	//surfInfos.loadInfos(etat, tilesets[3]->getTexture(), sf::Vector2u(tilesets[3]->getCellWidth(), tilesets[3]->getCellHeight()), 1, 1);
+	surfInfos.loadInfos(etat, tilesets[3]->getTexture(), sf::Vector2u(tilesets[3]->getCellWidth(), tilesets[3]->getCellHeight()), etat.getPersonnages().size(), 1);
 	
 	std::unique_ptr<Surface> ptr_surfGrille (new Surface(surfGrille));
 	std::unique_ptr<Surface> ptr_surfPersonnage (new Surface(surfPersonnage));
@@ -83,7 +87,12 @@ void StateLayer::stateChanged (const state::StateEvent& e, state::Etat& etat){
 		draw(window);
 	}
 	if (e.stateEventID == TEXTECHANGED){
+		draw(window);
 		writeTexteAction(e.texte, window);
+		//writeStatistiques(e.texte, e.texteSup, window);
+	}
+	if (e.stateEventID == PERSONNAGECHANGED){
+		writeStatistiques(e.texteInfos, e.texteStats, window, e.camp);
 	}
 }
 
@@ -104,7 +113,11 @@ void StateLayer::draw (sf::RenderWindow& window){
 	// Rectangle noir pour les messages
 	sf::RectangleShape rectangle(sf::Vector2f(390.f, 30.f));
 	rectangle.setPosition(5.f, 405.f);
-	rectangle.setFillColor(sf::Color::Black);
+	
+	sf::Color colorRect(0,0,0,150);
+	rectangle.setFillColor(colorRect);
+	//rectangle.setFillColor(sf::Color::Black);
+	
 	/*
 	// Rectangle noir de Statistiques
 	sf::RectangleShape rectangle2(sf::Vector2f(100.f, 102.f));
@@ -123,9 +136,9 @@ void StateLayer::draw (sf::RenderWindow& window){
 }
 
 void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& window){
-	sf::RectangleShape rectangle(sf::Vector2f(390.f, 30.f));
+	/*sf::RectangleShape rectangle(sf::Vector2f(390.f, 30.f));
 	rectangle.setPosition(5.f, 405.f);
-	rectangle.setFillColor(sf::Color::Black);
+	rectangle.setFillColor(sf::Color::Black);*/
 	
 	sf::Text text;
 	text.setFont(police);
@@ -139,32 +152,52 @@ void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& wi
 		           (int)(textRect.top  + textRect.height/2.0f));
 	text.setPosition(sf::Vector2f(400/2.0f, 420));
 	
-	window.draw(rectangle);
+	//window.draw(rectangle);
 	window.draw(text);
 	window.display();
 }
 
-void StateLayer::writeStatistiques(const std::string chaine, sf::RenderWindow& window){
+void StateLayer::writeStatistiques(const std::string chaine1, const std::string chaine2, sf::RenderWindow& window, bool camp){
+
 	// Rectangle noir de Statistiques
 	sf::RectangleShape rectangle2(sf::Vector2f(100.f, 102.f));
-	rectangle2.setPosition(5+64+5, 400+5+30+5);
-	rectangle2.setFillColor(sf::Color::Black);
+	if(camp){
+		rectangle2.setPosition(5+64+5, 400+5+30+5);
+	}
+	else{
+		rectangle2.setPosition(400-100-5-64-5, 400+5+30+5);
+	}
+	sf::Color colorRect(0,0,0,150);
+	rectangle2.setFillColor(colorRect);
 	
-	std::string chaine0 = "Oliver\nPV\nAtk\nDef\nEsq\nCrt";
+	//std::string chaine0 = "Oliver\nPV\nAtk\nDef\nEsq\nCrt";
 	sf::Text text;
 	text.setFont(police);
-	text.setString(chaine0);
+	text.setString(chaine1);
 	text.setCharacterSize(15);
 	text.setFillColor(sf::Color::White);
-	text.setPosition(5+64+5+4,400+5+30+5+2);
+	//text.setPosition(5+64+5+4,400+5+30+5+2);
+	if(camp){
+		text.setPosition(5+64+5+4,400+5+30+5+2);
+	}
+	else{
+		text.setPosition(400-100-5-64-5+4, 400+5+30+5);
+	}
 	
-	std::string chaine2 = "\n:\t100\n:\t50\n:\t30\n:\t10\n:\t30";
+	//std::string chaine3 = "\n:\t100\n:\t50\n:\t30\n:\t10\n:\t30";
 	sf::Text text2;
 	text2.setFont(police);
 	text2.setString(chaine2);
 	text2.setCharacterSize(15);
 	text2.setFillColor(sf::Color::White);
-	text2.setPosition(5+64+5+4+30,400+5+30+5+2);
+	//text2.setPosition(5+64+5+4+30,400+5+30+5+2);
+	if(camp){
+		text2.setPosition(5+64+5+4+30,400+5+30+5+2);
+	}
+	else{
+		text2.setPosition(400-100-5-64-5+4+30, 400+5+30+5);
+	}
+	
 	
 	window.draw(rectangle2);
 	window.draw(text);
@@ -243,6 +276,7 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 		// Enter (selection)
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){
 			std::string newChaine;
+			bool valid = true;
 			if(numeroPerso != -1){
 				// Selection du personnage
 				if(etatActuel.getPersonnages()[numeroPerso]->getCamp() && etatActuel.getPersonnages()[numeroPerso]->getStatut() != ATTENTE && etatActuel.getPersonnages()[numeroPerso]->getStatut() != MORT){
@@ -254,22 +288,33 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					
 					etatActuel.getPersonnages()[numeroPerso]->setStatut(SELECTIONNE);
 					etatActuel.notifyObservers(stateEvent, etatActuel);
+					
+					stateEvent.texteInfos = etatActuel.getPersonnages()[numeroPerso]->infosToString();
+					stateEvent.texteStats = etatActuel.getPersonnages()[numeroPerso]->statsToString();
+					stateEvent.camp = etatActuel.getPersonnages()[numeroPerso]->getCamp();
 				}									
 				else if (etatActuel.getPersonnages()[numeroPerso]->getStatut() == ATTENTE){
 					newChaine = "Ce personnage a deja termine son tour";
 					cout << "\t\t" << newChaine << endl;
+					valid = false;
 				}
 				else{	newChaine = "Ce personnage appartient a l'adversaire !";
-					cout<< newChaine <<endl;}
+					cout<< newChaine <<endl;
+					valid = false;}
 			}
 			
 			// Affichage du type de terrain							
 			else{	newChaine = "Ce terrain est de type " + etatActuel.getGrille()[yCurs][xCurs]->getNom();
 					cout << newChaine << endl;
+					valid = false;
 			}
 			stateEvent.texte = newChaine;
 			stateEvent.stateEventID = TEXTECHANGED;
 			etatActuel.notifyObservers(stateEvent, etatActuel);
+			if(valid){
+				stateEvent.stateEventID = PERSONNAGECHANGED;
+				etatActuel.notifyObservers(stateEvent, etatActuel);
+			}
 		}
 							
 		// Déplacement du curseur
@@ -294,8 +339,9 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 	
 	// Declenchement d'un attaque
 	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && (etatActuel.verifStatut()!=-1)){
-	
-		cout<< "\tAttaque en préparation" << endl;
+		
+		std::string newChaine = "Attaque en preparation";
+		cout<< "\t" << newChaine << endl;
 							
 		int attaquant=etatActuel.verifStatut();
 		int champDroit=etatActuel.getPersonnages()[attaquant]->getChampAttack();
@@ -304,10 +350,20 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 		int champBas=champDroit;
 		int cible=-1;
 		
+		stateEvent.texteInfos = etatActuel.getPersonnages()[attaquant]->infosToString();
+		stateEvent.texteStats = etatActuel.getPersonnages()[attaquant]->statsToString();
+		stateEvent.camp = etatActuel.getPersonnages()[attaquant]->getCamp();
+		
 		// Changement de couleur du curseur
 		etatActuel.getCurseur()->setCodeTuile(1);
-		etatActuel.notifyObservers(stateEvent, etatActuel);
 		
+		stateEvent.texte = newChaine;
+		stateEvent.stateEventID = TEXTECHANGED;
+		etatActuel.notifyObservers(stateEvent, etatActuel);
+		stateEvent.stateEventID = PERSONNAGECHANGED;
+		etatActuel.notifyObservers(stateEvent, etatActuel);
+		stateEvent.stateEventID = ALLCHANGED;
+				
 		// Actions
 		while((cible==-1) || (cible==attaquant)){	
 									
@@ -319,8 +375,17 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					Position nextPosCurs(xCurs+1, yCurs);
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champDroit=champDroit-1;
-					champGauche++;	
+					champGauche++;
+					
+					newChaine = "Choix de la cible";
+					stateEvent.texte = newChaine;
 					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = TEXTECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = ALLCHANGED;
+					
 					usleep(200000);
 				}
 			}
@@ -333,7 +398,16 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champGauche=champGauche-1;
 					champDroit++;
+					
+					newChaine = "Choix de la cible";
+					stateEvent.texte = newChaine;
 					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = TEXTECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = ALLCHANGED;
+					
 					usleep(200000);
 				}
 			}
@@ -346,7 +420,16 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champBas=champBas-1;
 					champHaut++;
+					
+					newChaine = "Choix de la cible";
+					stateEvent.texte = newChaine;
 					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = TEXTECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = ALLCHANGED;
+					
 					usleep(200000);
 				}
 			}
@@ -358,7 +441,16 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.getCurseur()->move(nextPosCurs);
 					champHaut=champHaut-1;
 					champBas++;
-					etatActuel.notifyObservers(stateEvent, etatActuel); 
+					
+					newChaine = "Choix de la cible";
+					stateEvent.texte = newChaine;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = TEXTECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = ALLCHANGED;
+					
 					usleep(200000);
 				}
 			}
@@ -366,15 +458,29 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 			// Annulation de l'attaque avec N
 			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)){
 				cible=-2;
-				cout<< "\tAttaque annulée" << endl;									
+				newChaine = "Attaque annulee";
+				cout<< "\t" << newChaine << endl;									
 				etatActuel.getCurseur()->setCodeTuile(3);
+				
+				stateEvent.texte = newChaine;
 				etatActuel.notifyObservers(stateEvent, etatActuel);
+				stateEvent.stateEventID = TEXTECHANGED;
+				etatActuel.notifyObservers(stateEvent, etatActuel);
+				stateEvent.stateEventID = PERSONNAGECHANGED;
+				etatActuel.notifyObservers(stateEvent, etatActuel);
+				stateEvent.stateEventID = ALLCHANGED;
 				
 				if(!etatActuel.getCurseur()->getPosition().equals(etatActuel.getPersonnages()[attaquant]->getPosition())){
 					Position nextPosCurs(etatActuel.getPersonnages()[attaquant]->getPosition().getX(), etatActuel.getPersonnages()[attaquant]->getPosition().getY());
 					etatActuel.getCurseur()->move(nextPosCurs);
 									
+					stateEvent.texte = newChaine;
 					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = TEXTECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etatActuel.notifyObservers(stateEvent, etatActuel);
+					stateEvent.stateEventID = ALLCHANGED;
 				}
 			}
 								

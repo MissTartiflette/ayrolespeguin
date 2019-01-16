@@ -15,6 +15,9 @@ namespace state {
   public:
     StateEventID stateEventID;
     std::string texte;
+    std::string texteInfos;
+    std::string texteStats;
+    bool camp;
     // Operations
   public:
     StateEvent (StateEventID se);

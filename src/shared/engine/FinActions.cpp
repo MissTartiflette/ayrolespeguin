@@ -13,12 +13,30 @@ FinActions::FinActions(state::Personnage& cible, bool newJoueur):cible(cible){
 }
 
 void FinActions::execute(state::Etat& etat){
+	string newChaine;
+	StateEvent stateEvent(TEXTECHANGED);
+	int waitTime = 1000000;
+	
 	if (cible.getStatut()!=ATTENTE && cible.getStatut()!=MORT){
 		cible.setStatut(ATTENTE);
-		cout << "\t\t--- " << cible.getNom() << " termine son tour. ---" << endl;
+		newChaine = cible.getNom() + " termine son tour";
+		cout << "\t\t--- " << newChaine << " ---" << endl;
+		stateEvent.texte = newChaine;
+		etat.notifyObservers(stateEvent, etat);
+		usleep(waitTime);
+		
+		stateEvent.stateEventID = ALLCHANGED;
+		etat.notifyObservers(stateEvent, etat);
 	}
 	else if(cible.getStatut()==ATTENTE){
-		cout << cible.getNom() << " a déjà terminé son tour d'actions, il ne peut plus effectuer d'actions !" <<endl; 
+		newChaine = cible.getNom() + " a deja termine son tour";
+		cout << "\t" << newChaine << endl;
+		stateEvent.texte = newChaine;
+		etat.notifyObservers(stateEvent, etat);
+		usleep(waitTime);
+		
+		stateEvent.stateEventID = ALLCHANGED;
+		etat.notifyObservers(stateEvent, etat);
 	}
 	
 	cout << "\n" ;

@@ -9,7 +9,8 @@ namespace state {
     SELECTIONNE     = 1,
     DISPONIBLE     = 2,
     ATTENTE     = 3,
-    MORT     = 4
+    MORT     = 4,
+    CIBLE     = 5
   };
 
 };

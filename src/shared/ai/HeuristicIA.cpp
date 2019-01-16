@@ -35,6 +35,7 @@ FinFaire*/
 void HeuristicIA::run (engine::Moteur& moteur){
 
 		if(moteur.getJoueurActif()==camp && moteur.getEtat().getFin() == false){
+		StateEvent stateEvent(ALLCHANGED);
 		
 		bool armeeAdverseAneantie = true;
 			
@@ -44,7 +45,26 @@ void HeuristicIA::run (engine::Moteur& moteur){
 			if (moteur.getEtat().getPersonnages()[i]-> getCamp() == camp){
 				size_t indiceObjectif=0;
 				while (moteur.getEtat().getPersonnages()[i]->getStatut() != MORT && moteur.getEtat().getPersonnages()[i]->getStatut() != ATTENTE){
-					moteur.getEtat().getPersonnages()[i]->setStatut(SELECTIONNE);
+					
+					if(moteur.getEtat().getPersonnages()[i]->getStatut() != SELECTIONNE){
+						moteur.getEtat().getPersonnages()[i]->setStatut(SELECTIONNE);
+						std::string newChaine = "Debut du tour de " + moteur.getEtat().getPersonnages()[i]->getNom();
+						cout<< "\t\t->" << newChaine << " <-" << endl;
+						moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat());
+						stateEvent.stateEventID = TEXTECHANGED;
+						stateEvent.texte = newChaine;
+						moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat());
+						stateEvent.stateEventID = ALLCHANGED;
+					}
+					/*moteur.getEtat().getPersonnages()[i]->setStatut(SELECTIONNE);
+					std::string newChaine = "Debut du tour de " + moteur.getEtat().getPersonnages()[i]->getNom();
+					cout<< "\t\t->" << newChaine << " <-" << endl;
+					moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat());
+					stateEvent.stateEventID = TEXTECHANGED;
+					stateEvent.texte = newChaine;
+					moteur.getEtat().notifyObservers(stateEvent, moteur.getEtat());
+					stateEvent.stateEventID = ALLCHANGED;*/
+					
 					vector<Position> objectif;
 					vector<Position> listeAttaques = moteur.getEtat().getPersonnages()[i]-> getLegalAttack(moteur.getEtat());
 					armeeAdverseAneantie = true;

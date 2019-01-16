@@ -20,6 +20,9 @@ namespace render {
 namespace state {
   class IObserver;
 };
+namespace sf {
+  class Music;
+};
 namespace render {
   class TileSet;
   class Surface;
@@ -51,7 +54,7 @@ namespace render {
     void stateChanged (const state::StateEvent& e, state::Etat& etat);
     void draw (sf::RenderWindow& window);
     void writeTexteAction (const std::string chaine, sf::RenderWindow& window);
-    void writeStatistiques (const std::string chaine, sf::RenderWindow& window);
+    void writeStatistiques (const std::string chaine1, const std::string chaine2, sf::RenderWindow& window, bool camp);
     void gestionCurseur (sf::Event  newEvent, unsigned int largeur_map_cases, unsigned int  longueur_map_cases, state::Etat& etatActuel, bool rollback);
     // Setters and Getters
   };

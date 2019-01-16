@@ -194,3 +194,12 @@ void Personnage::setChampMove(int newChampMove){
 	champMove = newChampMove;
 }
 
+std::string Personnage::infosToString(){
+	std::string chaine = nom + "\nPV\nAtk\nDef\nEsq\nCrt";
+	return chaine;
+}
+
+std::string Personnage::statsToString(){
+	std::string chaine = "\n:\t" + to_string(statistiques.getPV()) + "\n:\t" + to_string(statistiques.getAttaque())+"\n:\t" + to_string(statistiques.getDefense()) +"\n:\t" + to_string(statistiques.getEsquive())+"\n:\t"+to_string(statistiques.getCritique());
+	return chaine;
+}

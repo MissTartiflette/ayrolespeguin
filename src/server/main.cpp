@@ -9,13 +9,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/types.h> 
-#define SOCKET_ERROR -1
 
 #include "state.h"
 #include "render.h"
 #include "engine.h"
 #include "ai.h"
 #include "server.h"
+
+#define SOCKET_ERROR -1
 
 using namespace std;
 using namespace state;
@@ -47,7 +48,7 @@ static int post_iterator(void *cls,
 static int
 main_handler (void *cls,      
           struct MHD_Connection *connection,
-          const char *url, // 
+          const char *url, 
           const char *method,
           const char *version,
           const char *upload_data, size_t *upload_data_size, void **ptr) 
@@ -132,150 +133,18 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 			Json::Value root;
 			root["tabCmd"];
-			
-			/*
-			cout << "Taille root : " << root["tabCmd"].size() << endl;
-			root["tabCmd"][0]["id"] =  200;
-			cout << root << endl;
-			*/
 		}
-		if(strcmp(argv[1],"test")==0){
-			//VersionService versionService;
-			//std::unique_ptr<AbstractService> ptr_versionService (new VersionService(versionService));
-
-			ServicesManager servicesManager;
-			//servicesManager.registerService(move(ptr_versionService));
-			Player new_player("Paul", true);
-			std::unique_ptr<Player> ptr_player (new Player(new_player));
-			Game game;
-			game.addPlayer(move(ptr_player));
-
-			PlayerService playerService(std::ref(game));
-			std::unique_ptr<AbstractService> ptr_playerService (new PlayerService(playerService));
-
-			servicesManager.registerService(move(ptr_playerService));
-
-			//const string url="http://localhost:8080/player/1";
-			const string url="http://localhost:8080/player/1";
-			const string method="GET";
-			string out="";
-			string in="";
-			HttpStatus h=servicesManager.queryService (out, in, url, method);
-			cout<<h<<endl;
-		}
+		
+		/*	listen : le serveur écoute et attend l'arrivée de nouveaux joueurs */
 		else if(strcmp(argv[1], "listen") == 0){
-			/*struct sockaddr_in addr, addr2;
-			int sock;
-			if(( sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-				printf("error socket\n");
-				return -1;
-			}
-			int j=1;
-			setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &j, sizeof(j));
-			addr.sin_family = AF_UNIX;
-			addr.sin_port = 8086;
-			int bi, li;
-			if((bi=bind(sock, (struct sockaddr*) &addr, sizeof(struct sockaddr_in)))<0) {
-				perror("bind");
-			}
-			else{cout<<"bi : "<<bi<<endl;}
-			if((li=listen(sock, 5)) ==-1){
-				perror("listen");
-			}
-			else{cout<<"li : "<<li <<endl;}
-			char buffer[32] = "Bonjour !";
-			char buffer2[32]="";
-			if(li!=SOCKET_ERROR){
-				socklen_t size=sizeof(struct sockaddr_in);
-				int csock = accept(sock, (struct sockaddr*)&addr2, &size);
-				int sock_err = send(csock, buffer, 32, 0);
-				if(sock_err != SOCKET_ERROR){
-                        cout<<"Chaine envoyée : "<<buffer<<endl;
-						if(recv(csock, buffer2, 32, 0) != SOCKET_ERROR){
-                			cout<<"Recu : "<<buffer2<<endl;
-							
-						}
-						else{
-		        			cout<<"Impossible de se connecter"<<endl;
-		    			}
- 				}
-                else{
-                        cout<<"Erreur de transmission"<<endl;
-				}
- 
-                    // Il ne faut pas oublier de fermer la connexion (fermée dans les deux sens) 
-                shutdown(csock, 2);
-			}
-			cout<<"Fermeture de la socket"<<endl;
-            close(sock);
-            cout<<"Fermeture du serveur terminee"<<endl;
-
-			
-			// On attend que l'utilisateur tape sur une touche, puis on ferme 
-   			getchar();
-			return EXIT_SUCCESS;
-			while(1){
-			socklen_t size=sizeof(struct sockaddr_in);
-			int cfd = accept(sock, (struct sockaddr*)&addr2, &size);
-			cout<<"truc"<<endl;
-			//if(cfd==-1){perror("accept");}
-			//else{cout<<"ac : " <<cfd<<endl;}
-			
-			
-			char buf[100];
-			if(read(sock, (void*)&buf, 100)==-1){
-					perror("read");
-			}
-			cout<<buf<<endl;
-
-			if(write(sock, (void*)&buf, 100)==-1){
-					perror("error write");
-			}
-			cout<<buf<<endl;
-			
-			if(fork()) { 
-				shutdown(cfd, SHUT_RDWR);
-				close(cfd); 
-				continue;
-				
-				//shutdown(sock, SHUT_RDWR);
-				//close(sock);
-			} 
-			else{ 
-				shutdown(sock, SHUT_RDWR);
-				close(sock); 
-				
-			
-			char buffer[1024];
-			int n = 0;
-			sleep(3);
-			if((n = recv(sock, buffer, sizeof buffer - 1, 0)) < 0){
-   				perror("recv()");
-    			exit(errno);
-			}
-
-			buffer[n] = '\0';
-			//shutdown(cfd, SHUT_RDWR);
-			//close(cfd);
-			}
-			shutdown(sock, SHUT_RDWR);
-			shutdown(cfd, SHUT_RDWR);
-			close(sock);
-			close(cfd);
-			}*/
-			
 			try {
-
 				VersionService versionService;
 				std::unique_ptr<AbstractService> ptr_versionService (new VersionService(versionService));
 
 				ServicesManager servicesManager;
 				servicesManager.registerService(move(ptr_versionService));
 
-				/*Player new_player("Paul", true);
-				std::unique_ptr<Player> ptr_player (new Player(new_player));*/
 				Game game;
-				//game.addPlayer(move(ptr_player));
 
 				PlayerService playerService(std::ref(game));
 				std::unique_ptr<AbstractService> ptr_playerService (new PlayerService(playerService));
@@ -287,6 +156,7 @@ int main(int argc,char* argv[]){
 				    printf("%s PORT\n", argv[0]);
 				    return 1;
 				}
+				
 				d = MHD_start_daemon(// MHD_USE_SELECT_INTERNALLY | MHD_USE_DEBUG | MHD_USE_POLL,
 				        MHD_USE_SELECT_INTERNALLY | MHD_USE_DEBUG,
 				        // MHD_USE_THREAD_PER_CONNECTION | MHD_USE_DEBUG | MHD_USE_POLL,
@@ -296,6 +166,7 @@ int main(int argc,char* argv[]){
 				        &main_handler, (void*) &servicesManager,
 				        MHD_OPTION_NOTIFY_COMPLETED, request_completed, NULL,
 				        MHD_OPTION_END);
+				        
 				if (d == NULL)
 					return 1;
 				cout << "Pressez <entrée> pour arrêter le serveur" << endl;
@@ -305,7 +176,6 @@ int main(int argc,char* argv[]){
 			catch(exception& e) {
 				cerr << "Exception: " << e.what() << endl;
 			}
-    
 		}
 		
 		/*	record : Enregistrement d'une partie jouée par deux IA*/

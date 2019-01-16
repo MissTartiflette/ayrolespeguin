@@ -10,10 +10,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/types.h>
-#define SOCKET_ERROR -1
+
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+
 void testSFML() {
     sf::Texture texture;
 }
@@ -24,6 +26,8 @@ void testSFML() {
 #include "engine.h"
 #include "ai.h"
 #include "client.h"
+
+#define SOCKET_ERROR -1
 
 using namespace std;
 using namespace state;
@@ -191,7 +195,20 @@ int main(int argc,char* argv[]){
 				cout << "\t\t--- Play ---" << endl;
 				cout << "Pour lancer la partie, appuyez sur la touche P\n" << endl;						
 				
-				bool demarrage = true ;				
+				bool demarrage = true ;
+				
+				// Musique
+				std::string musicPath="res/music.ogg";
+				sf::Music backMusic;
+				if(backMusic.openFromFile(musicPath)){
+					backMusic.setVolume(40);
+					backMusic.setLoop(true);
+					backMusic.play();
+				}
+				else{
+					cout << "Erreur dans le chargement de la musique" << endl;
+				}
+							
 				bool partie_rejouee = false;
 				sf::Event event;
 				StateEvent stateEvent(ALLCHANGED);
@@ -333,7 +350,19 @@ int main(int argc,char* argv[]){
 					rollback = true;
 				}
 				
-				bool demarrage = true ;				
+				bool demarrage = true ;
+				
+				// Musique
+				std::string musicPath="res/music.ogg";
+				sf::Music backMusic;
+				if(backMusic.openFromFile(musicPath)){
+					backMusic.setVolume(40);
+					backMusic.setLoop(true);
+					backMusic.play();
+				}
+				else{
+					cout << "Erreur dans le chargement de la musique" << endl;
+				}			
 				
 				while (window.isOpen()){
 				

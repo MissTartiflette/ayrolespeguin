@@ -45,7 +45,7 @@ void Moteur::update (){
 		// On n'execute que les commandes du joueur dont c'est le tour
 		if (commandesActuelles[i]->joueur == joueurActif){
 			commandesActuelles[i]->execute(etatActuel);
-			etatActuel.notifyObservers(stateEvent, etatActuel);
+			//etatActuel.notifyObservers(stateEvent, etatActuel);
 			//sleep(1);
 		}
 	}
@@ -74,6 +74,10 @@ void Moteur::undo (Action* action){
 bool Moteur::verificationFinDeTour(){
 	bool tourChange = true;
 	bool partieFinie = true;
+	
+	string newChaine;
+	StateEvent stateEvent(TEXTECHANGED);
+	int waitTime = 1000000;
 	//int countJoueurActif = 0;
 	
 	for (unsigned int i = 0; i < etatActuel.getPersonnages().size(); i++){
@@ -107,20 +111,39 @@ bool Moteur::verificationFinDeTour(){
 	*/
 	
 	if (partieFinie && tourChange){
-		cout << "\tPartie Terminee !" << endl;
+		newChaine = "Partie Terminee !";
+		cout << "\t" << newChaine << endl;
+		stateEvent.texte = newChaine;
+		etatActuel.notifyObservers(stateEvent, etatActuel);
+		usleep(waitTime);
+		
 		etatActuel.setFin(partieFinie);
+		
 		//if (countJoueurActif == 0){							 A MODIFIER}
 		if (joueurActif){
-			cout << "\tL'armee bleue a gagne !" << endl;
+			newChaine = "L'armee bleue a gagne !";
+			cout << "\t" << newChaine << endl;
+			stateEvent.texte = newChaine;
+			etatActuel.notifyObservers(stateEvent, etatActuel);
+			usleep(waitTime);
 		}
 		else {
-			cout << "\tL'armee rouge a gagne !" << endl;
+			newChaine = "L'armee rouge a gagne !";
+			cout << "\t" << newChaine << endl;
+			stateEvent.texte = newChaine;
+			etatActuel.notifyObservers(stateEvent, etatActuel);
+			usleep(waitTime);
 		}
 		tourChange = false;
 	}
 		
 	else if (tourChange && !partieFinie){
-		cout << "\t\t--- Tour Terminé. ---\n" << endl;
+		newChaine = "TOUR TERMINE";
+		cout << "\t\t---" << newChaine << " ---\n" << endl;
+		stateEvent.texte = newChaine;
+		etatActuel.notifyObservers(stateEvent, etatActuel);
+		usleep(waitTime);
+		
 		etatActuel.setTour(etatActuel.getTour()+1);
 	}
 	
@@ -131,13 +154,28 @@ bool Moteur::verificationFinDeTour(){
 }
 
 void Moteur::verificationDebutDeTour(){
+
+	string newChaine;
+	StateEvent stateEvent(TEXTECHANGED);
+	int waitTime = 1000000;
+	
 	if (changementTour == true){
 		// Le maximum de points de vie est de 100
 		int nbMaxPV = 100;
 	
 		joueurActif = !joueurActif;
-		cout << "\t-> Changement de joueur <-" << endl;
-		cout << "\t\t--- Tour " << etatActuel.getTour() << " ---\n" << endl;
+		
+		newChaine = "Changement de joueur";
+		cout << "\t-> " << newChaine << " <-" << endl;
+		stateEvent.texte = newChaine;
+		etatActuel.notifyObservers(stateEvent, etatActuel);
+		usleep(waitTime);
+		
+		newChaine = "TOUR " + to_string(etatActuel.getTour());
+		cout << "\t\t--- " << newChaine << " ---\n" << endl;
+		stateEvent.texte = newChaine;
+		etatActuel.notifyObservers(stateEvent, etatActuel);
+		usleep(waitTime);		
 		
 		for (unsigned int i = 0; i < etatActuel.getPersonnages().size(); i++){
 		
@@ -163,18 +201,37 @@ void Moteur::verificationDebutDeTour(){
 					if (etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV()<= nbMaxPV){
 						etatActuel.getPersonnages()[i]->getStatistiques().setPV(etatActuel.getPersonnages()[i]->getStatistiques().getPV() + refTerrainP.getStatistiques().getPV());
 						// Affichage
-						cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
+						
+						newChaine = etatActuel.getPersonnages()[i]->getNom() + " recupere "  + to_string(refTerrainP.getStatistiques().getPV()) + " PV (" + to_string(etatActuel.getPersonnages()[i]->getStatistiques().getPV()) + " PV au total)";
+						cout << "+ " << newChaine << " +" << endl;
+						stateEvent.texte = newChaine;
+						etatActuel.notifyObservers(stateEvent, etatActuel);
+						usleep(waitTime);	
+						
+						/*cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
 						cout << refTerrainP.getStatistiques().getPV() << " PV.";
-						cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;
+						cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;*/
 					}
 					else if (etatActuel.getPersonnages()[i]->getStatistiques().getPV() == nbMaxPV){
-						cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " a déjà atteint son maximum de PV. +" << endl;
+						newChaine = etatActuel.getPersonnages()[i]->getNom() + " a deja atteint son maximum de PV";
+						cout << "+ " << newChaine << " +" << endl;
+						stateEvent.texte = newChaine;
+						etatActuel.notifyObservers(stateEvent, etatActuel);
+						usleep(waitTime);
 					}
 					else {
-						cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
+						
+						newChaine = etatActuel.getPersonnages()[i]->getNom() + " recupere "  + to_string(nbMaxPV - etatActuel.getPersonnages()[i]->getStatistiques().getPV()) + " PV (" + to_string(nbMaxPV) + " PV au total)";
+						cout << "+ " << newChaine << " +" << endl;
+						stateEvent.texte = newChaine;
+						etatActuel.notifyObservers(stateEvent, etatActuel);
+						usleep(waitTime);
+						etatActuel.getPersonnages()[i]->getStatistiques().setPV(nbMaxPV);
+					
+						/*cout << "+ " << etatActuel.getPersonnages()[i]->getNom() << " récupère " ;
 						cout << nbMaxPV -  etatActuel.getPersonnages()[i]->getStatistiques().getPV()<< " PV.";
 						etatActuel.getPersonnages()[i]->getStatistiques().setPV(nbMaxPV);
-						cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;
+						cout << " (" << etatActuel.getPersonnages()[i]->getStatistiques().getPV() << " PV au total). +" << endl;*/
 					}
 				}
 			}

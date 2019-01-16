@@ -1,6 +1,6 @@
 #include "engine.h"
 #include "state.h"
-
+#include <unistd.h>
 #include <iostream>
 
 using namespace engine;
@@ -13,7 +13,13 @@ Deplacement::Deplacement(state::Personnage& cible, state::Position& destination,
 }
 
 void Deplacement::execute (state::Etat& etat){
-
+	string newChaine;
+	StateEvent stateEvent(TEXTECHANGED);
+	stateEvent.texteInfos = cible.infosToString();
+	stateEvent.texteStats = cible.statsToString();
+	stateEvent.camp = cible.getCamp();
+	int waitTime = 500000;
+	
 	bool deplacementPossible=false;
 	if (cible.getStatut()!=ATTENTE && cible.getStatut()!=MORT){
 		if(cible.getChampMove()!=0){
@@ -40,8 +46,28 @@ void Deplacement::execute (state::Etat& etat){
 				cible.getPosition().setX(destination.getX());
 				cible.getPosition().setY(destination.getY());
 				cible.setChampMove(cible.getChampMove()-1);
-				cout << cible.getNom() << " se déplace sur la case de coordonnées [" << destination.getX() << ", " << destination.getY() << "] avec succès !" << endl;	
-				cout << "\tIl lui reste " << cible.getChampMove() << " points de deplacement." << endl;
+				
+				stateEvent.stateEventID = ALLCHANGED;
+				etat.notifyObservers(stateEvent, etat);
+				
+				stateEvent.stateEventID = TEXTECHANGED;
+				newChaine = cible.getNom() + " se deplace sur la case [" + to_string(destination.getX()) + ", " + to_string(destination.getY()) + "] (encore " + to_string(cible.getChampMove()) + ")";
+				cout << newChaine << endl;	
+				stateEvent.texte = newChaine;
+				etat.notifyObservers(stateEvent, etat);
+				stateEvent.stateEventID = PERSONNAGECHANGED;
+				stateEvent.texteStats = cible.statsToString();
+				etat.notifyObservers(stateEvent, etat);
+				stateEvent.stateEventID = TEXTECHANGED;
+				//usleep(waitTime);
+				
+				//cout << cible.getNom() << " se déplace sur la case de coordonnées [" << destination.getX() << ", " << destination.getY() << "] avec succès !" << endl;
+				/*
+				newChaine = "Il lui reste " + to_string(cible.getChampMove()) + " points de deplacement";
+				cout << "\t" << newChaine << endl;	
+				stateEvent.texte = newChaine;
+				etat.notifyObservers(stateEvent, etat);
+				usleep(waitTime);*/
 				
 				// Nouveau bonus de terrain
 				TerrainPraticable& refTerrainDestination = static_cast<TerrainPraticable&>(*etat.getGrille()[destination.getY()][destination.getX()]);
@@ -49,27 +75,60 @@ void Deplacement::execute (state::Etat& etat){
 								
 				if (refTerrainDestination.getTerrainPraticableID() == FORET){
 					cible.getStatistiques().setEsquive(cible.getStatistiques().getEsquive()+refTerrainDestination.getStatistiques().getEsquive());
-					cout << "+ Il obtient un bonus de +" ;
-					cout << refTerrainDestination.getStatistiques().getEsquive() << " en ESQUIVE sur cette case FORET. +" << endl;
-					
+					newChaine = "BONUS de +" + to_string(refTerrainDestination.getStatistiques().getEsquive()) + " en ESQUIVE (Foret)";
+					cout << "\t" << newChaine << endl;	
+					stateEvent.texte = newChaine;
+					etat.notifyObservers(stateEvent, etat);
+					stateEvent.texteStats = cible.statsToString();
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etat.notifyObservers(stateEvent, etat);
+					stateEvent.stateEventID = TEXTECHANGED;
+					usleep(waitTime);					
 				}
 				else if (refTerrainDestination.getTerrainPraticableID() == COLLINE){
-					cible.getStatistiques().setDefense(cible.getStatistiques().getDefense()+refTerrainDestination.getStatistiques().getDefense());
-					cout << "+ Il obtient un bonus de +" ;
-					cout << refTerrainDestination.getStatistiques().getDefense() << " en DEFENSE sur cette case COLLINE. +" << endl;
+					newChaine = "BONUS de +" + to_string(refTerrainDestination.getStatistiques().getDefense()) + " en DEFENSE (Colline)";
+					cout << "\t" << newChaine << endl;	
+					stateEvent.texte = newChaine;
+					etat.notifyObservers(stateEvent, etat);
+					stateEvent.texteStats = cible.statsToString();
+					stateEvent.stateEventID = PERSONNAGECHANGED;
+					etat.notifyObservers(stateEvent, etat);
+					stateEvent.stateEventID = TEXTECHANGED;
+					usleep(waitTime);
 				}
 				
 			}
 			else{
-				cerr << "Deplacement non autorise " << endl;
+				newChaine = "Deplacement non autorise";
+				cout << newChaine << endl;	
+				stateEvent.texte = newChaine;
+				etat.notifyObservers(stateEvent, etat);
+				stateEvent.stateEventID = PERSONNAGECHANGED;
+				etat.notifyObservers(stateEvent, etat);
+				stateEvent.stateEventID = TEXTECHANGED;
+				usleep(waitTime);
 			}
 		}
 		else {
-			cout<< "Deplacement impossible, tous les points de " << cible.getNom() << " de mouvement ont été utilisés pour ce tour." << endl;
+			newChaine = "Deplacement impossible : aucun point de mouvement";
+			cout << newChaine << endl;	
+			stateEvent.texte = newChaine;
+			etat.notifyObservers(stateEvent, etat);
+			stateEvent.stateEventID = PERSONNAGECHANGED;
+			etat.notifyObservers(stateEvent, etat);
+			stateEvent.stateEventID = TEXTECHANGED;
+			usleep(waitTime);
 		}
 	}
 	else if (cible.getStatut()==ATTENTE){
-		cout << cible.getNom() << " a terminé toutes son tour d'actions, il ne peut plus se déplacer." <<endl; 
+		newChaine = cible.getNom() + " a fini son tour d'actions, il ne peut plus se déplacer.";
+		cout << newChaine << endl;	
+		stateEvent.texte = newChaine;
+		etat.notifyObservers(stateEvent, etat);
+		stateEvent.stateEventID = PERSONNAGECHANGED;
+		etat.notifyObservers(stateEvent, etat);
+		stateEvent.stateEventID = TEXTECHANGED;
+		usleep(waitTime); 
 	}
 	
 	cout << "\n" ;
