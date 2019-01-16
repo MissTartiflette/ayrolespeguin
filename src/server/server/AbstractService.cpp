@@ -12,7 +12,6 @@ AbstractService::~AbstractService() {
 }
 
 const string& AbstractService::getPattern () const {
-	cout<<"truc" <<pattern<<endl;
     return pattern;
 }
 

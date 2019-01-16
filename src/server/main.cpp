@@ -164,7 +164,7 @@ int main(int argc,char* argv[]){
 			cout<<h<<endl;
 		}
 		else if(strcmp(argv[1], "listen") == 0){
-			struct sockaddr_in addr, addr2;
+			/*struct sockaddr_in addr, addr2;
 			int sock;
 			if(( sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
 				printf("error socket\n");
@@ -203,7 +203,7 @@ int main(int argc,char* argv[]){
                         cout<<"Erreur de transmission"<<endl;
 				}
  
-                    /* Il ne faut pas oublier de fermer la connexion (fermée dans les deux sens) */
+                    // Il ne faut pas oublier de fermer la connexion (fermée dans les deux sens) 
                 shutdown(csock, 2);
 			}
 			cout<<"Fermeture de la socket"<<endl;
@@ -211,10 +211,10 @@ int main(int argc,char* argv[]){
             cout<<"Fermeture du serveur terminee"<<endl;
 
 			
-			/* On attend que l'utilisateur tape sur une touche, puis on ferme */
+			// On attend que l'utilisateur tape sur une touche, puis on ferme 
    			getchar();
 			return EXIT_SUCCESS;
-			/*while(1){
+			while(1){
 			socklen_t size=sizeof(struct sockaddr_in);
 			int cfd = accept(sock, (struct sockaddr*)&addr2, &size);
 			cout<<"truc"<<endl;
@@ -222,7 +222,7 @@ int main(int argc,char* argv[]){
 			//else{cout<<"ac : " <<cfd<<endl;}
 			
 			
-			/*char buf[100];
+			char buf[100];
 			if(read(sock, (void*)&buf, 100)==-1){
 					perror("read");
 			}
@@ -264,19 +264,18 @@ int main(int argc,char* argv[]){
 			close(cfd);
 			}*/
 			
-			/*try {
+			try {
 
 				VersionService versionService;
 				std::unique_ptr<AbstractService> ptr_versionService (new VersionService(versionService));
 
 				ServicesManager servicesManager;
-				//servicesManager.registerService(make_unique<VersionService>());
 				servicesManager.registerService(move(ptr_versionService));
 
-				Player new_player("Paul", true);
-				std::unique_ptr<Player> ptr_player (new Player(new_player));
+				/*Player new_player("Paul", true);
+				std::unique_ptr<Player> ptr_player (new Player(new_player));*/
 				Game game;
-				game.addPlayer(move(ptr_player));
+				//game.addPlayer(move(ptr_player));
 
 				PlayerService playerService(std::ref(game));
 				std::unique_ptr<AbstractService> ptr_playerService (new PlayerService(playerService));
@@ -305,7 +304,7 @@ int main(int argc,char* argv[]){
    			 }
 			catch(exception& e) {
 				cerr << "Exception: " << e.what() << endl;
-			}*/
+			}
     
 		}
 		

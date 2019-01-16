@@ -21,6 +21,7 @@ namespace server {
     // Attributes
   protected:
     std::vector<std::unique_ptr<AbstractService>> services;
+    int id;
     // Operations
   public:
     void registerService (std::unique_ptr<AbstractService> service);

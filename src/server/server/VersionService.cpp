@@ -12,3 +12,7 @@ HttpStatus VersionService::get (Json::Value& out, int id) const {
     out["minor"] = 0;
     return HttpStatus::OK;
 }
+
+bool VersionService::isVersion(){
+	return true;
+}

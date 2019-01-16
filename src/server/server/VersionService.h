@@ -19,6 +19,7 @@ namespace server {
   public:
     VersionService ();
     HttpStatus get (Json::Value& out, int id) const;
+    bool isVersion ();
     // Setters and Getters
   };
 

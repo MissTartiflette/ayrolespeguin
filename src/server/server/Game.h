@@ -28,6 +28,7 @@ namespace server {
     void setPlayer (int id, std::unique_ptr<Player> player);
     void removePlayer (int id);
     std::map<int, std::unique_ptr<Player>>& getPlayersList ();
+    int getIDseq ();
     // Setters and Getters
   };
 

@@ -26,7 +26,7 @@ HttpStatus PlayerService::post (const Json::Value& in, int id) {
         playermod->name = in["name"].asString();
     }
     if (in.isMember("free")) {
-        playermod->free = in["free"].asInt();
+        playermod->free = in["free"].asBool();
     }
     game.setPlayer(id, std::move(playermod));
     return HttpStatus::NO_CONTENT;
@@ -37,7 +37,7 @@ HttpStatus PlayerService::put (Json::Value& out,const Json::Value& in) {
 		throw ServiceException(HttpStatus::OUT_OF_RESOURCES,"Aucune place libre");
 	}
     string name = in["name"].asString();
-    bool free = in["free"].asInt();
+    bool free = in["free"].asBool();
 	Player new_player(name, free);
 	std::unique_ptr<Player> ptr_player (new Player(new_player));
 	out["id"] = game.addPlayer(move(ptr_player));
@@ -50,5 +50,14 @@ HttpStatus PlayerService::remove (int id) {
         throw ServiceException(HttpStatus::NOT_FOUND,"Invalid player id");
     game.removePlayer(id);
     return HttpStatus::NO_CONTENT;
+}
+
+bool PlayerService::isVersion(){
+	return false;
+}
+
+Game& PlayerService::getGame(){
+	Game& ref=game;
+	return ref;
 }
 

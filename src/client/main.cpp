@@ -140,9 +140,9 @@ int main(int argc,char* argv[]){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
 		
-		else if(strcmp(argv[1], "network") == 0){
+		else if(strcmp(argv[1], "network2") == 0){
 
-			
+			/*
 			struct sockaddr_in addr; 
 			
 			int sock;
@@ -165,7 +165,7 @@ int main(int argc,char* argv[]){
 			if(co!=SOCKET_ERROR){
 			char buffer[32]="";
 			char buffer2[32]="salut toi!";
-			/* Si l'on reçoit des informations : on les affiche à l'écran */
+			//Si l'on reçoit des informations : on les affiche à l'écran 
             if(recv(sock, buffer, 32, 0) != SOCKET_ERROR){
                 cout<<"Recu : "<<buffer<<endl;
 				int sock_err = send(sock, buffer2, 32, 0);
@@ -174,19 +174,19 @@ int main(int argc,char* argv[]){
                 else
                         cout<<"Erreur de transmission"<<endl;
        		 }
-        	/* sinon, on affiche "Impossible de se connecter" */
+        	//sinon, on affiche "Impossible de se connecter" 
 		    else
 		    {
 		        cout<<"Impossible de se connecter"<<endl;
 		    }
  
-        	/* On ferme la socket */
+        	//On ferme la socket 
        		 close(sock);
 			}
 			getchar();
  
     		return EXIT_SUCCESS;
-			/*char buf[100]="hello";
+			char buf[100]="hello";
 			size_t count=strlen(buf);
 			
 			if(write(sock, (void*) &buf, count)==-1){
@@ -195,9 +195,9 @@ int main(int argc,char* argv[]){
 			
 			if(read(sock, (void*) &buf, count)==-1){
 				perror("error read");
-			}*/
+			}
 			
-/*
+
 			char buffer[1024]="hello";
 			ssize_t s;
 			if((s=send(sock, buffer, strlen(buffer), 0)) < 0){
@@ -211,14 +211,14 @@ int main(int argc,char* argv[]){
 			//sleep(3);
 			shutdown(sock, SHUT_RDWR);
 			//close(sock);
-			close(sock);*/
+			close(sock);
 			
-			/*
-			sf::Http http("http://localhost:8080/");
+			*/
+			sf::Http http("http://localhost/", 8080);
 
 			sf::Http::Request request;
 			request.setMethod(sf::Http::Request::Get);
-			request.setUri("page/1");
+			request.setUri("/player/1");
 			request.setHttpVersion(1, 0);
 			request.setField("name","free");
 			
@@ -227,9 +227,179 @@ int main(int argc,char* argv[]){
 			cout<< "status : "<<response.getStatus()<<endl;
 			cout<<"HTTP version : "<<response.getMajorHttpVersion()<< "."<<response.getMinorHttpVersion()<<endl;
 			cout<<"Content-type header :"<<response.getField("Content-Type")<<endl;
-			cout<<"body :"<<response.getBody()<<endl;*/
+			cout<<"body :"<<response.getBody()<<endl;
+
+			sf::Http::Request request2;
+			//request.setMethod(sf::Http::Request::Get);
+			request2.setUri("/version");
+			request2.setHttpVersion(1, 0);
+			request2.setField("major","minor");
+			//bool free=true;
+			//string name="chloe";
+			sf::Http::Response response2 = http.sendRequest(request2);
+			cout<< "status : "<<response2.getStatus()<<endl;
+			cout<<"HTTP version : "<<response2.getMajorHttpVersion()<< "."<<response2.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response2.getField("Content-Type")<<endl;
+			cout<<"body :"<<response2.getBody()<<endl;
+			std::ostringstream stream;
+			//stream << "name="<<name<<"&free="<<free;
+			sf::Http::Request request3;
+			request3.setMethod(sf::Http::Request::Post);
+			request3.setUri("/player");
+			request3.setHttpVersion(1, 0);
+			request3.setField("name","free");
+			request3.setBody("P{\"name\":\"chloe\", \"free\":true}");
+			
+			sf::Http::Response response3 = http.sendRequest(request3);
+			cout<< "status : "<<response3.getStatus()<<endl;
+			cout<<"HTTP version : "<<response3.getMajorHttpVersion()<< "." <<response3.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response3.getField("Content-Type")<<endl;
+			cout<<"body :"<<response3.getBody()<<endl;
+
+			sf::Http::Request request4;
+			request4.setMethod(sf::Http::Request::Get);
+			request4.setUri("/player/2");
+			request4.setHttpVersion(1, 0);
+			request4.setField("name","free");
+
+			sf::Http::Response response4 = http.sendRequest(request4);
+			cout<< "status : "<<response4.getStatus()<<endl;
+			cout<<"HTTP version : "<<response4.getMajorHttpVersion()<< "."<<response4.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response4.getField("Content-Type")<<endl;
+			cout<<"body :"<<response4.getBody()<<endl;
+
+			sf::Http::Request request5;
+			request5.setMethod(sf::Http::Request::Post);
+			request5.setUri("/player/2");
+			request5.setHttpVersion(1, 0);
+			request5.setField("name","free");
+			request5.setBody("D");
+
+			sf::Http::Response response5 = http.sendRequest(request5);
+			cout<< "status : "<<response5.getStatus()<<endl;
+			cout<<"HTTP version : "<<response5.getMajorHttpVersion()<< "."<<response5.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response5.getField("Content-Type")<<endl;
+			cout<<"body :"<<response5.getBody()<<endl;
+
+			sf::Http::Request request6;
+			request6.setMethod(sf::Http::Request::Get);
+			request6.setUri("/player/2");
+			request6.setHttpVersion(1, 0);
+			request6.setField("name","free");
+
+			sf::Http::Response response6 = http.sendRequest(request6);
+			cout<< "status : "<<response6.getStatus()<<endl;
+			cout<<"HTTP version : "<<response6.getMajorHttpVersion()<< "."<<response6.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response6.getField("Content-Type")<<endl;
+			cout<<"body :"<<response6.getBody()<<endl;
+
 
 			
+		}
+		else if(strcmp(argv[1], "network") == 0){
+
+			string nom;
+			cout<<"Entrez votre nom de joueur : ";
+			cin>>nom;
+
+			sf::Http http("http://localhost/", 8080);
+			
+			sf::Http::Request request1;
+			request1.setMethod(sf::Http::Request::Post);
+			request1.setUri("/player");
+			request1.setHttpVersion(1, 0);
+			request1.setField("name","free");
+			string body="P{\"name\":\"" + nom + "\", \"free\":true}"; 
+			request1.setBody(body);
+			
+			sf::Http::Response response1 = http.sendRequest(request1);
+			/*cout<< "status : "<<response1.getStatus()<<endl;
+			cout<<"HTTP version : "<<response1.getMajorHttpVersion()<< "." <<response1.getMinorHttpVersion()<<endl;
+			cout<<"Content-type header :"<<response1.getField("Content-Type")<<endl;
+			cout<<"body :"<<response1.getBody()<<endl;*/
+
+			Json::Reader jsonReader;
+			Json::Value rep1;
+        	if(jsonReader.parse(response1.getBody(),rep1)){
+				int idJoueur=rep1["id"].asInt();
+				cout<<"Vous avez rejoint la partie avec succès!"<<endl;
+				cout<<"Votre ID est : "<<idJoueur<<endl;
+				cout<<""<<endl;
+
+				cout<< "Liste des joueurs présents dans la partie :"<<endl;
+				for(int j=1; j<=idJoueur; j++){
+				
+					sf::Http::Request request2;
+					request2.setMethod(sf::Http::Request::Get);
+					string uri="/player/"+ to_string(j);
+					
+					request2.setUri(uri);
+					request2.setHttpVersion(1, 0);
+					request2.setField("name","free");
+
+					sf::Http::Response response2 = http.sendRequest(request2);
+					Json::Reader jsonReader2;
+		    		Json::Value rep2;
+				
+					if (jsonReader.parse(response2.getBody(), rep2)){	
+						string nom=rep2["name"].asString();
+						cout<<"	-"<<nom<<endl;		
+						/*cout<< "status : "<<response2.getStatus()<<endl;
+						cout<<"HTTP version : "<<response2.getMajorHttpVersion()<< "." <<response2.getMinorHttpVersion()<<endl;
+						cout<<"Content-type header :"<<response2.getField("Content-Type")<<endl;
+						cout<<"body :"<<response2.getBody()<<endl;*/
+					}
+				
+				}
+				cout<<"Appuyez sur d puis sur entree pour vous retirer du serveur"<<endl;
+				//while(!sf::Keyboard::isKeyPressed(sf::Keyboard::D)){}
+				//(void)getc(stdin);
+				//while(getc(stdin)!='d'){
+				//if(getchar()=='D'){
+				while(getchar()!='d'){}
+				
+				sf::Http::Request request3;
+				request3.setMethod(sf::Http::Request::Post);
+				string uri2="/player/"+ to_string(idJoueur);
+				request3.setUri(uri2);
+				request3.setHttpVersion(1, 0);
+				request3.setField("name","free");
+				string body3="D"; 
+				request3.setBody(body3);
+				http.sendRequest(request3);
+				cout<<""<<endl;
+				cout<<"Joueur "<< idJoueur << " supprimé."<<endl;
+				cout<<""<<endl;
+			
+				cout<< "Liste des joueurs restants : "<<endl;
+				for(int k=1; k<=15; k++){
+					
+					sf::Http::Request request4;
+					request4.setMethod(sf::Http::Request::Get);
+					string uri="/player/"+ to_string(k);
+					request4.setUri(uri);
+					request4.setHttpVersion(1, 0);
+					request4.setField("name","free");
+					
+					sf::Http::Response response4 = http.sendRequest(request4);
+					
+					Json::Reader jsonReader4;
+	    			Json::Value rep4;
+        			
+					
+					if (jsonReader.parse(response4.getBody(), rep4)){
+						string nom4=rep4["name"].asString();
+						cout<<"	-"<<nom4<<endl;
+						/*cout<< "status : "<<response4.getStatus()<<endl;
+						cout<<"HTTP version : "<<response4.getMajorHttpVersion()<< "." <<response4.getMinorHttpVersion()<<endl;
+						cout<<"Content-type header :"<<response4.getField("Content-Type")<<endl;
+						cout<<"body :"<<response4.getBody()<<endl;*/
+					}
+				}
+			}
+			else{
+				cout<<"Aucune place de libre. Le nombre est limité à 2."<<endl;
+			}
 		}
 		/*	thread : le moteur tourne dans un thread séparé */
 		else if(strcmp(argv[1], "thread") == 0){

@@ -28,6 +28,8 @@ namespace server {
     HttpStatus post (const Json::Value& in, int id);
     HttpStatus put (Json::Value& out, const Json::Value& in);
     HttpStatus remove (int id);
+    bool isVersion ();
+    Game& getGame ();
     // Setters and Getters
   };
 

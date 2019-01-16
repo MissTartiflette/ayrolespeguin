@@ -46,4 +46,6 @@ void Game::removePlayer (int id) {
     players.erase(ite);
 }
 
-
+int Game::getIDseq(){
+	return idseq;
+}
