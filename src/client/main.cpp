@@ -102,11 +102,9 @@ int main(int argc,char* argv[]){
 					}
 				
 				}
+				cout<<""<<endl;
 				cout<<"Appuyez sur d puis sur entree pour vous retirer du serveur"<<endl;
-				//while(!sf::Keyboard::isKeyPressed(sf::Keyboard::D)){}
-				//(void)getc(stdin);
-				//while(getc(stdin)!='d'){
-				//if(getchar()=='D'){
+				
 				while(getchar()!='d'){}
 				
 				sf::Http::Request request3;

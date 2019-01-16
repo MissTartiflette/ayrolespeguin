@@ -51,7 +51,16 @@ HttpStatus ServicesManager::queryService (string& out, const string& in, const s
     }
     // Traite les différentes méthodes
     if (method == "GET") {
-        cerr << "Requête GET " << pattern << " avec id=" << id << endl;
+		int n_id=0;
+		for(size_t i=0; i<services.size(); i++){
+			if(!services[i]->isVersion()){
+				PlayerService& player_service=static_cast<PlayerService&>(*services[i]);
+				n_id=player_service.getGame().getIDseq();
+			}
+		}
+		if(id<n_id){
+        	cerr << "Requête GET " << pattern << " avec id=" << id << endl;
+		}
         Json::Value jsonOut;
         HttpStatus status = service->get(jsonOut,id);
         out = jsonOut.toStyledString();
@@ -73,7 +82,7 @@ HttpStatus ServicesManager::queryService (string& out, const string& in, const s
             throw ServiceException(HttpStatus::BAD_REQUEST,"Données invalides: "+jsonReader.getFormattedErrorMessages());
 			cerr << "Requête PUT " << pattern << " avec contenu:" << in << endl;
 		}
-        cerr << "Requête PUT " << pattern << " avec contenu: {\"name\":" << jsonIn["name"].asString()<<" ,\"free\":"<<jsonIn["free"].asBool() <<"}" << endl;
+        cerr << "Requête PUT " << pattern << " avec contenu: {\"name\":" << jsonIn["name"].asString()<<" ,\"free\":"<<jsonIn["free"]<<"}" << endl;
         
         Json::Value jsonOut;
         HttpStatus status = service->put(jsonOut,jsonIn);

@@ -15,7 +15,7 @@ FinActions::FinActions(state::Personnage& cible, bool newJoueur):cible(cible){
 void FinActions::execute(state::Etat& etat){
 	string newChaine;
 	StateEvent stateEvent(TEXTECHANGED);
-	int waitTime = 1000000;
+	int waitTime = 500000;
 	
 	if (cible.getStatut()!=ATTENTE && cible.getStatut()!=MORT){
 		cible.setStatut(ATTENTE);

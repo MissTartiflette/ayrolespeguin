@@ -386,7 +386,7 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.notifyObservers(stateEvent, etatActuel);
 					stateEvent.stateEventID = ALLCHANGED;
 					
-					usleep(200000);
+					usleep(100000);
 				}
 			}
 			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
@@ -408,7 +408,7 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.notifyObservers(stateEvent, etatActuel);
 					stateEvent.stateEventID = ALLCHANGED;
 					
-					usleep(200000);
+					usleep(100000);
 				}
 			}
 			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
@@ -430,7 +430,7 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.notifyObservers(stateEvent, etatActuel);
 					stateEvent.stateEventID = ALLCHANGED;
 					
-					usleep(200000);
+					usleep(100000);
 				}
 			}
 			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
@@ -451,7 +451,7 @@ void StateLayer::gestionCurseur(sf::Event newEvent, unsigned int largeur_map_cas
 					etatActuel.notifyObservers(stateEvent, etatActuel);
 					stateEvent.stateEventID = ALLCHANGED;
 					
-					usleep(200000);
+					usleep(100000);
 				}
 			}
 								
