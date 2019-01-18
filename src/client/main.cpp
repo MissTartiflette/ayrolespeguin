@@ -46,7 +46,7 @@ int main(int argc,char* argv[]){
 		if(strcmp(argv[1],"hello")==0){
 			cout<<"Bonjour tout le monde"<<endl;
 		}
-		else if(strcmp(argv[1], "network2") == 0){
+		else if(strcmp(argv[1], "network") == 0){
 			int camp;
 			string nom;
 			cout<<"Entrez votre nom de joueur : ";
@@ -187,7 +187,7 @@ int main(int argc,char* argv[]){
 
 			
 		}
-		else if(strcmp(argv[1], "network") == 0){
+		else if(strcmp(argv[1], "network2") == 0){
 
 			string nom;
 			cout<<"Entrez votre nom de joueur : ";
