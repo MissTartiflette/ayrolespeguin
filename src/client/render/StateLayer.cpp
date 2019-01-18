@@ -118,6 +118,54 @@ void StateLayer::draw (sf::RenderWindow& window){
 	rectangle.setFillColor(colorRect);
 	//rectangle.setFillColor(sf::Color::Black);
 	
+	sf::RectangleShape rectangleBas(sf::Vector2f(390.f, 48.f));
+	rectangleBas.setPosition(5.f, 547.f);
+	rectangleBas.setFillColor(colorRect);
+	
+	std::string chaine = "Commandes";
+	sf::Text text;
+	text.setFont(police);
+	text.setString(chaine);
+	text.setCharacterSize(10);
+	text.setFillColor(sf::Color::Blue);
+	
+	sf::FloatRect textRect = text.getLocalBounds();
+	text.setOrigin((int)(textRect.left + textRect.width/2.0f),
+		           (int)(textRect.top  + textRect.height/2.0f));
+	text.setPosition(sf::Vector2f(400/2.0f, 555.f));
+	
+	std::string chaine2 = "Fleches\nEnter\nA";
+	sf::Text text2;
+	text2.setFont(police);
+	text2.setString(chaine2);
+	text2.setCharacterSize(10);
+	text2.setFillColor(sf::Color::Blue);
+	text2.setPosition(sf::Vector2f(10.f, 562.f));
+	
+	std::string chaine3 = "Deplacement\nSelection\nAttaque";
+	sf::Text text3;
+	text3.setFont(police);
+	text3.setString(chaine3);
+	text3.setCharacterSize(10);
+	text3.setFillColor(sf::Color::White);
+	text3.setPosition(sf::Vector2f(65.f, 562.f));
+	
+	std::string chaine4 = "N\nZ";
+	sf::Text text4;
+	text4.setFont(police);
+	text4.setString(chaine4);
+	text4.setCharacterSize(10);
+	text4.setFillColor(sf::Color::Blue);
+	text4.setPosition(sf::Vector2f(150.f, 562.f));
+	
+	std::string chaine5 = "Annulation Attaque\nFin du tour";
+	sf::Text text5;
+	text5.setFont(police);
+	text5.setString(chaine5);
+	text5.setCharacterSize(10);
+	text5.setFillColor(sf::Color::White);
+	text5.setPosition(sf::Vector2f(175.f, 562.f));
+
 	/*
 	// Rectangle noir de Statistiques
 	sf::RectangleShape rectangle2(sf::Vector2f(100.f, 102.f));
@@ -129,8 +177,14 @@ void StateLayer::draw (sf::RenderWindow& window){
 	window.draw(*surfaces[2]);	// Dessin du curseur
 	window.draw(quad);
 	window.draw(rectangle);
+	window.draw(rectangleBas);
 	//window.draw(rectangle2);
-	
+	window.draw(text);
+	window.draw(text2);
+	window.draw(text3);
+	window.draw(text4);
+	window.draw(text5);
+		
 	window.draw(*surfaces[3]); // Dessin des infos
 	window.display();
 }
@@ -145,7 +199,7 @@ void StateLayer::writeTexteAction(const std::string chaine, sf::RenderWindow& wi
 	text.setString(chaine);
 	text.setCharacterSize(15);
 	text.setFillColor(sf::Color::White);
-	text.setPosition(10.f, 400.f);
+	//text.setPosition(10.f, 400.f);
 	
 	sf::FloatRect textRect = text.getLocalBounds();
 	text.setOrigin((int)(textRect.left + textRect.width/2.0f),
