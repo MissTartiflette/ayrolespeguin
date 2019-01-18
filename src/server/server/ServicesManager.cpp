@@ -51,17 +51,16 @@ HttpStatus ServicesManager::queryService (string& out, const string& in, const s
     }
     // Traite les différentes méthodes
     if (method == "GET") {
-		int n_id=0;
-		for(size_t i=0; i<services.size(); i++){
-			if(!services[i]->isVersion()){
-				PlayerService& player_service=static_cast<PlayerService&>(*services[i]);
-				n_id=player_service.getGame().getIDseq();
-			}
-		}
-		if(id<n_id){
-        	cerr << "Requête GET " << pattern << " avec id=" << id << endl;
-		}
+        cerr << "Requête GET " << pattern << " avec id=" << id << endl;
         Json::Value jsonOut;
+        HttpStatus status = service->get(jsonOut,id);
+        out = jsonOut.toStyledString();
+        return status;
+    }
+	else if (method == "POST" && in[0]=='C') {
+        cerr << "Requête Command " << pattern << " avec id=" << id << endl;
+        Json::Value jsonOut;
+		
         HttpStatus status = service->get(jsonOut,id);
         out = jsonOut.toStyledString();
         return status;
@@ -82,7 +81,7 @@ HttpStatus ServicesManager::queryService (string& out, const string& in, const s
             throw ServiceException(HttpStatus::BAD_REQUEST,"Données invalides: "+jsonReader.getFormattedErrorMessages());
 			cerr << "Requête PUT " << pattern << " avec contenu:" << in << endl;
 		}
-        cerr << "Requête PUT " << pattern << " avec contenu: {\"name\":" << jsonIn["name"].asString()<<" ,\"free\":"<<jsonIn["free"]<<"}" << endl;
+        cerr << "Requête PUT " << pattern << " avec contenu: {\"name\":" << jsonIn["name"].asString()<<" ,\"free\":"<<jsonIn["free"].asBool() <<"}" << endl;
         
         Json::Value jsonOut;
         HttpStatus status = service->put(jsonOut,jsonIn);

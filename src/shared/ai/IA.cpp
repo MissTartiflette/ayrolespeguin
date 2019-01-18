@@ -14,3 +14,7 @@ using namespace std;
 void IA::setCamp(bool newCamp){
 	camp = newCamp;
 }
+
+bool IA::getCamp(){
+	return camp;
+}

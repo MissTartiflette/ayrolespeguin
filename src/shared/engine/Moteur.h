@@ -61,6 +61,7 @@ namespace engine {
     void curseurChanged (state::Etat& etat, render::CurseurEventID& touche, int acteur, int cible, state::Position& position, bool rollback);
     void setEnableRecord (bool val);
     Json::Value getRecord ();
+    std::map<int, std::unique_ptr<Commande>>& getCommandesActuelles ();
     // Setters and Getters
   };
 

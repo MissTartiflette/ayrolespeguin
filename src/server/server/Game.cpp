@@ -5,11 +5,16 @@
 #include <set>
 
 using namespace server;
+using namespace engine;
 using namespace std;
 using std::unique_ptr;
 using std::map;
 using std::vector;
 
+/*engine::Moteur moteur;
+std::unique_ptr<std::thread> moteurThread;
+int idseq;
+std::map<int, std::unique_ptr<Player>> players;*/
 
 Game::Game():idseq(1){   
 }
@@ -48,4 +53,9 @@ void Game::removePlayer (int id) {
 
 int Game::getIDseq(){
 	return idseq;
+}
+
+engine::Moteur& Game::getMoteur (){
+	Moteur& ref=moteur;
+	return ref;
 }

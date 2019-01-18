@@ -26,6 +26,7 @@ namespace ai {
   public:
     virtual void run (engine::Moteur& moteur) = 0;
     void setCamp (bool newCamp);
+    bool getCamp ();
   protected:
     void listeCommandes (std::vector<std::unique_ptr<engine::Commande>>& liste, state::Etat& etat);
     // Setters and Getters

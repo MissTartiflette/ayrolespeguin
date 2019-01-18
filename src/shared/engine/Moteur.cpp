@@ -318,3 +318,8 @@ Json::Value Moteur::getRecord(){
 	return record;
 }
 
+std::map<int, std::unique_ptr<Commande>>& Moteur::getCommandesActuelles (){
+	std::map<int, std::unique_ptr<Commande>>& ref=commandesActuelles;
+	return ref;
+}
+

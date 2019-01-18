@@ -138,18 +138,21 @@ int main(int argc,char* argv[]){
 		/*	listen : le serveur écoute et attend l'arrivée de nouveaux joueurs */
 		else if(strcmp(argv[1], "listen") == 0){
 			try {
+				Moteur moteur;
+				ServicesManager servicesManager;
+
 				VersionService versionService;
 				std::unique_ptr<AbstractService> ptr_versionService (new VersionService(versionService));
-
-				ServicesManager servicesManager;
 				servicesManager.registerService(move(ptr_versionService));
 
 				Game game;
-
 				PlayerService playerService(std::ref(game));
 				std::unique_ptr<AbstractService> ptr_playerService (new PlayerService(playerService));
-
 				servicesManager.registerService(move(ptr_playerService));
+
+				CommandService commandService(moteur);
+				std::unique_ptr<AbstractService> ptr_commandService (new CommandService(commandService));
+				servicesManager.registerService(move(ptr_commandService));
 
 				struct MHD_Daemon *d;
 				if (argc != 2) {
